@@ -139,7 +139,7 @@ class GroupSkillCheck extends GroupRoll5e {
       let sklmod = t.actor.data.data.skills[skillName].mod;
       let abilityDef = t.actor.data.data.skills[skillName].ability;
       if ( abilityName !== abilityDef ) sklmod = sklmod - t.actor.data.data.abilities[abilityDef].mod + t.actor.data.data.abilities[abilityName].mod;
-      let tokRace = t.actor.data.data.details.race.value;
+      let tokRace = t.actor.data.data.details.race;
       let lucky = tokRace ? tokRace.toLowerCase().includes("halfling") : false;
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
@@ -199,7 +199,7 @@ class GroupAbilityCheck extends GroupRoll5e {
       }
       let m = this.mstList[t.id];
       let ablmod = saveRoll ? t.actor.data.data.abilities[abilityName].save : t.actor.data.data.abilities[abilityName].mod;
-      let tokRace = t.actor.data.data.details.race.value;
+      let tokRace = t.actor.data.data.details.race;
       let lucky = tokRace ? tokRace.toLowerCase().includes("halfling") : false;
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
