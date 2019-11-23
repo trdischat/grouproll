@@ -1,0 +1,15 @@
+{
+  "name": "grouproll",
+  "title": "Roll Group Checks",
+  "description": "This module rolls skill and ability checks for groups of tokens.",
+  "version": "0.0.12",
+  "minimumCoreVersion": "0.4.1",
+  "author": "trdischat",
+  "systems": ["dnd5e", "dnd5eJP"],
+  "scripts": ["./scripts/main.js", "./scripts/rolls.js", "./scripts/config.js", "./scripts/patches.js"],
+  "styles": ["./css/grouproll.css"],
+  "packs": [],
+  "url": "https://github.com/trdischat/fvtt/tree/master/grouproll",
+  "manifest": "https://github.com/trdischat/fvtt/raw/master/grouproll/module.json",
+  "download": "https://github.com/trdischat/fvtt/raw/master/grouproll/grouproll.zip"
+}
