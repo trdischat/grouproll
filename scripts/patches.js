@@ -4,7 +4,7 @@ function patchClass(klass, func, line_number, line, new_line) {
   if (lines[line_number].trim() == line.trim()) {
     lines[line_number] = lines[line_number].replace(line, new_line);
     classStr = klass.toString()
-    fixedClass = classStr.replace(funcStr, lines.join("\n"))
+    fixedClass = classStr.replace(funcStr, function(m) {return lines.join("\n")})
     return Function('"use strict";return (' + fixedClass + ')')();
   }
   else {
@@ -41,7 +41,7 @@ if (patchedDieClass == undefined) {
 }
 
 function patchRollClass() {
-    newClass = patchClass(Roll, Roll.prototype.constructor, 48,
+    newClass = patchClass(Roll, Roll.prototype.constructor, 56,
       `reroll: /r(<=|>=|<|>)?([0-9]+)?/,`,
       `reroll: /r(<=|>=|<|>)?([0-9]+)?(?:=([0-9]+))?/,`);
     if (!newClass) return;
