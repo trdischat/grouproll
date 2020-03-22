@@ -1,15 +1,11 @@
 # Group rolls for DND 5e
-The primary purpose of this module is to facilitate group ability and skill check rolls per Player's Handbook, page 175:
-
-*"If at least half the group succeeds, the whole group succeeds."*
+The primary purpose of this module is to facilitate group ability and skill check rolls per Player's Handbook, page 175: *"If at least half the group succeeds, the whole group succeeds."*
 
 It also displays the rolls for each individual token, and therefore can be used to roll saving throws for an entire groups of tokens at once (e.g., DEX saves for a group of characters hit by a fireball). Finally, there is a "Passive" button to run passive skill or ability checks for a group in place of actual rolls. 
 
-The module also implements a house rule to use the average of 2d20 for normal skill and ability check rolls, and it also *partially* implements the D&D 5e *Halfling Lucky* trait.  Both of these rules can be disabled in config.js.  Per Player's Handbook, page 173:
+The module also implements a house rule to use the average of 2d20 for normal skill and ability check rolls, and the D&D 5e *Halfling Lucky* trait for Actors with the word "halfling" anywhere in the Race field.  Per Player's Handbook, page 173: *"When you have advantage or disadvantage and something in the game, such as the halfling's Lucky trait, lets you reroll or replace the d20, you can reroll or replace only one of the dice."*
 
-*"When you have advantage or disadvantage and something in the game, such as the halfling's Lucky trait, lets you reroll or replace the d20, you can reroll or replace only one of the dice."*
-
-Unfortunately, FVTT does not have the ability to limit the number of dice that can be rerolled.  Therefore, this module currently will allow a halfling to reroll any 1.
+Each of these custom rules can be individually enabled or disabled in config.js.
 
 # Installation
 See https://github.com/foundry-vtt-community/wiki/wiki/Modules#installing-modules. Open the Add-on Modules tab in the Configuration and Setup dialog. Click Install Module, paste `https://raw.githubusercontent.com/trdischat/grouproll/master/module.json` in as the Manifest URL, then click Install.
