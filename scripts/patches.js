@@ -12,7 +12,7 @@ function patchClass(klass, func, line_number, line, new_line) {
   }
 }
 
-/* Patch Die and Roll classes to allow limit on number of dice to reroll (e.g.,
+/* Patch Die class to allow limit on number of dice to reroll (e.g.,
  * a halfing rolling an attack with advantage would use '2d20r1=1kh' to roll
  * two d20, reroll on a 1, but only on one die, then keep the highest roll).
  */
