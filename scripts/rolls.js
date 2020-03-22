@@ -9,7 +9,7 @@ function midValue(rolls) {
 }
 
 function chkRoll(adv, bon, modifier, lucky) {
-  if (CONFIG._grouproll_module_halflingLuckEnabled) var luck = lucky ? "r1" : "";
+  if (CONFIG._grouproll_module_halflingLuckEnabled) var luck = lucky ? "r1=1" : "";
   else var luck = "";
   var rStr;
   var rData = {bonus: bon, mod: modifier};
@@ -28,7 +28,7 @@ function chkRoll(adv, bon, modifier, lucky) {
 }
 
 function hitRoll(adv, bon, modifier, lucky) {
-  if (CONFIG._grouproll_module_halflingLuckEnabled) var luck = lucky ? "r1" : "";
+  if (CONFIG._grouproll_module_halflingLuckEnabled) var luck = lucky ? "r1=1" : "";
   else var luck = "";
   var rStr;
   var rData = {bonus: bon, mod: modifier};
