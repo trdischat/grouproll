@@ -23,7 +23,7 @@ function patchDieClass() {
   if (!newClass) return;
   newClass = patchClass(newClass, newClass.prototype.reroll, 3,
     `// Flag dice which are eligible for re-roll`,
-    `maxrerolls = maxrerolls || 999; console.log(targets, maxrerolls);
+    `maxrerolls = maxrerolls || 999;
     // Flag dice which are eligible for re-roll`);
   if (!newClass) return;
   newClass = patchClass(newClass, newClass.prototype.reroll, 7,
