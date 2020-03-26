@@ -140,7 +140,8 @@ class GroupSkillCheck extends GroupRoll5e {
       let abilityDef = t.actor.data.data.skills[skillName].ability;
       if ( abilityName !== abilityDef ) sklmod = sklmod - t.actor.data.data.abilities[abilityDef].mod + t.actor.data.data.abilities[abilityName].mod;
       let tokRace = t.actor.data.data.details.race;
-      let lucky = t.actor.data.flags.dnd5e.halflingLucky ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
+      let trtLuck = t.actor.data.flags.dnd5e ? (t.actor.data.flags.dnd5e.halflingLucky ? true : false) : false;
+      let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
       return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: sklmod, luck: lucky};
@@ -200,7 +201,8 @@ class GroupAbilityCheck extends GroupRoll5e {
       let m = this.mstList[t.id];
       let ablmod = saveRoll ? t.actor.data.data.abilities[abilityName].save : t.actor.data.data.abilities[abilityName].mod;
       let tokRace = t.actor.data.data.details.race;
-      let lucky = t.actor.data.flags.dnd5e.halflingLucky ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
+      let trtLuck = t.actor.data.flags.dnd5e ? (t.actor.data.flags.dnd5e.halflingLucky ? true : false) : false;
+      let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
       return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: ablmod, luck: lucky};
