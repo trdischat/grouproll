@@ -1,5 +1,5 @@
 // Configure rolling behavior
-CONFIG._grouproll_module_averageRolls = true;         // Set to false to use normal 1d20 roll rather than averaging 2d20
+CONFIG._grouproll_module_averageRolls = false;         // Set to false to use normal 1d20 roll rather than averaging 2d20
 CONFIG._grouproll_module_halflingLuckEnabled = true;  // Set to false if Halfling Luck patch not applied
 
 // Advantage Types
