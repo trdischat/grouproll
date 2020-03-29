@@ -41,6 +41,9 @@ Die.prototype._applyReroll = function(option) {
 
 Die.rgx.reroll = /r(<=|>=|<|>)?([0-9]+)?(?:=([0-9]+))?/;
 
+/* Substitute "average" d20 roll for standard d20 ability and skill rolls.
+ * Average of two d20 approximated using 2d10+1-1d2.
+ */
 if (CONFIG._grouproll_module_averageRolls) {
   Hooks.once("setup", function() {
     game.dnd5e.Dice5e.d20Roll = async function({parts=[], data={}, event={}, template=null, title=null, speaker=null, flavor=null, fastForward=true, critical=20, fumble=1, elvenAccuracy=false, halflingLucky=false, onClose, dialogOptions}={}) {
