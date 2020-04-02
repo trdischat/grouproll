@@ -51,24 +51,24 @@ if (CONFIG._grouproll_module_averageRolls) {
       // Handle input arguments
       flavor = flavor || title;
       speaker = speaker || ChatMessage.getSpeaker();
-      const rollMode = game.settings.get("core", "rollMode");
       parts = parts.concat(["@bonus"]);
+      let rollMode = game.settings.get("core", "rollMode");
       let rolled = false;
-  
+
       // Define inner roll function
       const _roll = function(parts, adv, form=null) {
 
         // Determine the d20 roll and modifiers
         let nd = 1;
         let mods = halflingLucky ? "r=1" : "";
-  
+
         // Handle advantage
         if ( adv === 1 ) {
           nd = elvenAccuracy ? 3 : 2;
           flavor += " (Advantage)";
           mods += "kh";
         }
-  
+
         // Handle disadvantage
         else if ( adv === -1 ) {
           nd = 2;
@@ -76,51 +76,54 @@ if (CONFIG._grouproll_module_averageRolls) {
           mods += "kl";
         }
 
-          // Include the d20 roll
+        // Include the d20 roll
         parts.unshift(`${nd}d20${mods}`);
-  
+
         // Optionally include a situational bonus
-        if ( form !== null ) data['bonus'] = form.find('[name="bonus"]').val();
+        if ( form !== null ) data['bonus'] = form.bonus.value;
         if ( !data["bonus"] ) parts.pop();
-  
+
         // Optionally include an ability score selection (used for tool checks)
-        const ability = form ? form.find('[name="ability"]') : null;
-        if ( ability && ability.length && ability.val() ) {
-          data.ability = ability.val();
+        const ability = form ? form.ability : null;
+        if ( ability && ability.value ) {
+          data.ability = ability.value;
           const abl = data.abilities[data.ability];
-          if ( abl ) data.mod = abl.mod;
+          if ( abl ) {
+            data.mod = abl.mod;
+            flavor += ` (${CONFIG.DND5E.abilities[data.ability]})`;
+          }
         }
-  
+
         // Execute the roll and flag critical thresholds on the d20
         let roll = new Roll(parts.join(" + "), data).roll();
         if (!(flavor.includes("Attack Roll") || adv !== 0)) {  // ! New Lines
-          let avgRoll = new Roll(`2d10${mods}+1-1d2`).roll();
-          roll._total = roll._total + avgRoll.total - (roll._dice[0].rolls[1] ? roll._dice[0].rolls[1].roll : roll._dice[0].rolls[0].roll);
-          roll._result = roll.parts.slice(1).reduce((acc, val) => { return acc + " " + val; }, avgRoll.total);
-          roll.parts[0].rolls = (avgRoll.total == 1) ? [{roll: 1, rerolled: true},{roll: 1}] : [{roll: avgRoll.total}];
-          roll._dice[0].rolls = roll.parts[0].rolls;
+            let avgRoll = new Roll(`2d10${mods}+1-1d2`).roll();
+            roll._total = roll._total + avgRoll.total - (roll._dice[0].rolls[1] ? roll._dice[0].rolls[1].roll : roll._dice[0].rolls[0].roll);
+            roll._result = roll.parts.slice(1).reduce((acc, val) => { return acc + " " + val; }, avgRoll.total);
+            roll.parts[0].rolls = (avgRoll.total == 1) ? [{roll: 1, rerolled: true},{roll: 1}] : [{roll: avgRoll.total}];
+            roll._dice[0].rolls = roll.parts[0].rolls;
         }
         const d20 = roll.parts[0];
         d20.options.critical = critical;
         d20.options.fumble = fumble;
 
         // Convert the roll to a chat message and return the roll
+        rollMode = form ? form.rollMode.value : rollMode;
         roll.toMessage({
           speaker: speaker,
-          flavor: flavor,
-          rollMode: form ? form.find('[name="rollMode"]').val() : rollMode
-        });
+          flavor: flavor
+        }, { rollMode });
         rolled = true;
         return roll;
       };
-  
+
       // Optionally allow fast-forwarding to specify advantage or disadvantage
       if ( fastForward ) {
         if (event.shiftKey) return _roll(parts, 0);
         else if (event.altKey) return _roll(parts, 1);
         else if (event.ctrlKey || event.metaKey) return _roll(parts, -1);
       }
-  
+
       // Render modal dialog
       template = template || "systems/dnd5e/templates/chat/roll-dialog.html";
       let dialogData = {
@@ -131,7 +134,7 @@ if (CONFIG._grouproll_module_averageRolls) {
         config: CONFIG.DND5E
       };
       const html = await renderTemplate(template, dialogData);
-  
+
       // Create the Dialog window
       let roll;
       return new Promise(resolve => {
@@ -141,15 +144,15 @@ if (CONFIG._grouproll_module_averageRolls) {
           buttons: {
             advantage: {
               label: "Advantage",
-              callback: html => roll = _roll(parts, 1, html)
+              callback: html => roll = _roll(parts, 1, html[0].children[0])
             },
             normal: {
               label: "Normal",
-              callback: html => roll = _roll(parts, 0, html)
+              callback: html => roll = _roll(parts, 0, html[0].children[0])
             },
             disadvantage: {
               label: "Disadvantage",
-              callback: html => roll = _roll(parts, -1, html)
+              callback: html => roll = _roll(parts, -1, html[0].children[0])
             }
           },
           default: "normal",
