@@ -2,7 +2,7 @@
   "name": "grouproll",
   "title": "Roll Group Checks",
   "description": "This module rolls skill and ability checks for groups of tokens.",
-  "version": "0.5.1",
+  "version": "0.5.1.1",
   "minimumCoreVersion": "0.5.1",
   "author": "trdischat",
   "systems": ["dnd5e"],
