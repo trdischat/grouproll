@@ -97,11 +97,11 @@ if (CONFIG._grouproll_module_averageRolls) {
         // Execute the roll and flag critical thresholds on the d20
         let roll = new Roll(parts.join(" + "), data).roll();
         if (!(flavor.includes("Attack Roll") || adv !== 0)) {  // ! New Lines
-            let avgRoll = new Roll(`2d10${mods}+1-1d2`).roll();
-            roll._total = roll._total + avgRoll.total - (roll._dice[0].rolls[1] ? roll._dice[0].rolls[1].roll : roll._dice[0].rolls[0].roll);
-            roll._result = roll.parts.slice(1).reduce((acc, val) => { return acc + " " + val; }, avgRoll.total);
-            roll.parts[0].rolls = (avgRoll.total == 1) ? [{roll: 1, rerolled: true},{roll: 1}] : [{roll: avgRoll.total}];
-            roll._dice[0].rolls = roll.parts[0].rolls;
+          let avgRoll = new Roll(`2d10${mods}+1-1d2`).roll();
+          roll._total = roll._total + avgRoll.total - (roll._dice[0].rolls[1] ? roll._dice[0].rolls[1].roll : roll._dice[0].rolls[0].roll);
+          roll._result = roll.parts.slice(1).reduce((acc, val) => { return acc + " " + val; }, avgRoll.total);
+          roll.parts[0].rolls = (avgRoll.total == 1) ? [{roll: 1, rerolled: true},{roll: 1}] : [{roll: avgRoll.total}];
+          roll._dice[0].rolls = roll.parts[0].rolls;
         }
         const d20 = roll.parts[0];
         d20.options.critical = critical;
