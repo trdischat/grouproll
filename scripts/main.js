@@ -1,3 +1,19 @@
+// Advantage Types
+CONFIG._grouproll_module_advantageStatus = {
+  "-1": {
+    "label": "Disadvantage",
+    "icon": '<i class="fas fa-minus"></i>'
+  },
+  "0": {
+    "label": "Normal",
+    "icon": '<i class="far fa-circle"></i>'
+  },
+  "1": {
+    "label": "Advantage",
+    "icon": '<i class="fas fa-plus"></i>'
+  }
+};
+
 class GroupRoll5e extends Application {
 
   constructor(object, options) {
@@ -5,6 +21,7 @@ class GroupRoll5e extends Application {
     this.tokList = [];
     this.mstList = {};
     this.groupRoll = "";
+    // Update dialog display on changes to token selection
     Hooks.on("controlToken", (object, controlled) => {
       this.render();
     });
@@ -20,23 +37,23 @@ class GroupRoll5e extends Application {
 
   doGroupCheck() {
     this.tokList = this.tokList.map(t => {
-      t.roll = chkRoll(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
+      t.roll = tr5eLib.chkRoll(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
       this.mstList[t.id].roll = t.roll;
       return t;
     });
     let tResults = this.tokList.map(t => t.roll.total);
-    this.groupRoll = midValue(tResults);
+    this.groupRoll = tr5eLib.midValue(tResults);
     this.render();
   }
 
   doPassiveCheck() {
     this.tokList = this.tokList.map(t => {
-      t.roll = chkPassive(Number(t.adv), Number(t.bon), Number(t.mod));
+      t.roll = tr5eLib.chkPassive(Number(t.adv), Number(t.bon), Number(t.mod));
       this.mstList[t.id].roll = t.roll;
       return t;
     });
     let tResults = this.tokList.map(t => t.roll.total);
-    this.groupRoll = midValue(tResults);
+    this.groupRoll = tr5eLib.midValue(tResults);
     this.render();
   }
 
@@ -67,9 +84,6 @@ class GroupRoll5e extends Application {
     ].concat(buttons);
     return buttons
   }
-
-  // Update dialog display on changes to token selection
-  // Hooks.on("controlToken", (object, controlled) => { this.render() });
 
   activateListeners(html) {
     super.activateListeners(html);
@@ -133,7 +147,7 @@ class GroupSkillCheck extends GroupRoll5e {
   getTokenList(skillName, abilityName) {
     return canvas.tokens.controlledTokens.map(t => {
       if (this.mstList[t.id] === undefined) {
-        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: ""}};
+        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
       }
       let m = this.mstList[t.id];
       let sklmod = t.actor.data.data.skills[skillName].mod;
@@ -144,7 +158,8 @@ class GroupSkillCheck extends GroupRoll5e {
       let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: sklmod, luck: lucky};
+      let natRoll = m.roll.parts[0].total === 1 ? "fumble" : (m.roll.parts[0].total === 20 ? "success" : "");
+      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: sklmod, luck: lucky, nat: natRoll};
     })
   }
 
@@ -196,7 +211,7 @@ class GroupAbilityCheck extends GroupRoll5e {
   getTokenList(saveRoll, abilityName) {
     return canvas.tokens.controlledTokens.map(t => {
       if (this.mstList[t.id] === undefined) {
-        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: ""}};
+        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
       }
       let m = this.mstList[t.id];
       let ablmod = saveRoll ? t.actor.data.data.abilities[abilityName].save : t.actor.data.data.abilities[abilityName].mod;
@@ -205,7 +220,8 @@ class GroupAbilityCheck extends GroupRoll5e {
       let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: ablmod, luck: lucky};
+      let natRoll = m.roll.parts[0].total === 1 ? "fumble" : (m.roll.parts[0].total === 20 ? "success" : "");
+      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: ablmod, luck: lucky, nat: natRoll};
     })
   }
 
