@@ -45,3 +45,13 @@
 .grm-name-col {
   justify-self: start;
 }
+
+.fumble {
+  color: #aa0200;
+  font-weight: bold;
+}
+
+.success {
+  color: #257f11;
+  font-weight: bold;
+}

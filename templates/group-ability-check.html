@@ -33,7 +33,7 @@
     <div><span class="value"><input type="hidden" name="adv-{{ this.id }}" value={{ this.adv }} data-dtype="Number"/><a class="advantage-mode" title="{{this.hover}}">{{{this.icon}}}</a></span></div>
     <div><span class="bonus-value"><input name="bon-{{ this.id }}" value={{ this.bon }} type="number" min="0" style="width: 4em; text-align: center"></span></div>
     <div><span class="value">{{ this.mod }}</span></div>
-    <div><span class="value" title="{{this.roll.result}}">{{ this.roll.total }}</span></div>
+    <div><span class="value {{ this.nat }}" title="{{this.roll.result}}">{{ this.roll.total }}</span></div>
     {{/each}}
   </div>
 
