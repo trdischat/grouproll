@@ -4,6 +4,9 @@ CONFIG._tr5e_options_halflingLuckEnabled = true;  // Set to true to apply Halfli
 
 class tr5eLib {
 
+    /* Patching and replacement functions from "The Furnace" by Kakaroto
+     * https://github.com/kakaroto/fvtt-module-furnace
+     */
     static patchClass(klass, func, line_number, line, new_line) {
         // Check in case the class/function had been deprecated/removed
         if (func === undefined)
@@ -31,35 +34,9 @@ class tr5eLib {
     static patchFunction(func, line_number, line, new_line) {
         return tr5eLib.patchClass(undefined, func, line_number, line, new_line)
     }
+
     static patchMethod(klass, func, line_number, line, new_line) {
         return tr5eLib.patchClass(klass, klass.prototype[func], line_number, line, new_line)
-    }
-
-    static replaceFunction(klass, name, func) {
-        klass[this.ORIG_PFX + name] = klass[name]
-        klass[name] = func
-    }
-    static replaceMethod(klass, name, func) {
-        return this.replaceFunction(klass.prototype, name, func)
-    }
-    static replaceStaticGetter(klass, name, func) {
-        let getterProperty = Object.getOwnPropertyDescriptor(klass, name);
-        if (getterProperty == undefined)
-            return false;
-        Object.defineProperty(klass, tr5eLib.ORIG_PFX + name, getterProperty);
-        Object.defineProperty(klass, name, { get: func });
-        return true;
-    }
-    static replaceGetter(klass, name, func) {
-        return this.replaceStaticGetter(klass.prototype, name, func)
-    };
-
-    // Would be the same code for callOriginalMethod as long as 'klass' is actually the instance
-    static callOriginalFunction(klass, name, ...args) {
-        return klass[this.ORIG_PFX + name].call(klass, ...args)
-    }
-    static callOriginalGetter(klass, name) {
-        return klass[this.ORIG_PFX + name]
     }
 
     /**
@@ -72,6 +49,11 @@ class tr5eLib {
         return rolls.sort(function(a, b){return b - a})[midRoll];
     }
 
+    /**
+     * Substitute average of two d20 rolls for a single d20 roll.  2d10+1-1d2
+     * is statistically equivalent and easier than actual averaging.
+     * @param {Roll} d20Roll    Roll of 1d20 to be replaced
+     */
     static avgD20roll(d20Roll) {
         let oldTotal = d20Roll.parts[0].total;
         let avgRoll = new Roll(`2d10+1-1d2`).roll();
@@ -88,6 +70,15 @@ class tr5eLib {
         d20Roll._result = d20Roll.parts.slice(1).reduce((acc, val) => { return acc + " " + val; }, newTotal);
     }
 
+    /**
+     * Roll a skill check, or an ability check or save.  If option enabled,
+     * will substitute average of two d20 rolls for a single d20 roll.
+     * @param {Number} adv     1=advantage, -1=disadvantage, 0=normal
+     * @param {Number} bon     Situational bonus
+     * @param {Number} mod     Ability or skill modifier
+     * @param {Boolean} lucky  Halfling luck
+     * @return {Roll}          Ability or skill roll
+     */
     static chkRoll(adv, bon, mod, lucky) {
         let luck = (CONFIG._tr5e_options_halflingLuckEnabled && lucky) ? "r1=1" : "";
         let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
@@ -96,19 +87,34 @@ class tr5eLib {
         if (CONFIG._tr5e_options_averageRolls && adv === 0) tr5eLib.avgD20roll(roll);
         return roll;
       }
-      
+
+    /**
+     * Roll an attack roll.
+     * @param {Number} adv     1=advantage, -1=disadvantage, 0=normal
+     * @param {Number} bon     Situational bonus
+     * @param {Number} mod     Attack or spellcasting ability modifier
+     * @param {Boolean} lucky  Halfling luck
+     * @return {Roll}          Attack roll
+     */
     static hitRoll(adv, bon, mod, lucky) {
         let luck = (CONFIG._tr5e_options_halflingLuckEnabled && lucky) ? "r1=1" : "";
         let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
         let rData = {bonus: bon, modifier: mod};
         return new Roll(rStr, rData).roll();
-      }
-    
+    }
+
+    /**
+     * Compute a passive skill check, or an ability check or save.
+     * @param {Number} adv     1=advantage, -1=disadvantage, 0=normal
+     * @param {Number} bon     Situational bonus
+     * @param {Number} mod     Ability or skill modifier
+     * @return {Roll}          Ability or skill roll
+     */
     static chkPassive(adv, bon, mod) {
         var rStr = "@base + @bonus + @modifier";
         var rData = {base: (adv * 5) + 10, bonus: bon, modifier: mod};
         return new Roll(rStr, rData).roll();
-      }
+    }
 
     static init() {
     }
