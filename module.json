@@ -6,7 +6,7 @@
   "minimumCoreVersion": "0.5.1",
   "author": "trdischat",
   "systems": ["dnd5e"],
-  "scripts": ["./scripts/util.js", "./scripts/main.js", "./scripts/patches.js"],
+  "scripts": ["./scripts/main.js", "./scripts/lib.js", "./scripts/patches.js"],
   "styles": ["./css/grouproll.css"],
   "packs": [],
   "url": "https://github.com/trdischat/grouproll",
