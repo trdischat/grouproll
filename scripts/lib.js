@@ -1,5 +1,5 @@
 // Configure rolling behavior
-CONFIG._tr5e_options_averageRolls = true;         // Set to false to use normal 1d20 roll rather than averaging 2d20
+CONFIG._tr5e_options_averageRolls = false;         // Set to false to use normal 1d20 roll rather than averaging 2d20
 CONFIG._tr5e_options_halflingLuckEnabled = true;  // Set to true to apply Halfling Luck trait to d20 rolls
 
 class tr5eLib {
