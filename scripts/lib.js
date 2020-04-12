@@ -4,7 +4,7 @@ CONFIG._tr5e_options_halflingLuckEnabled = true;  // Set to true to apply Halfli
 
 class tr5eLib {
 
-    /* Patching and replacement functions from "The Furnace" by Kakaroto
+    /* Patching and replacement functions from "The Furnace" by KaKaRoTo
      * https://github.com/kakaroto/fvtt-module-furnace
      */
     static patchClass(klass, func, line_number, line, new_line) {
