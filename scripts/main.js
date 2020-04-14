@@ -22,7 +22,8 @@ class GroupRoll5e extends Application {
     this.mstList = {};
     this.groupRoll = "";
     // Update dialog display on changes to token selection
-    Hooks.on("controlToken", (object, controlled) => {
+    Hooks.on("controlToken", async (object, controlled) => {
+      let x = await canvas.tokens.controlledTokens;
       this.render();
     });
   }
@@ -65,7 +66,7 @@ class GroupRoll5e extends Application {
         class: "reset-values",
         icon: "fas fa-undo",
         onclick: ev => {
-          canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: ""}});
+          canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}});
           this.render();
         }
       },
