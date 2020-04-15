@@ -159,7 +159,7 @@ class GroupSkillCheck extends GroupRoll5e {
       let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      let natRoll = m.roll.parts[0].total === 1 ? "fumble" : (m.roll.parts[0].total === 20 ? "success" : "");
+      let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
       return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: sklmod, luck: lucky, nat: natRoll};
     })
   }
@@ -221,7 +221,7 @@ class GroupAbilityCheck extends GroupRoll5e {
       let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      let natRoll = m.roll.parts[0].total === 1 ? "fumble" : (m.roll.parts[0].total === 20 ? "success" : "");
+      let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
       return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: ablmod, luck: lucky, nat: natRoll};
     })
   }
