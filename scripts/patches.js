@@ -6,15 +6,15 @@ class trdisGRpatch {
    */
   static halflingLuckPatch() {
     let newClass = Die;
-    newClass = tr5eLib.patchMethod(newClass, "reroll", 0,
+    newClass = trPatchLib.patchMethod(newClass, "reroll", 0,
       `reroll(targets) {`,
       `reroll(targets, maxrerolls = 999) {`);
     if (!newClass) return;
-    newClass = tr5eLib.patchMethod(newClass, "reroll", 6,
+    newClass = trPatchLib.patchMethod(newClass, "reroll", 6,
       `else if ( targets.includes(r.roll) ) return r.rerolled = true;`,
       `else if ( targets.includes(r.roll) && maxrerolls > 0 ) { maxrerolls--; return r.rerolled = true; }`);
     if (!newClass) return;
-    newClass = tr5eLib.patchMethod(newClass, "_applyReroll", 15,
+    newClass = trPatchLib.patchMethod(newClass, "_applyReroll", 15,
       `this.reroll(target);`,
       `this.reroll(target, rr[3]);`);
     if (!newClass) return;
@@ -27,10 +27,10 @@ class trdisGRpatch {
    * Average of two d20 approximated using 2d10+1-1d2.
    */
   static averageD20Patch() {
-    let newFunc = tr5eLib.patchFunction(game.dnd5e.Dice5e.d20Roll, 51,
+    let newFunc = trPatchLib.patchFunction(game.dnd5e.Dice5e.d20Roll, 51,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
       `let roll = new Roll(parts.join(" + "), data).roll();
-      if (!(flavor.includes("Attack Roll") || adv !== 0)) tr5eLib.avgD20roll(roll);`);
+      if (!(flavor.includes("Attack Roll") || adv !== 0)) trPatchLib.avgD20roll(roll);`);
     if (!newFunc) return;
     game.dnd5e.Dice5e.d20Roll = newFunc;
   }  

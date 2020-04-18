@@ -4,44 +4,9 @@ CONFIG._tr5e_options_halflingLuckEnabled = true;  // Set to true to apply Halfli
 
 class tr5eLib {
 
-    /* Patching and replacement functions from "The Furnace" by KaKaRoTo
-     * https://github.com/kakaroto/fvtt-module-furnace
-     */
-    static patchClass(klass, func, line_number, line, new_line) {
-        // Check in case the class/function had been deprecated/removed
-        if (func === undefined)
-            return;
-        let funcStr = func.toString()
-        let lines = funcStr.split("\n")
-        if (lines[line_number].trim() == line.trim()) {
-            lines[line_number] = lines[line_number].replace(line, new_line);
-            let fixed = lines.join("\n")
-            if (klass !== undefined) {
-                let classStr = klass.toString()
-                fixed = classStr.replace(funcStr, fixed)
-            } else {
-                if (!fixed.startsWith("function"))
-                    fixed = "function " + fixed
-                if (fixed.startsWith("function async"))
-                    fixed = fixed.replace("function async", "async function");
-            }
-            return Function('"use strict";return (' + fixed + ')')();
-        } else {
-            console.log("Cannot patch function. It has wrong content at line ", line_number, " : ", lines[line_number].trim(), " != ", line.trim(), "\n", funcStr)
-        }
-    }
-
-    static patchFunction(func, line_number, line, new_line) {
-        return tr5eLib.patchClass(undefined, func, line_number, line, new_line)
-    }
-
-    static patchMethod(klass, func, line_number, line, new_line) {
-        return tr5eLib.patchClass(klass, klass.prototype[func], line_number, line, new_line)
-    }
-
     /**
      * Alternate median function that does not average the two middle values
-     * @param {Array} rolls    Roll results to evaluate
+     * @param {Array} Number   Roll results to evaluate
      * @return {Number}        "Median" roll
      */
     static midValue(rolls) {
@@ -84,7 +49,7 @@ class tr5eLib {
         let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
         let rData = {bonus: bon, modifier: mod};
         let roll = new Roll(rStr, rData).roll();
-        if (CONFIG._tr5e_options_averageRolls && adv === 0) tr5eLib.avgD20roll(roll);
+        if (CONFIG._tr5e_options_averageRolls && adv === 0) this.avgD20roll(roll);
         return roll;
       }
 
@@ -119,7 +84,5 @@ class tr5eLib {
     static init() {
     }
 }
-
-tr5eLib.ORIG_PFX = "__tr5e_orig_";
 
 Hooks.once('init', tr5eLib.init);
