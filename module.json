@@ -4,6 +4,7 @@
   "description": "This module rolls skill and ability checks for groups of tokens.",
   "version": "0.5.1.4",
   "minimumCoreVersion": "0.5.1",
+  "compatibleCoreVersion": "0.5.5",
   "author": "trdischat",
   "systems": ["dnd5e"],
   "scripts": ["./scripts/main.js", "./scripts/lib.js", "./scripts/patches.js"],
