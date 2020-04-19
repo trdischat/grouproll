@@ -30,7 +30,7 @@ class trdisGRpatch {
     let newFunc = trPatchLib.patchFunction(game.dnd5e.Dice5e.d20Roll, 51,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
       `let roll = new Roll(parts.join(" + "), data).roll();
-      if (!(flavor.includes("Attack Roll") || adv !== 0)) trPatchLib.avgD20roll(roll);`);
+      if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);`);
     if (!newFunc) return;
     game.dnd5e.Dice5e.d20Roll = newFunc;
   }  
