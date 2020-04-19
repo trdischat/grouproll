@@ -14,6 +14,7 @@ CONFIG._grouproll_module_advantageStatus = {
   }
 };
 
+// Base class for group roll apps
 class GroupRollApp extends Application {
 
   constructor(object, options) {
@@ -117,6 +118,7 @@ class GroupRollApp extends Application {
 
 }
 
+// Default Apps for DND 5e System
 class GroupSkillCheck extends GroupRollApp {
 
   constructor(object, options) {
@@ -249,6 +251,146 @@ class GroupAbilityCheck extends GroupRollApp {
 
 }
 
+
+// Apps for Pathfinder 2e System
+class GroupSkillCheckPF2E extends GroupRollApp {
+
+  constructor(object, options) {
+    super(options);
+    this.skillName = "acr";
+    this.abilityName = "dex";
+  }
+
+  _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+    buttons[1].label = "Skill DC";
+    return buttons
+  }
+
+  static get defaultOptions() {
+    const options = super.defaultOptions;
+    options.id = "group-skill-check";
+    options.title = "Group Skill Check";
+    options.template = "modules/grouproll/templates/group-skill-check-pf2e.html";
+    return options;
+  }
+
+  getData() {
+    this.tokList = this.getTokenList(this.skillName, this.abilityName);
+    return {
+      tok: this.tokList,
+      skl: this.skillName,
+      abl: this.abilityName,
+      skills: CONFIG.PF2E.skills,
+      abilities: CONFIG.PF2E.abilities,
+      rollresult: this.groupRoll
+    };
+  }
+
+  getTokenList(skillName, abilityName) {
+    return canvas.tokens.controlledTokens.map(t => {
+      if (this.mstList[t.id] === undefined) {
+        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+      }
+      let m = this.mstList[t.id];
+      let sklmod = t.actor.data.data.skills[skillName].value;
+      let abilityDef = t.actor.data.data.skills[skillName].ability;
+      if ( abilityName !== abilityDef ) sklmod = sklmod - t.actor.data.data.abilities[abilityDef].mod + t.actor.data.data.abilities[abilityName].mod;
+      let lucky = false;
+      let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
+      let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
+      let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: sklmod, luck: lucky, nat: natRoll};
+    })
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Change skill or ability
+    html.find('select').change(event => {
+      let newSkill = html.find('[name="select-skill"]').val();
+      let newAbility = html.find('[name="select-ability"]').val();
+      if (this.skillName !== newSkill) {
+        this.skillName = newSkill;
+        this.abilityName = game.system.template.Actor.templates.common.skills[this.skillName].ability;
+      }
+      else if (this.abilityName !== newAbility) this.abilityName = newAbility;
+      this.render();
+    });
+  }
+
+}
+
+class GroupSavePF2E extends GroupRollApp {
+
+  constructor(object, options) {
+    super(options);
+    this.abilityName = "fortitude";
+  }
+
+  _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+    buttons[1].label = "Save DC";
+    return buttons
+  }
+
+	static get defaultOptions() {
+	  const options = super.defaultOptions;
+	  options.id = "group-ability-check";
+	  options.title = "Group Saving Throw";
+	  options.template = "modules/grouproll/templates/group-ability-check-pf2e.html";
+	  return options;
+  }
+
+  getData() {
+    this.tokList = this.getTokenList(this.abilityName);
+    return {
+      tok: this.tokList,
+      abl: this.abilityName,
+      abilities: CONFIG.PF2E.saves,
+      rollresult: this.groupRoll
+    };
+  }
+
+  getTokenList(abilityName) {
+    return canvas.tokens.controlledTokens.map(t => {
+      if (this.mstList[t.id] === undefined) {
+        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+      }
+      let m = this.mstList[t.id];
+      let ablmod = t.actor.data.data.saves[abilityName].value;
+      let lucky = false;
+      let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
+      let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
+      let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: ablmod, luck: lucky, nat: natRoll};
+    })
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Change ability
+    html.find('select').change(event => {
+      let newAbility = html.find('[name="select-ability"]').val();
+      if (this.abilityName !== newAbility) {
+        this.abilityName = newAbility;
+      }
+      else if (this.abilityName !== newAbility) this.abilityName = newAbility;
+      this.render();
+    });
+  }
+
+}
+
+Hooks.once("ready", function() {
+  if (game.system.id === "pf2e") {
+    CONFIG._grouproll_module_advantageStatus[1].label = "Fortune";
+    CONFIG._grouproll_module_advantageStatus[-1].label = "Misfortune";
+  };
+});
+
 Hooks.on('getSceneControlButtons', controls => {
   controls[0].tools.push(
     {
@@ -258,17 +400,19 @@ Hooks.on('getSceneControlButtons', controls => {
       visible: game.user.isGM,
       onClick: () => {
         controls[0].activeTool = "select";
-        return new GroupSkillCheck().render(true);
+        if (game.system.id === "pf2e") return new GroupSkillCheckPF2E().render(true);
+        else return new GroupSkillCheck().render(true);
       }
     },
     {
       name: "ability",
-      title: "Group Ability Check",
+      title: game.system.id === "pf2e" ? "Group Saving Throw" : "Group Ability Check",
       icon: "fas fa-user-shield",
       visible: game.user.isGM,
       onClick: () => {
         controls[0].activeTool = "select";
-        return new GroupAbilityCheck().render(true);
+        if (game.system.id === "pf2e") return new GroupSavePF2E().render(true);
+        else return new GroupAbilityCheck().render(true);
       }
     }
   );
