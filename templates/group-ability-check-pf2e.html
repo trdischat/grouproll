@@ -1,0 +1,37 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+
+  <div class="grm-grid" style="grid-template-columns: 1fr 4fr 5fr 2fr 2em">
+    <div class="grm-label">Save</div>
+    <div class="grm-select">          
+      <select name="select-ability" data-dtype="String">
+        {{#select abl}}
+        {{#each abilities as |value ability|}}
+        <option value="{{ability}}">{{value}}</option>
+        {{/each}}
+        {{/select}}
+      </select>
+    </div>
+    <div class="grm-label">&nbsp;</div>  
+    <div class="grm-label">Group&nbsp;Roll</div>
+    <div class="grm-roll">{{rollresult}}</div>
+  </div>
+
+  <div class="grm-grid grm-tbl-cols grm-hdr">
+    <div class="grm-name-col">Name</div>
+    <div>Fortune</div>
+    <div>Bonus</div>
+    <div>Modifier</div>
+    <div>Roll</div>
+  </div>
+
+  <div class="grm-grid grm-tbl-cols grm-tbl-rows">
+    {{#each tok}}
+    <div class="grm-name-col"><span class="name">{{ this.name }}</span></div>
+    <div><span class="value"><input type="hidden" name="adv-{{ this.id }}" value={{ this.adv }} data-dtype="Number"/><a class="advantage-mode" title="{{this.hover}}">{{{this.icon}}}</a></span></div>
+    <div><span class="bonus-value"><input name="bon-{{ this.id }}" value={{ this.bon }} type="number" min="0" style="width: 4em; text-align: center"></span></div>
+    <div><span class="value">{{ this.mod }}</span></div>
+    <div><span class="value {{ this.nat }}" title="{{this.roll.result}}">{{ this.roll.total }}</span></div>
+    {{/each}}
+  </div>
+
+</form>
