@@ -14,7 +14,7 @@ CONFIG._grouproll_module_advantageStatus = {
   }
 };
 
-class GroupRoll5e extends Application {
+class GroupRollApp extends Application {
 
   constructor(object, options) {
     super(options);
@@ -38,23 +38,23 @@ class GroupRoll5e extends Application {
 
   doGroupCheck() {
     this.tokList = this.tokList.map(t => {
-      t.roll = tr5eLib.chkRoll(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
+      t.roll = trRollLib.chkRoll(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
       this.mstList[t.id].roll = t.roll;
       return t;
     });
     let tResults = this.tokList.map(t => t.roll.total);
-    this.groupRoll = tr5eLib.midValue(tResults);
+    this.groupRoll = trRollLib.midValue(tResults);
     this.render();
   }
 
   doPassiveCheck() {
     this.tokList = this.tokList.map(t => {
-      t.roll = tr5eLib.chkPassive(Number(t.adv), Number(t.bon), Number(t.mod));
+      t.roll = trRollLib.chkPassive(Number(t.adv), Number(t.bon), Number(t.mod));
       this.mstList[t.id].roll = t.roll;
       return t;
     });
     let tResults = this.tokList.map(t => t.roll.total);
-    this.groupRoll = tr5eLib.midValue(tResults);
+    this.groupRoll = trRollLib.midValue(tResults);
     this.render();
   }
 
@@ -117,7 +117,7 @@ class GroupRoll5e extends Application {
 
 }
 
-class GroupSkillCheck extends GroupRoll5e {
+class GroupSkillCheck extends GroupRollApp {
 
   constructor(object, options) {
     super(options);
@@ -182,7 +182,7 @@ class GroupSkillCheck extends GroupRoll5e {
 
 }
 
-class GroupAbilityCheck extends GroupRoll5e {
+class GroupAbilityCheck extends GroupRollApp {
 
   constructor(object, options) {
     super(options);
