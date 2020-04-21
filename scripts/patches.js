@@ -14,13 +14,15 @@ class trdisGRpatch {
       `else if ( targets.includes(r.roll) ) return r.rerolled = true;`,
       `else if ( targets.includes(r.roll) && maxrerolls > 0 ) { maxrerolls--; return r.rerolled = true; }`);
     if (!newClass) return;
+    Die.prototype.reroll = newClass.prototype.reroll;
     newClass = trPatchLib.patchMethod(newClass, "_applyReroll", 15,
       `this.reroll(target);`,
       `this.reroll(target, rr[3]);`);
     if (!newClass) return;
+    Die.prototype._applyReroll = newClass.prototype._applyReroll;
     newClass.rgx = Die.rgx;
     newClass.rgx.reroll = /r(<=|>=|<|>)?([0-9]+)?(?:=([0-9]+))?/;
-    Die = newClass;
+    Die.rgx = newClass.rgx;
   }
 
   /* Substitute "average" d20 roll for standard d20 ability and skill rolls.
