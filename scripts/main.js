@@ -123,8 +123,8 @@ class GroupSkillCheck extends GroupRollApp {
 
   constructor(object, options) {
     super(options);
-    this.skillName = "acr";
-    this.abilityName = "dex";
+    this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
+    this.abilityName = CONFIG._grouproll_module_skillability || "dex";
   }
 
   static get defaultOptions() {
@@ -178,6 +178,8 @@ class GroupSkillCheck extends GroupRollApp {
         this.abilityName = game.system.template.Actor.templates.common.skills[this.skillName].ability;
       }
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
+      CONFIG._grouproll_module_skillcheck = this.skillName;
+      CONFIG._grouproll_module_skillability = this.abilityName;
       this.render();
     });
   }
@@ -188,8 +190,8 @@ class GroupAbilityCheck extends GroupRollApp {
 
   constructor(object, options) {
     super(options);
-    this.saveRoll = false;
-    this.abilityName = "dex";
+    this.saveRoll = CONFIG._grouproll_module_saveroll || false;
+    this.abilityName = CONFIG._grouproll_module_abilitycheck || "dex";
   }
 
 	static get defaultOptions() {
@@ -239,12 +241,15 @@ class GroupAbilityCheck extends GroupRollApp {
         this.saveRoll = false;
       }
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
+      CONFIG._grouproll_module_abilitycheck = this.abilityName;
+      CONFIG._grouproll_module_saveroll = this.saveRoll;
       this.render();
     });
 
     // Toggle save roll
     html.find('input[type="checkbox"]').change(event => {
       this.saveRoll = event.target.checked;
+      CONFIG._grouproll_module_saveroll = this.saveRoll;
       this.render();
     });
   }
@@ -257,8 +262,8 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   constructor(object, options) {
     super(options);
-    this.skillName = "acr";
-    this.abilityName = "dex";
+    this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
+    this.abilityName = CONFIG._grouproll_module_skillability || "dex";
   }
 
   _getHeaderButtons() {
@@ -316,6 +321,8 @@ class GroupSkillCheckPF2E extends GroupRollApp {
         this.abilityName = game.system.template.Actor.templates.common.skills[this.skillName].ability;
       }
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
+      CONFIG._grouproll_module_skillcheck = this.skillName;
+      CONFIG._grouproll_module_skillability = this.abilityName;
       this.render();
     });
   }
@@ -326,7 +333,7 @@ class GroupSavePF2E extends GroupRollApp {
 
   constructor(object, options) {
     super(options);
-    this.abilityName = "fortitude";
+    this.abilityName = CONFIG._grouproll_module_abilitycheck || "fortitude";
   }
 
   _getHeaderButtons() {
@@ -378,6 +385,7 @@ class GroupSavePF2E extends GroupRollApp {
         this.abilityName = newAbility;
       }
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
+      CONFIG._grouproll_module_abilitycheck = this.abilityName;
       this.render();
     });
   }
