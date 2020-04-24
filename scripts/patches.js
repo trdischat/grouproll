@@ -29,7 +29,7 @@ class trdisGRpatch {
    * Average of two d20 approximated using 2d10+1-1d2.
    */
   static averageD20Patch() {
-    let newFunc = trPatchLib.patchFunction(game.dnd5e.Dice5e.d20Roll, 51,
+    let newFunc = trPatchLib.patchFunction(game.dnd5e.Dice5e.d20Roll, 52,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
       `let roll = new Roll(parts.join(" + "), data).roll();
       if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);`);
