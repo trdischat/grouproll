@@ -256,7 +256,6 @@ class GroupAbilityCheck extends GroupRollApp {
 
 }
 
-
 // Apps for Pathfinder 2e System
 class GroupSkillCheckPF2E extends GroupRollApp {
 
@@ -264,6 +263,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
     super(options);
     this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
     this.abilityName = CONFIG._grouproll_module_skillability || "dex";
+    this.skillTemplate = Object.assign({prc: {value: 0, ability: "wis", armor: 0, rank: 0, item: 0, mod: 0, breakdown: ""}}, game.system.template.Actor.templates.common.skills);
   }
 
   _getHeaderButtons() {
@@ -282,11 +282,14 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   getData() {
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
+    let allSkills = Object.assign({prc: "Perception"}, CONFIG.PF2E.skills);
+    let allSorted = {};
+    Object.keys(allSkills).sort().forEach(function(key) { allSorted[key] = allSkills[key]; });
     return {
       tok: this.tokList,
       skl: this.skillName,
       abl: this.abilityName,
-      skills: CONFIG.PF2E.skills,
+      skills: allSorted,
       abilities: CONFIG.PF2E.abilities,
       rollresult: this.groupRoll
     };
@@ -298,8 +301,18 @@ class GroupSkillCheckPF2E extends GroupRollApp {
         this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
       }
       let m = this.mstList[t.id];
-      let sklmod = t.actor.data.data.skills[skillName].value;
-      let abilityDef = t.actor.data.data.skills[skillName].ability;
+      let prcData = t.actor.data.data.attributes.perception;
+      let tokenSkills = Object.assign({prc: {
+        value: prcData.value,
+        ability: prcData.ability,
+        armor: 0,
+        rank: prcData.rank,
+        item: prcData.item,
+        mod: t.actor.data.data.abilities[prcData.ability].mod,
+        breakdown: prcData.breakdown
+      }}, t.actor.data.data.skills);
+      let sklmod = tokenSkills[skillName].value;
+      let abilityDef = tokenSkills[skillName].ability;
       if ( abilityName !== abilityDef ) sklmod = sklmod - t.actor.data.data.abilities[abilityDef].mod + t.actor.data.data.abilities[abilityName].mod;
       let lucky = false;
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
@@ -318,7 +331,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       let newAbility = html.find('[name="select-ability"]').val();
       if (this.skillName !== newSkill) {
         this.skillName = newSkill;
-        this.abilityName = game.system.template.Actor.templates.common.skills[this.skillName].ability;
+        this.abilityName = this.skillTemplate[this.skillName].ability;
       }
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_skillcheck = this.skillName;
