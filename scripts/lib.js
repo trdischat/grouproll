@@ -1,7 +1,3 @@
-// Configure rolling behavior
-CONFIG._tr5e_options_averageRolls = false;         // Set to false to use normal 1d20 roll rather than averaging 2d20
-CONFIG._tr5e_options_halflingLuckEnabled = true;  // Set to true to apply Halfling Luck trait to d20 rolls
-
 class trRollLib {
 
     /**
@@ -45,11 +41,11 @@ class trRollLib {
      * @return {Roll}          Ability or skill roll
      */
     static chkRoll(adv, bon, mod, lucky) {
-        let luck = (CONFIG._tr5e_options_halflingLuckEnabled && lucky) ? "r1=1" : "";
+        let luck = lucky ? (game.settings.get("grouproll", "halflingLuckEnabled") ? "r1=1" : "r1") : "";
         let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
         let rData = {bonus: bon, modifier: mod};
         let roll = new Roll(rStr, rData).roll();
-        if (CONFIG._tr5e_options_averageRolls && adv === 0) this.avgD20roll(roll);
+        if (game.settings.get("grouproll", "averageRolls") && adv === 0) this.avgD20roll(roll);
         return roll;
       }
 
@@ -62,7 +58,7 @@ class trRollLib {
      * @return {Roll}          Attack roll
      */
     static hitRoll(adv, bon, mod, lucky) {
-        let luck = (CONFIG._tr5e_options_halflingLuckEnabled && lucky) ? "r1=1" : "";
+        let luck = lucky ? (game.settings.get("grouproll", "halflingLuckEnabled") ? "r1=1" : "r1") : "";
         let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
         let rData = {bonus: bon, modifier: mod};
         return new Roll(rStr, rData).roll();
@@ -85,4 +81,28 @@ class trRollLib {
     }
 }
 
-Hooks.once('init', trRollLib.init);
+/**
+ * Configuration for optional settings.
+ */
+Hooks.once("init", function() {
+    game.settings.register("grouproll", "averageRolls", {
+        name: "Average Rolls (House Rule)",
+        hint: "Standard checks and saves use average of 2d20",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true,
+        onChange: s => {}
+    });
+    game.settings.register("grouproll", "halflingLuckEnabled", {
+        name: "Halfling Luck (D&D 5e)",
+        hint: "Only reroll one die when using the Halfling Lucky trait",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true,
+        onChange: s => {}
+    });
+    trRollLib.init;
+});
+  
