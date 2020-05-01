@@ -64,7 +64,7 @@ class GroupRollApp extends Application {
     buttons = [
       {
         label: "PCs",
-        class: "select-pcs",
+        class: "grm-btn-select",
         icon: "fas fa-user-friends",
         onclick: ev => {
           canvas.tokens.releaseAll();
@@ -74,7 +74,7 @@ class GroupRollApp extends Application {
       },
       {
         label: "Reset",
-        class: "reset-values",
+        class: "grm-btn-reset",
         icon: "fas fa-undo",
         onclick: ev => {
           canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}});
@@ -83,13 +83,13 @@ class GroupRollApp extends Application {
       },
       {
         label: "Passive",
-        class: "no-dice",
+        class: "grm-btn-nodice",
         icon: "fas fa-lock",
         onclick: ev => this.doPassiveCheck()
       },
       {
         label: "Roll",
-        class: "roll-dice",
+        class: "grm-btn-roll",
         icon: "fas fa-dice-d20",
         onclick: ev => this.doGroupCheck()
       }
