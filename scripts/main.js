@@ -63,6 +63,16 @@ class GroupRollApp extends Application {
     let buttons = super._getHeaderButtons();
     buttons = [
       {
+        label: "PCs",
+        class: "select-pcs",
+        icon: "fas fa-user-friends",
+        onclick: ev => {
+          canvas.tokens.releaseAll();
+          canvas.tokens.ownedTokens.filter(t => t.actor && t.actor.isPC).map(t => t.control({updateSight: true, releaseOthers: false}));
+          this.render();
+        }
+      },
+      {
         label: "Reset",
         class: "reset-values",
         icon: "fas fa-undo",
