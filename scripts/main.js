@@ -124,6 +124,18 @@ class GroupRollApp extends Application {
       });
       this.render();
     });
+
+    // Remove token from list
+    html.find('.remove-token').click(event => {
+      event.preventDefault();
+      let field = $(event.currentTarget).siblings('input[type="hidden"]');
+      let tokID = field.val();
+      canvas.tokens.controlledTokens.map(t => {
+        if (t.id === tokID) t.release();
+      });
+      this.render();
+    });
+
   }
 
 }
