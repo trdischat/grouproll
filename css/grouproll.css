@@ -37,7 +37,7 @@
 }
 
 .grm-tbl-cols {
-  grid-template-columns: 1fr repeat(3, 5em) 3em;
+  grid-template-columns: 1em 1fr repeat(3, 5em) 3em;
   overflow-y: scroll;
   scrollbar-width: none;
 }
