@@ -65,6 +65,7 @@ class GroupRollApp extends Application {
       {
         label: "PCs",
         class: "grm-btn-select",
+        title: "Select all player character tokens",
         icon: "fas fa-user-friends",
         onclick: ev => {
           canvas.tokens.releaseAll();
@@ -75,6 +76,7 @@ class GroupRollApp extends Application {
       {
         label: "Reset",
         class: "grm-btn-reset",
+        title: "Reset advantage, bonus, and roll values",
         icon: "fas fa-undo",
         onclick: ev => {
           canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}});
@@ -84,12 +86,14 @@ class GroupRollApp extends Application {
       {
         label: "Passive",
         class: "grm-btn-nodice",
+        title: "Compute fixed outcomes without rolls",
         icon: "fas fa-lock",
         onclick: ev => this.doPassiveCheck()
       },
       {
         label: "Roll",
         class: "grm-btn-roll",
+        title: "Roll for all selected tokens",
         icon: "fas fa-dice-d20",
         onclick: ev => this.doGroupCheck()
       }
@@ -279,6 +283,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
     buttons[1].label = "Skill DC";
+    buttons[1].title = "Reset fortune, bonus, and roll values";
     return buttons
   }
 
