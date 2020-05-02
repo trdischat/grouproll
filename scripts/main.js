@@ -43,8 +43,6 @@ class GroupRollApp extends Application {
       this.mstList[t.id].roll = t.roll;
       return t;
     });
-    let tResults = this.tokList.map(t => t.roll.total);
-    this.groupRoll = trRollLib.midValue(tResults);
     this.render();
   }
 
@@ -54,8 +52,6 @@ class GroupRollApp extends Application {
       this.mstList[t.id].roll = t.roll;
       return t;
     });
-    let tResults = this.tokList.map(t => t.roll.total);
-    this.groupRoll = trRollLib.midValue(tResults);
     this.render();
   }
 
@@ -151,6 +147,7 @@ class GroupSkillCheck extends GroupRollApp {
 
   getData() {
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
+    this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
     return {
       tok: this.tokList,
       skl: this.skillName,
@@ -218,6 +215,7 @@ class GroupAbilityCheck extends GroupRollApp {
 
   getData() {
     this.tokList = this.getTokenList(this.saveRoll, this.abilityName);
+    this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
     return {
       tok: this.tokList,
       sav: this.saveRoll,
@@ -297,6 +295,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   getData() {
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
+    this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
     let allSkills = Object.assign({prc: "Perception"}, CONFIG.PF2E.skills);
     let allSorted = {};
     Object.keys(allSkills).sort().forEach(function(key) { allSorted[key] = allSkills[key]; });
@@ -380,6 +379,7 @@ class GroupSavePF2E extends GroupRollApp {
 
   getData() {
     this.tokList = this.getTokenList(this.abilityName);
+    this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
     return {
       tok: this.tokList,
       abl: this.abilityName,
