@@ -22,6 +22,7 @@ class GroupRollApp extends Application {
     this.tokList = [];
     this.mstList = {};
     this.groupRoll = "";
+    this.flavor = "";
     // Update dialog display on changes to token selection
     Hooks.on("controlToken", async (object, controlled) => {
       let x = await canvas.tokens.controlledTokens;
@@ -53,6 +54,46 @@ class GroupRollApp extends Application {
       return t;
     });
     this.render();
+  }
+
+  async sendRollsToChat() {
+    if(this.tokList.reduce((notready, t) => notready = (t.roll.dice && t.roll.dice.length > 0) ? notready : true, false)) return;
+    let tokRolls = this.tokList.map(t => {
+      let d = t.roll.dice[0];
+      return {
+        name: t.name,
+        total: t.roll.total,
+        formula: t.roll.result,
+        faces: d.faces,
+        nat: t.nat,
+        rolls: d.rolls.map(r => {
+          return {
+            result: r.roll,
+            classes: [
+              "d"+d.faces,
+              r.rerolled ? "rerolled" : null,
+              r.exploded ? "exploded" : null,
+              r.discarded ? "discarded": null,
+              (r.roll === 1) ? "min" : null,
+              (r.roll === 20) ? "max" : null
+            ].filter(c => c).join(" ")
+          }
+        })
+      };
+    });
+    let tooltip = await renderTemplate("modules/grouproll/templates/group-chat-tooltip.html",{
+      tok: tokRolls
+    });
+    let content = await renderTemplate("modules/grouproll/templates/group-chat-roll.html", {
+      flavor: this.flavor,
+      total: this.groupRoll,
+      tooltip: tooltip
+    });
+    let chatData = {
+			user: game.user._id,
+			content: content,
+		};
+    ChatMessage.create(chatData);
   }
 
   _getHeaderButtons() {
@@ -89,9 +130,12 @@ class GroupRollApp extends Application {
       {
         label: "Roll",
         class: "grm-btn-roll",
-        title: "Roll for all selected tokens",
+        title: "Roll for all selected tokens\nShift: Output rolls to chat\nCtrl: Keep same rolls",
         icon: "fas fa-dice-d20",
-        onclick: ev => this.doGroupCheck()
+        onclick: ev => {
+          if (!ev.ctrlKey) this.doGroupCheck();
+          if (ev.shiftKey) this.sendRollsToChat();
+        }
       }
     ].concat(buttons);
     return buttons
@@ -147,6 +191,7 @@ class GroupSkillCheck extends GroupRollApp {
     super(options);
     this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
     this.abilityName = CONFIG._grouproll_module_skillability || "dex";
+    this.flavor = CONFIG.DND5E.skills[this.skillName] + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
   }
 
   static get defaultOptions() {
@@ -203,6 +248,7 @@ class GroupSkillCheck extends GroupRollApp {
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_skillcheck = this.skillName;
       CONFIG._grouproll_module_skillability = this.abilityName;
+      this.flavor = CONFIG.DND5E.skills[this.skillName] + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
       this.render();
     });
   }
@@ -215,6 +261,7 @@ class GroupAbilityCheck extends GroupRollApp {
     super(options);
     this.saveRoll = CONFIG._grouproll_module_saveroll || false;
     this.abilityName = CONFIG._grouproll_module_abilitycheck || "dex";
+    this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
   }
 
 	static get defaultOptions() {
@@ -267,6 +314,7 @@ class GroupAbilityCheck extends GroupRollApp {
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_abilitycheck = this.abilityName;
       CONFIG._grouproll_module_saveroll = this.saveRoll;
+      this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
       this.render();
     });
 
@@ -274,6 +322,7 @@ class GroupAbilityCheck extends GroupRollApp {
     html.find('input[type="checkbox"]').change(event => {
       this.saveRoll = event.target.checked;
       CONFIG._grouproll_module_saveroll = this.saveRoll;
+      this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
       this.render();
     });
   }
@@ -285,14 +334,19 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   constructor(object, options) {
     super(options);
+    let expandedSkills = Object.assign({prc: "Perception"}, CONFIG.PF2E.skills);
+    let allSorted = {};
+    Object.keys(expandedSkills).sort().forEach(function(key) { allSorted[key] = expandedSkills[key]; });
+    this.allSkills = allSorted;
     this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
     this.abilityName = CONFIG._grouproll_module_skillability || "dex";
+    this.flavor = this.allSkills[this.skillName] + " (" + CONFIG.PF2E.abilities[this.abilityName] + ") Check";
     this.skillTemplate = Object.assign({prc: {value: 0, ability: "wis", armor: 0, rank: 0, item: 0, mod: 0, breakdown: ""}}, game.system.template.Actor.templates.common.skills);
   }
 
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
-    buttons[1].label = "Skill DC";
+    buttons[2].label = "Skill DC";
     buttons[1].title = "Reset fortune, bonus, and roll values";
     return buttons
   }
@@ -308,14 +362,11 @@ class GroupSkillCheckPF2E extends GroupRollApp {
   getData() {
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
-    let allSkills = Object.assign({prc: "Perception"}, CONFIG.PF2E.skills);
-    let allSorted = {};
-    Object.keys(allSkills).sort().forEach(function(key) { allSorted[key] = allSkills[key]; });
     return {
       tok: this.tokList,
       skl: this.skillName,
       abl: this.abilityName,
-      skills: allSorted,
+      skills: this.allSkills,
       abilities: CONFIG.PF2E.abilities,
       rollresult: this.groupRoll
     };
@@ -362,6 +413,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_skillcheck = this.skillName;
       CONFIG._grouproll_module_skillability = this.abilityName;
+      this.flavor = this.allSkills[this.skillName] + " (" + CONFIG.PF2E.abilities[this.abilityName] + ") Check";
       this.render();
     });
   }
@@ -373,11 +425,13 @@ class GroupSavePF2E extends GroupRollApp {
   constructor(object, options) {
     super(options);
     this.abilityName = CONFIG._grouproll_module_abilitycheck || "fortitude";
+    this.flavor = CONFIG.PF2E.saves[this.abilityName] + " Save";
   }
 
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
-    buttons[1].label = "Save DC";
+    buttons[2].label = "Save DC";
+    buttons[1].title = "Reset fortune, bonus, and roll values";
     return buttons
   }
 
@@ -426,6 +480,7 @@ class GroupSavePF2E extends GroupRollApp {
       }
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_abilitycheck = this.abilityName;
+      this.flavor = CONFIG.PF2E.saves[this.abilityName] + " Save";
       this.render();
     });
   }

@@ -1,0 +1,19 @@
+<div class="dice-tooltip">
+    <section class="tooltip-part">
+        <table>
+            {{#each tok}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td class="{{this.nat}}" title="{{this.formula}}">{{this.total}}</td>
+                <td class="dice">
+                    <ol class="dice-rolls">
+                    {{#each this.rolls}}
+                        <li class="roll {{this.classes}}">{{this.result}}</li>
+                    {{/each}}
+                    </ol>
+                </td>
+            </tr>
+            {{/each}}
+        </table>
+    </section>
+</div>
