@@ -1,19 +1,17 @@
 <div class="dice-tooltip">
     <section class="tooltip-part">
-        <table>
+        <div class="grm-grid" style="grid-template-columns: 7fr 4fr 1fr">
             {{#each tok}}
-            <tr>
-                <td>{{this.name}}</td>
-                <td class="{{this.nat}}" title="{{this.formula}}">{{this.total}}</td>
-                <td class="dice">
+                <div class="grm-name-col">{{this.name}}</div>
+                <div class="dice">
                     <ol class="dice-rolls">
                     {{#each this.rolls}}
                         <li class="roll {{this.classes}}">{{this.result}}</li>
                     {{/each}}
                     </ol>
-                </td>
-            </tr>
+                </div>
+                <div class="grm-roll {{this.nat}}" title="{{this.formula}}">{{this.total}}</div>
             {{/each}}
-        </table>
+        </div>
     </section>
 </div>
