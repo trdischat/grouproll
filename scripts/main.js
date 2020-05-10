@@ -23,6 +23,8 @@ class GroupRollApp extends Application {
     this.mstList = {};
     this.groupRoll = "";
     this.flavor = "";
+    this.groupOutcome = "";
+    this.groupCheckIcon = "";
     // Update dialog display on changes to token selection
     Hooks.on("controlToken", async (object, controlled) => {
       let x = await canvas.tokens.controlledTokens;
@@ -32,7 +34,7 @@ class GroupRollApp extends Application {
 
   static get defaultOptions() {
     const options = super.defaultOptions;
-    options.width = 500;
+    options.width = 550;
     options.height = "auto";
     options.resizable = false;
     return options;
@@ -66,6 +68,7 @@ class GroupRollApp extends Application {
         formula: t.roll.result,
         faces: d.faces,
         nat: t.nat,
+        chk: t.chk,
         rolls: d.rolls.map(r => {
           return {
             result: r.roll,
@@ -87,6 +90,8 @@ class GroupRollApp extends Application {
     let content = await renderTemplate("modules/grouproll/templates/group-chat-roll.html", {
       flavor: this.flavor,
       total: this.groupRoll,
+      groupoutcome: this.groupOutcome,
+      groupcheck: this.groupCheckIcon,
       tooltip: tooltip
     });
     let chatData = {
@@ -192,6 +197,7 @@ class GroupSkillCheck extends GroupRollApp {
     this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
     this.abilityName = CONFIG._grouproll_module_skillability || "dex";
     this.flavor = CONFIG.DND5E.skills[this.skillName] + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
+    this.dc = "";
   }
 
   static get defaultOptions() {
@@ -205,13 +211,24 @@ class GroupSkillCheck extends GroupRollApp {
   getData() {
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
+    this.groupOutcome = "";
+    this.groupCheckIcon = "";
+    if (this.dc !== "" && !isNaN(this.dc)) {
+      this.groupOutcome = this.groupRoll >= this.dc ? "grm-success" : "grm-fumble";
+      if (game.settings.get("grouproll", "passfail")) {
+        this.groupCheckIcon = this.groupOutcome === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
+      }
+    }
     return {
       tok: this.tokList,
       skl: this.skillName,
       abl: this.abilityName,
       skills: CONFIG.DND5E.skills,
       abilities: CONFIG.DND5E.abilities,
-      rollresult: this.groupRoll
+      dc: this.dc,
+      rollresult: this.groupRoll,
+      rollgood: this.groupOutcome,
+      rollicon: this.groupCheckIcon 
     };
   }
 
@@ -230,7 +247,16 @@ class GroupSkillCheck extends GroupRollApp {
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
       let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
-      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: sklmod, luck: lucky, nat: natRoll};
+      let checkIcon = "";
+      if (this.dc !== "" && !isNaN(this.dc)) {
+        if (natRoll === "") {
+          natRoll = m.roll.total >= this.dc ? "grm-success" : "grm-fumble";
+        }
+        if (game.settings.get("grouproll", "passfail")) {
+          checkIcon = natRoll === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
+        }
+      }
+      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: sklmod, luck: lucky, nat: natRoll, chk: checkIcon};
     })
   }
 
@@ -251,6 +277,15 @@ class GroupSkillCheck extends GroupRollApp {
       this.flavor = CONFIG.DND5E.skills[this.skillName] + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
       this.render();
     });
+
+    // Change target DC
+    html.find('.dc-value').change(event => {
+      let newDC = html.find('input[name="input-dc"]').val();
+      if (this.dc !== newDC) {
+        this.dc = newDC;
+      }
+      this.render();
+    });
   }
 
 }
@@ -262,6 +297,7 @@ class GroupAbilityCheck extends GroupRollApp {
     this.saveRoll = CONFIG._grouproll_module_saveroll || false;
     this.abilityName = CONFIG._grouproll_module_abilitycheck || "dex";
     this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
+    this.dc = "";
   }
 
 	static get defaultOptions() {
@@ -275,12 +311,23 @@ class GroupAbilityCheck extends GroupRollApp {
   getData() {
     this.tokList = this.getTokenList(this.saveRoll, this.abilityName);
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
+    this.groupOutcome = "";
+    this.groupCheckIcon = "";
+    if (this.dc !== "" && !isNaN(this.dc)) {
+      this.groupOutcome = this.groupRoll >= this.dc ? "grm-success" : "grm-fumble";
+      if (game.settings.get("grouproll", "passfail")) {
+        this.groupCheckIcon = this.groupOutcome === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
+      }
+    }
     return {
       tok: this.tokList,
       sav: this.saveRoll,
       abl: this.abilityName,
       abilities: CONFIG.DND5E.abilities,
-      rollresult: this.groupRoll
+      dc: this.dc,
+      rollresult: this.groupRoll,
+      rollgood: this.groupOutcome,
+      rollicon: this.groupCheckIcon
     };
   }
 
@@ -297,7 +344,16 @@ class GroupAbilityCheck extends GroupRollApp {
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
       let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
-      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: ablmod, luck: lucky, nat: natRoll};
+      let checkIcon = "";
+      if (this.dc !== "" && !isNaN(this.dc)) {
+        if (natRoll === "") {
+          natRoll = m.roll.total >= this.dc ? "grm-success" : "grm-fumble";
+        }
+        if (game.settings.get("grouproll", "passfail")) {
+          checkIcon = natRoll === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
+        }
+      }
+      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: ablmod, luck: lucky, nat: natRoll, chk: checkIcon};
     })
   }
 
@@ -325,6 +381,15 @@ class GroupAbilityCheck extends GroupRollApp {
       this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
       this.render();
     });
+
+    // Change target DC
+    html.find('.dc-value').change(event => {
+      let newDC = html.find('input[name="input-dc"]').val();
+      if (this.dc !== newDC) {
+        this.dc = newDC;
+      }
+      this.render();
+    });
   }
 
 }
@@ -342,6 +407,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
     this.abilityName = CONFIG._grouproll_module_skillability || "dex";
     this.flavor = this.allSkills[this.skillName] + " (" + CONFIG.PF2E.abilities[this.abilityName] + ") Check";
     this.skillTemplate = Object.assign({prc: {value: 0, ability: "wis", armor: 0, rank: 0, item: 0, mod: 0, breakdown: ""}}, game.system.template.Actor.templates.common.skills);
+    this.dc = "";
   }
 
   _getHeaderButtons() {
@@ -362,13 +428,24 @@ class GroupSkillCheckPF2E extends GroupRollApp {
   getData() {
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
+    this.groupOutcome = "";
+    this.groupCheckIcon = "";
+    if (this.dc !== "" && !isNaN(this.dc)) {
+      this.groupOutcome = this.groupRoll >= this.dc ? "grm-success" : "grm-fumble";
+      if (game.settings.get("grouproll", "passfail")) {
+        this.groupCheckIcon = this.groupOutcome === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
+      }
+    }
     return {
       tok: this.tokList,
       skl: this.skillName,
       abl: this.abilityName,
       skills: this.allSkills,
       abilities: CONFIG.PF2E.abilities,
-      rollresult: this.groupRoll
+      dc: this.dc,
+      rollresult: this.groupRoll,
+      rollgood: this.groupOutcome,
+      rollicon: this.groupCheckIcon
     };
   }
 
@@ -395,7 +472,16 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
       let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
-      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: sklmod, luck: lucky, nat: natRoll};
+      let checkIcon = "";
+      if (this.dc !== "" && !isNaN(this.dc)) {
+        if (natRoll === "") {
+          natRoll = m.roll.total >= this.dc ? "grm-success" : "grm-fumble";
+        }
+        if (game.settings.get("grouproll", "passfail")) {
+          checkIcon = natRoll === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
+        }
+      }
+      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: sklmod, luck: lucky, nat: natRoll, chk: checkIcon};
     })
   }
 
@@ -416,6 +502,15 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       this.flavor = this.allSkills[this.skillName] + " (" + CONFIG.PF2E.abilities[this.abilityName] + ") Check";
       this.render();
     });
+
+    // Change target DC
+    html.find('.dc-value').change(event => {
+      let newDC = html.find('input[name="input-dc"]').val();
+      if (this.dc !== newDC) {
+        this.dc = newDC;
+      }
+      this.render();
+    });
   }
 
 }
@@ -426,6 +521,7 @@ class GroupSavePF2E extends GroupRollApp {
     super(options);
     this.abilityName = CONFIG._grouproll_module_abilitycheck || "fortitude";
     this.flavor = CONFIG.PF2E.saves[this.abilityName] + " Save";
+    this.dc = "";
   }
 
   _getHeaderButtons() {
@@ -446,11 +542,22 @@ class GroupSavePF2E extends GroupRollApp {
   getData() {
     this.tokList = this.getTokenList(this.abilityName);
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
+    this.groupOutcome = "";
+    this.groupCheckIcon = "";
+    if (this.dc !== "" && !isNaN(this.dc)) {
+      this.groupOutcome = this.groupRoll >= this.dc ? "grm-success" : "grm-fumble";
+      if (game.settings.get("grouproll", "passfail")) {
+        this.groupCheckIcon = this.groupOutcome === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
+      }
+    }
     return {
       tok: this.tokList,
       abl: this.abilityName,
       abilities: CONFIG.PF2E.saves,
-      rollresult: this.groupRoll
+      dc: this.dc,
+      rollresult: this.groupRoll,
+      rollgood: this.groupOutcome,
+      rollicon: this.groupCheckIcon
     };
   }
 
@@ -465,7 +572,16 @@ class GroupSavePF2E extends GroupRollApp {
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
       let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
-      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: ablmod, luck: lucky, nat: natRoll};
+      let checkIcon = "";
+      if (this.dc !== "" && !isNaN(this.dc)) {
+        if (natRoll === "") {
+          natRoll = m.roll.total >= this.dc ? "grm-success" : "grm-fumble";
+        }
+        if (game.settings.get("grouproll", "passfail")) {
+          checkIcon = natRoll === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
+        }
+      }
+      return {id: t.id, name: t.name, adv: m.adv, icon: advIcon, hover: advHover, bon: m.bon, roll: m.roll, mod: ablmod, luck: lucky, nat: natRoll, chk: checkIcon};
     })
   }
 
@@ -481,6 +597,15 @@ class GroupSavePF2E extends GroupRollApp {
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_abilitycheck = this.abilityName;
       this.flavor = CONFIG.PF2E.saves[this.abilityName] + " Save";
+      this.render();
+    });
+
+    // Change target DC
+    html.find('.dc-value').change(event => {
+      let newDC = html.find('input[name="input-dc"]').val();
+      if (this.dc !== newDC) {
+        this.dc = newDC;
+      }
       this.render();
     });
   }

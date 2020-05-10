@@ -4,6 +4,10 @@
     {{/if}}
     <div class="dice-result">
         {{{tooltip}}}
-        <h4 class="dice-total" title="At least half of the group rolled this number or higher.&#013;Click for individual rolls.">Group Roll: {{total}}</h4>
+        {{#if groupcheck}}
+        <h4 class="dice-total" title="At least half of the group succeeded.&#013;Click for individual results.">Group Roll: <span class="{{groupoutcome}}">{{{groupcheck}}}</span></h4>
+        {{else}}
+        <h4 class="dice-total" title="At least half of the group rolled this number or higher.&#013;Click for individual rolls.">Group Roll: <span class="{{groupoutcome}}">{{total}}</span></h4>
+        {{/if}}
     </div>
 </div>
