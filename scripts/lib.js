@@ -85,6 +85,15 @@ class trRollLib {
  * Configuration for optional settings.
  */
 Hooks.once("init", function() {
+    game.settings.register("grouproll", "passfail", {
+        name: "Pass or Fail",
+        hint: "Output PASS or FAIL icons rather than numbers when DC is set",
+        scope: "world",
+        type: Boolean,
+        default: false,
+        config: true,
+        onChange: s => {}
+    });
     game.settings.register("grouproll", "averageRolls", {
         name: "Average Rolls (House Rule)",
         hint: "Standard checks and saves use average of 2d20",

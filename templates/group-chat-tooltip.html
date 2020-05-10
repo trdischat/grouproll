@@ -10,7 +10,11 @@
                     {{/each}}
                     </ol>
                 </div>
+                {{#if this.chk}}
+                <div class="grm-roll {{this.nat}}" title="{{this.formula}}">{{{this.chk}}}</div>
+                {{else}}
                 <div class="grm-roll {{this.nat}}" title="{{this.formula}}">{{this.total}}</div>
+                {{/if}}
             {{/each}}
         </div>
     </section>
