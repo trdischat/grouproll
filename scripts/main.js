@@ -210,11 +210,12 @@ class GroupSkillCheck extends GroupRollApp {
 
   getData() {
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
+    let groupWins = (this.tokList.filter(t => t.nat === "grm-success").length / this.tokList.length) >= 0.5;
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
     this.groupOutcome = "";
     this.groupCheckIcon = "";
     if (this.dc !== "" && !isNaN(this.dc)) {
-      this.groupOutcome = this.groupRoll >= this.dc ? "grm-success" : "grm-fumble";
+      this.groupOutcome = groupWins ? "grm-success" : "grm-fumble";
       if (game.settings.get("grouproll", "passfail")) {
         this.groupCheckIcon = this.groupOutcome === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
       }
@@ -310,11 +311,12 @@ class GroupAbilityCheck extends GroupRollApp {
 
   getData() {
     this.tokList = this.getTokenList(this.saveRoll, this.abilityName);
+    let groupWins = (this.tokList.filter(t => t.nat === "grm-success").length / this.tokList.length) >= 0.5;
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
     this.groupOutcome = "";
     this.groupCheckIcon = "";
     if (this.dc !== "" && !isNaN(this.dc)) {
-      this.groupOutcome = this.groupRoll >= this.dc ? "grm-success" : "grm-fumble";
+      this.groupOutcome = groupWins ? "grm-success" : "grm-fumble";
       if (game.settings.get("grouproll", "passfail")) {
         this.groupCheckIcon = this.groupOutcome === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
       }
@@ -427,11 +429,12 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   getData() {
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
+    let groupWins = (this.tokList.filter(t => t.nat === "grm-success").length / this.tokList.length) >= 0.5;
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
     this.groupOutcome = "";
     this.groupCheckIcon = "";
     if (this.dc !== "" && !isNaN(this.dc)) {
-      this.groupOutcome = this.groupRoll >= this.dc ? "grm-success" : "grm-fumble";
+      this.groupOutcome = groupWins ? "grm-success" : "grm-fumble";
       if (game.settings.get("grouproll", "passfail")) {
         this.groupCheckIcon = this.groupOutcome === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
       }
@@ -541,11 +544,12 @@ class GroupSavePF2E extends GroupRollApp {
 
   getData() {
     this.tokList = this.getTokenList(this.abilityName);
+    let groupWins = (this.tokList.filter(t => t.nat === "grm-success").length / this.tokList.length) >= 0.5;
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
     this.groupOutcome = "";
     this.groupCheckIcon = "";
     if (this.dc !== "" && !isNaN(this.dc)) {
-      this.groupOutcome = this.groupRoll >= this.dc ? "grm-success" : "grm-fumble";
+      this.groupOutcome = groupWins ? "grm-success" : "grm-fumble";
       if (game.settings.get("grouproll", "passfail")) {
         this.groupCheckIcon = this.groupOutcome === "grm-success" ? "<i class='fas fa-check'></i>" : "<i class='fas fa-times'></i>";
       }
