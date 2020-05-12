@@ -428,6 +428,9 @@ class GroupSkillCheckPF2E extends GroupRollApp {
   }
 
   getData() {
+    canvas.tokens.controlledTokens.map(t => {
+      if (t.actor.data.type === "npc") t.release();
+    });
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
     let groupWins = (this.tokList.filter(t => t.nat === "grm-success").length / this.tokList.length) >= 0.5;
     this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
