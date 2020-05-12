@@ -1,4 +1,4 @@
-# Group rolls for D&D 5e and Pathfinder 2e
+# Group rolls for D&D 5e (limited support for Pathfinder 2e)
 The primary purpose of this module is to facilitate group ability and skill check rolls per the Player's Handbook, page 175: *"If at least half the group succeeds, the whole group succeeds."*  It also displays the rolls for each individual token, and therefore can be used to roll saving throws for an entire groups of tokens at once (e.g., DEX saves for a group of characters hit by a fireball).
 
 The module adds two buttons to the Token menu on the left of the canvas. Group skill and ability checks can be launched by selecting tokens, then clicking the relevant group roll button. The window can be left open, and it will update automatically if the token selection is changed.  The "PCs" button will select all player character tokens on the canvas.  Individual tokens can be deselected by clicking the "x" next to the token name.
@@ -12,6 +12,8 @@ Normally, roll results are only displayed in the `grouproll` dialog, which is on
 Finally, there is a "Passive" button to run passive skill or ability checks for a group in place of actual rolls.  Passive checks cannot be output to the Chat window since they are not actual rolls.
 
 The module also has options for (1) outputting roll results as PASS/FAIL checkmark icons instead of numbers; (2) a house rule that uses the average of 2d20 for normal skill and ability check rolls; and (3) a limit on total rerolls to properly implement the D&D 5e *Halfling Lucky* trait for any Actor that either has the word "halfling" anywhere in the Race field or has the *Halfling Lucky* trait checked in the Special Traits tab the dnd5e system.  Per Player's Handbook, page 173: *"When you have advantage or disadvantage and something in the game, such as the halfling's Lucky trait, lets you reroll or replace the d20, you can reroll or replace only one of the dice."*  All of these options are disabled by default, but can be individually enabled in the module configuration settings.
+
+The module was designed for the D&D 5e system, but will also work for many group rolls in the Pathfinder 2e system.  It will handle all PF2e saving throws, as well as skill checks for player characters.  It will not work properly for skill checks for NPCs in PF2e, and therefore NPCs cannot be selected while the skill check window is open.
 
 # Installation
 See https://github.com/foundry-vtt-community/wiki/wiki/Modules#installing-modules. Open the Add-on Modules tab in the Configuration and Setup dialog. Click Install Module, paste `https://raw.githubusercontent.com/trdischat/grouproll/master/module.json` in as the Manifest URL, then click Install.
