@@ -1,5 +1,7 @@
 class trRollLib {
 
+    static MyD20Roll() {}
+
     /**
      * Alternate median function that does not average the two middle values
      * @param {Array} Number   Roll results to evaluate
