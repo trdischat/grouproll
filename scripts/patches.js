@@ -28,7 +28,7 @@ class trdisGRpatch {
   /* Substitute "average" d20 roll for standard d20 ability and skill rolls.
    * Average of two d20 approximated using 2d10+1-1d2.
    */
-  static averageD20Patch() {
+  static v89_averageD20Patch() {
     let newFunc = trPatchLib.patchFunction(game.dnd5e.Dice5e.d20Roll, 52,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
       `let roll = new Roll(parts.join(" + "), data).roll();
@@ -36,6 +36,34 @@ class trdisGRpatch {
     if (!newFunc) return;
     game.dnd5e.Dice5e.d20Roll = newFunc;
   }  
+
+  static averageD20Patch() {
+    let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 54,
+      `let roll = new Roll(parts.join(" + "), data).roll();`,
+      `let roll = new Roll(parts.join(" + "), data).roll();
+      if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);`);
+    if (!newFunc) return;
+    trRollLib.MyD20Roll = newFunc;
+  }  
+
+  static checkRollsPatch() {
+    let newClass = game.dnd5e.entities.Actor5e;
+    newClass = trPatchLib.patchMethod(newClass, "rollSkill", 15,
+    `return d20Roll(mergeObject(options, {`,
+    `return trRollLib.MyD20Roll(mergeObject(options, {`);
+    if (!newClass) return;
+    game.dnd5e.entities.Actor5e.prototype.rollSkill = newClass.prototype.rollSkill;
+    newClass = trPatchLib.patchMethod(newClass, "rollAbilityTest", 25,
+    `return d20Roll(mergeObject(options, {`,
+    `return trRollLib.MyD20Roll(mergeObject(options, {`);
+    if (!newClass) return;
+    game.dnd5e.entities.Actor5e.prototype.rollAbilityTest = newClass.prototype.rollAbilityTest;
+    newClass = trPatchLib.patchMethod(newClass, "rollAbilitySave", 20,
+    `return d20Roll(mergeObject(options, {`,
+    `return trRollLib.MyD20Roll(mergeObject(options, {`);
+    if (!newClass) return;
+    game.dnd5e.entities.Actor5e.prototype.rollAbilitySave = newClass.prototype.rollAbilitySave;
+  }
 
   static appTemplatePatch() {
     let newClass = Application;
@@ -50,6 +78,13 @@ class trdisGRpatch {
 
 Hooks.once("ready", function() {
   if (game.settings.get("grouproll", "halflingLuckEnabled")) trdisGRpatch.halflingLuckPatch();
-  if (game.system.id === "dnd5e" && game.settings.get("grouproll", "averageRolls")) trdisGRpatch.averageD20Patch();
+  if (game.system.id === "dnd5e" && game.settings.get("grouproll", "averageRolls")) {
+    if (game.system.data.version == 0.9) {
+      trdisGRpatch.averageD20Patch();
+      trdisGRpatch.checkRollsPatch();
+    } else {
+      trdisGRpatch.v89_averageD20Patch();
+    }
+  }
   trdisGRpatch.appTemplatePatch();
 });
