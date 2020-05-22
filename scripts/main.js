@@ -27,7 +27,7 @@ class GroupRollApp extends Application {
     this.groupCheckIcon = "";
     // Update dialog display on changes to token selection
     Hooks.on("controlToken", async (object, controlled) => {
-      let x = await canvas.tokens.controlledTokens;
+      let x = await canvas.tokens.controlled;
       this.render();
     });
   }
@@ -179,7 +179,7 @@ class GroupRollApp extends Application {
       event.preventDefault();
       let field = $(event.currentTarget).siblings('input[type="hidden"]');
       let tokID = field.val();
-      canvas.tokens.controlledTokens.map(t => {
+      canvas.tokens.controlled.map(t => {
         if (t.id === tokID) t.release();
       });
       this.render();
@@ -234,7 +234,7 @@ class GroupSkillCheck extends GroupRollApp {
   }
 
   getTokenList(skillName, abilityName) {
-    return canvas.tokens.controlledTokens.map(t => {
+    return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
         this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
       }
@@ -334,7 +334,7 @@ class GroupAbilityCheck extends GroupRollApp {
   }
 
   getTokenList(saveRoll, abilityName) {
-    return canvas.tokens.controlledTokens.map(t => {
+    return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
         this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
       }
@@ -428,7 +428,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
   }
 
   getData() {
-    canvas.tokens.controlledTokens.map(t => {
+    canvas.tokens.controlled.map(t => {
       if (t.actor.data.type === "npc") t.release();
     });
     this.tokList = this.getTokenList(this.skillName, this.abilityName);
@@ -456,7 +456,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
   }
 
   getTokenList(skillName, abilityName) {
-    return canvas.tokens.controlledTokens.map(t => {
+    return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
         this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
       }
@@ -569,7 +569,7 @@ class GroupSavePF2E extends GroupRollApp {
   }
 
   getTokenList(abilityName) {
-    return canvas.tokens.controlledTokens.map(t => {
+    return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
         this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
       }
