@@ -79,7 +79,7 @@ class trdisGRpatch {
 Hooks.once("ready", function() {
   if (game.settings.get("grouproll", "halflingLuckEnabled")) trdisGRpatch.halflingLuckPatch();
   if (game.system.id === "dnd5e" && game.settings.get("grouproll", "averageRolls")) {
-    if (game.system.data.version == 0.9) {
+    if (game.system.data.version >= 0.9) {
       trdisGRpatch.averageD20Patch();
       trdisGRpatch.checkRollsPatch();
     } else {
