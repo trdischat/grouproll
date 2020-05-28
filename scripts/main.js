@@ -239,7 +239,7 @@ class GroupSkillCheck extends GroupRollApp {
         this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
       }
       let m = this.mstList[t.id];
-      let sklmod = t.actor.data.data.skills[skillName].mod;
+      let sklmod = t.actor.data.data.skills[skillName].total;
       let abilityDef = t.actor.data.data.skills[skillName].ability;
       if ( abilityName !== abilityDef ) sklmod = sklmod - t.actor.data.data.abilities[abilityDef].mod + t.actor.data.data.abilities[abilityName].mod;
       let tokRace = t.actor.data.data.details.race;
