@@ -3,7 +3,7 @@ The primary purpose of this module is to facilitate group ability and skill chec
 
 The module adds two buttons to the Token menu on the left of the canvas. Group skill and ability checks can be launched by selecting tokens, then clicking the relevant group roll button. The window can be left open, and it will update automatically if the token selection is changed.  The "PCs" button will select all player character tokens on the canvas.  Individual tokens can be deselected by clicking the "x" next to the token name.
 
-Skills and abilities are selected from the dropdowns.  If desired, the DC for the roll can be entered.  If the DC is set, a successfull roll is colored green, while an failed roll is colored red.  If the DC is not set, natural 20 rolls are highlighted in green, while natural 1 rolls are highlighted in red.
+Skills and abilities are selected from the dropdowns.  If desired, the DC for the roll can be entered.  If the DC is set, a successful roll is colored green, while an failed roll is colored red.  If the DC is not set, natural 20 rolls are highlighted in green, while natural 1 rolls are highlighted in red.
 
 Advantage, disadvantage, and situational bonuses can be set individually for each token.  The "Reset" button clears advantage, bonuses, and rolls for all tokens.  The "Roll" button rolls for all tokens at once, taking into account all advantage and bonus settings, then calculates the minimum roll achieved by at least half of the group.
 

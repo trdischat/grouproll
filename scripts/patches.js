@@ -48,17 +48,17 @@ class trdisGRpatch {
 
   static checkRollsPatch() {
     let newClass = game.dnd5e.entities.Actor5e;
-    newClass = trPatchLib.patchMethod(newClass, "rollSkill", 15,
+    newClass = trPatchLib.patchMethod(newClass, "rollSkill", 24,
     `return d20Roll(mergeObject(options, {`,
     `return trRollLib.MyD20Roll(mergeObject(options, {`);
     if (!newClass) return;
     game.dnd5e.entities.Actor5e.prototype.rollSkill = newClass.prototype.rollSkill;
-    newClass = trPatchLib.patchMethod(newClass, "rollAbilityTest", 25,
+    newClass = trPatchLib.patchMethod(newClass, "rollAbilityTest", 27,
     `return d20Roll(mergeObject(options, {`,
     `return trRollLib.MyD20Roll(mergeObject(options, {`);
     if (!newClass) return;
     game.dnd5e.entities.Actor5e.prototype.rollAbilityTest = newClass.prototype.rollAbilityTest;
-    newClass = trPatchLib.patchMethod(newClass, "rollAbilitySave", 20,
+    newClass = trPatchLib.patchMethod(newClass, "rollAbilitySave", 22,
     `return d20Roll(mergeObject(options, {`,
     `return trRollLib.MyD20Roll(mergeObject(options, {`);
     if (!newClass) return;
