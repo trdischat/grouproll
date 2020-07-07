@@ -116,6 +116,26 @@ class GroupRollApp extends Application {
         }
       },
       {
+        label: "Pass",
+        class: "grm-btn-pass",
+        title: "Select only tokens with successful rolls",
+        icon: "fas fa-check",
+        onclick: ev => {
+          this.tokList.filter(t => t.nat !== 'grm-success').map(t => canvas.tokens.get(t.id).release());
+          this.render();
+        }
+      },
+      {
+        label: "Fail",
+        class: "grm-btn-fail",
+        title: "Select only tokens with failed rolls",
+        icon: "fas fa-times",
+        onclick: ev => {
+          this.tokList.filter(t => (t.nat !== 'grm-fumble') || !(t.roll instanceof Roll)).map(t => canvas.tokens.get(t.id).release());
+          this.render();
+        }
+      },
+      {
         label: "Reset",
         class: "grm-btn-reset",
         title: "Reset advantage, bonus, and roll values",

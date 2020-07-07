@@ -1,7 +1,7 @@
 # Group rolls for D&D 5e (limited support for Pathfinder 2e)
 The primary purpose of this module is to facilitate group ability and skill check rolls per the Player's Handbook, page 175: *"If at least half the group succeeds, the whole group succeeds."*  It also displays the rolls for each individual token, and therefore can be used to roll saving throws for an entire groups of tokens at once (e.g., DEX saves for a group of characters hit by a fireball).
 
-The module adds two buttons to the Token menu on the left of the canvas. Group skill and ability checks can be launched by selecting tokens, then clicking the relevant group roll button. The window can be left open, and it will update automatically if the token selection is changed.  The "PCs" button will select all player character tokens on the canvas.  Individual tokens can be deselected by clicking the "x" next to the token name.
+The module adds two buttons to the Token menu on the left of the canvas. Group skill and ability checks can be launched by selecting tokens, then clicking the relevant group roll button. The window can be left open, and it will update automatically if the token selection is changed.  The "PCs" button will select all player character tokens on the canvas.  The "Pass" button selects only tokens with successful rolls, while the "Fail" button selects only tokens with failed rolls.  Individual tokens can be deselected by clicking the "x" next to the token name.
 
 Skills and abilities are selected from the dropdowns.  If desired, the DC for the roll can be entered.  If the DC is set, a successful roll is colored green, while an failed roll is colored red.  If the DC is not set, natural 20 rolls are highlighted in green, while natural 1 rolls are highlighted in red.
 
