@@ -18,6 +18,24 @@ class trRollLib {
      * @param {Roll} d20Roll    Roll of 1d20 to be replaced
      */
     static avgD20roll(d20Roll) {
+        if (game.data.version != '0.7.0') {
+            this.avgD20roll_old(d20Roll);
+        } else {
+            let oldTotal = d20Roll.terms[0].total;
+            let avgRoll = new Roll(`2d10-1dc`).roll();
+            let newTotal = avgRoll.total;
+            if (d20Roll.terms[0].formula.includes("r") && newTotal == 1) {
+                let altRoll = avgRoll.reroll();
+                newTotal = altRoll.total;
+                d20Roll.terms[0].results = [{result: 1, active: false, rerolled: true},{result: newTotal, active: true}];
+            } else {
+                d20Roll.terms[0].results = [{result: newTotal, active: true}];
+            }
+            d20Roll._total = d20Roll._total + newTotal - oldTotal;
+            d20Roll.results[0] = newTotal;
+        }
+    }
+    static avgD20roll_old(d20Roll) {
         let oldTotal = d20Roll.parts[0].total;
         let avgRoll = new Roll(`2d10+1-1d2`).roll();
         let newTotal = avgRoll.total;
@@ -110,8 +128,8 @@ Hooks.once("init", function() {
         hint: "Only reroll one die when using the Halfling Lucky trait",
         scope: "world",
         type: Boolean,
-        default: false,
-        config: true,
+        default: true,
+        config: false,
         onChange: s => {}
     });
     trRollLib.init;
