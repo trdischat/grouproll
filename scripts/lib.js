@@ -18,7 +18,7 @@ class trRollLib {
      * @param {Roll} d20Roll    Roll of 1d20 to be replaced
      */
     static avgD20roll(d20Roll) {
-        if (game.data.version != '0.7.0') {
+        if (isNewerVersion('0.7.0', game.data.version)) {
             this.avgD20roll_old(d20Roll);
         } else {
             let oldTotal = d20Roll.terms[0].total;
