@@ -37,16 +37,25 @@ class trdisGRpatch {
     game.dnd5e.Dice5e.d20Roll = newFunc;
   }  
 
-  static averageD20Patch() {
+  static v93_averageD20Patch() {
     let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 54,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
       `let roll = new Roll(parts.join(" + "), data).roll();
       if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);`);
     if (!newFunc) return;
     trRollLib.MyD20Roll = newFunc;
-  }  
+   } 
 
-  static checkRollsPatch() {
+   static averageD20Patch() {
+    let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 62,
+      `// Flag d20 options for any 20-sided dice in the roll`,
+      `if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);
+      // Flag d20 options for any 20-sided dice in the roll`);
+    if (!newFunc) return;
+    trRollLib.MyD20Roll = newFunc;
+   } 
+
+  static v93_checkRollsPatch() {
     let newClass = game.dnd5e.entities.Actor5e;
     newClass = trPatchLib.patchMethod(newClass, "rollSkill", 24,
     `return d20Roll(mergeObject(options, {`,
@@ -61,6 +70,25 @@ class trdisGRpatch {
     newClass = trPatchLib.patchMethod(newClass, "rollAbilitySave", 22,
     `return d20Roll(mergeObject(options, {`,
     `return trRollLib.MyD20Roll(mergeObject(options, {`);
+    if (!newClass) return;
+    game.dnd5e.entities.Actor5e.prototype.rollAbilitySave = newClass.prototype.rollAbilitySave;
+  }
+
+  static checkRollsPatch() {
+    let newClass = game.dnd5e.entities.Actor5e;
+    newClass = trPatchLib.patchMethod(newClass, "rollSkill", 37,
+    `return d20Roll(rollData);`,
+    `return trRollLib.MyD20Roll(rollData);`);
+    if (!newClass) return;
+    game.dnd5e.entities.Actor5e.prototype.rollSkill = newClass.prototype.rollSkill;
+    newClass = trPatchLib.patchMethod(newClass, "rollAbilityTest", 39,
+    `return d20Roll(rollData);`,
+    `return trRollLib.MyD20Roll(rollData);`);
+    if (!newClass) return;
+    game.dnd5e.entities.Actor5e.prototype.rollAbilityTest = newClass.prototype.rollAbilityTest;
+    newClass = trPatchLib.patchMethod(newClass, "rollAbilitySave", 34,
+    `return d20Roll(rollData);`,
+    `return trRollLib.MyD20Roll(rollData);`);
     if (!newClass) return;
     game.dnd5e.entities.Actor5e.prototype.rollAbilitySave = newClass.prototype.rollAbilitySave;
   }
@@ -81,6 +109,9 @@ Hooks.once("ready", function() {
   if (game.system.id === "dnd5e" && game.settings.get("grouproll", "averageRolls")) {
     if (isNewerVersion('0.9', game.system.data.version)) {
         trdisGRpatch.v89_averageD20Patch();
+    } else if (isNewerVersion('0.94', game.system.data.version)) {
+        trdisGRpatch.v93_averageD20Patch();
+        trdisGRpatch.v93_checkRollsPatch();
     } else {
         trdisGRpatch.averageD20Patch();
         trdisGRpatch.checkRollsPatch();
