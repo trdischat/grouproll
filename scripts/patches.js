@@ -105,7 +105,9 @@ class trdisGRpatch {
 }
 
 Hooks.once("ready", function() {
+  // DEPRECATED - halflingLuckPatch only applies to through v0.6.5 of FVTT
   if (game.settings.get("grouproll", "halflingLuckEnabled") && isNewerVersion('0.7.0', game.data.version) ) trdisGRpatch.halflingLuckPatch();
+  // DEPRECATED - averageD20Patch depends on version of dnd5e system
   if (game.system.id === "dnd5e" && game.settings.get("grouproll", "averageRolls")) {
     if (isNewerVersion('0.9', game.system.data.version)) {
         trdisGRpatch.v89_averageD20Patch();
