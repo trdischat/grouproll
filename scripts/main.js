@@ -441,6 +441,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   static get defaultOptions() {
     const options = super.defaultOptions;
+    options.width = 600;
     options.id = "group-skill-check";
     options.title = "Group Skill Check";
     options.template = "modules/grouproll/templates/group-skill-check-pf2e.html";
@@ -559,6 +560,7 @@ class GroupSavePF2E extends GroupRollApp {
 
 	static get defaultOptions() {
 	  const options = super.defaultOptions;
+    options.width = 600;
 	  options.id = "group-ability-check";
 	  options.title = "Group Saving Throw";
 	  options.template = "modules/grouproll/templates/group-ability-check-pf2e.html";
