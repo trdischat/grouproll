@@ -4,6 +4,8 @@ class trdisGRpatch {
    * with advantage would use '2d20r1=1kh' to roll two d20, reroll on a 1, but
    * only on one die, then keep the highest roll).
    */
+
+  // DEPRECATED - halflingLuckPatch only applies through v0.6.5 of FVTT
   static halflingLuckPatch() {
     let newClass = Die;
     newClass = trPatchLib.patchMethod(newClass, "reroll", 0,
@@ -28,6 +30,8 @@ class trdisGRpatch {
   /* Substitute "average" d20 roll for standard d20 ability and skill rolls.
    * Average of two d20 approximated using 2d10+1-1d2.
    */
+
+  // DEPRECATED - averageD20Patch through v0.89 of dnd5e system
   static v89_averageD20Patch() {
     let newFunc = trPatchLib.patchFunction(game.dnd5e.Dice5e.d20Roll, 52,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
@@ -37,6 +41,7 @@ class trdisGRpatch {
     game.dnd5e.Dice5e.d20Roll = newFunc;
   }  
 
+  // DEPRECATED - averageD20Patch through v0.93 of dnd5e system
   static v93_averageD20Patch() {
     let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 54,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
@@ -55,6 +60,7 @@ class trdisGRpatch {
     trRollLib.MyD20Roll = newFunc;
    } 
 
+  // DEPRECATED - checkRollsPatch through v0.93 of dnd5e system
   static v93_checkRollsPatch() {
     let newClass = game.dnd5e.entities.Actor5e;
     newClass = trPatchLib.patchMethod(newClass, "rollSkill", 24,
