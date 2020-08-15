@@ -49,16 +49,26 @@ class trdisGRpatch {
       if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);`);
     if (!newFunc) return;
     trRollLib.MyD20Roll = newFunc;
-   } 
+  } 
 
-   static averageD20Patch() {
-    let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 62,
-      `// Flag d20 options for any 20-sided dice in the roll`,
-      `if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);
-      // Flag d20 options for any 20-sided dice in the roll`);
-    if (!newFunc) return;
-    trRollLib.MyD20Roll = newFunc;
-   } 
+  // DEPRECATED - averageD20Patch for v0.94 of dnd5e system
+  static v94_averageD20Patch() {
+  let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 62,
+    `// Flag d20 options for any 20-sided dice in the roll`,
+    `if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);
+    // Flag d20 options for any 20-sided dice in the roll`);
+  if (!newFunc) return;
+  trRollLib.MyD20Roll = newFunc;
+  } 
+
+  static averageD20Patch() {
+  let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 76,
+    `// Flag d20 options for any 20-sided dice in the roll`,
+    `if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);
+    // Flag d20 options for any 20-sided dice in the roll`);
+  if (!newFunc) return;
+  trRollLib.MyD20Roll = newFunc;
+  } 
 
   // DEPRECATED - checkRollsPatch through v0.93 of dnd5e system
   static v93_checkRollsPatch() {
@@ -80,7 +90,8 @@ class trdisGRpatch {
     game.dnd5e.entities.Actor5e.prototype.rollAbilitySave = newClass.prototype.rollAbilitySave;
   }
 
-  static checkRollsPatch() {
+  // DEPRECATED - checkRollsPatch for v0.94 of dnd5e system
+  static v94_checkRollsPatch() {
     let newClass = game.dnd5e.entities.Actor5e;
     newClass = trPatchLib.patchMethod(newClass, "rollSkill", 37,
     `return d20Roll(rollData);`,
@@ -93,6 +104,25 @@ class trdisGRpatch {
     if (!newClass) return;
     game.dnd5e.entities.Actor5e.prototype.rollAbilityTest = newClass.prototype.rollAbilityTest;
     newClass = trPatchLib.patchMethod(newClass, "rollAbilitySave", 34,
+    `return d20Roll(rollData);`,
+    `return trRollLib.MyD20Roll(rollData);`);
+    if (!newClass) return;
+    game.dnd5e.entities.Actor5e.prototype.rollAbilitySave = newClass.prototype.rollAbilitySave;
+  }
+
+  static checkRollsPatch() {
+    let newClass = game.dnd5e.entities.Actor5e;
+    newClass = trPatchLib.patchMethod(newClass, "rollSkill", 38,
+    `return d20Roll(rollData);`,
+    `return trRollLib.MyD20Roll(rollData);`);
+    if (!newClass) return;
+    game.dnd5e.entities.Actor5e.prototype.rollSkill = newClass.prototype.rollSkill;
+    newClass = trPatchLib.patchMethod(newClass, "rollAbilityTest", 40,
+    `return d20Roll(rollData);`,
+    `return trRollLib.MyD20Roll(rollData);`);
+    if (!newClass) return;
+    game.dnd5e.entities.Actor5e.prototype.rollAbilityTest = newClass.prototype.rollAbilityTest;
+    newClass = trPatchLib.patchMethod(newClass, "rollAbilitySave", 35,
     `return d20Roll(rollData);`,
     `return trRollLib.MyD20Roll(rollData);`);
     if (!newClass) return;
@@ -120,6 +150,9 @@ Hooks.once("ready", function() {
     } else if (isNewerVersion('0.94', game.system.data.version)) {
         trdisGRpatch.v93_averageD20Patch();
         trdisGRpatch.v93_checkRollsPatch();
+    } else if (isNewerVersion('0.95', game.system.data.version)) {
+      trdisGRpatch.v94_averageD20Patch();
+      trdisGRpatch.v94_checkRollsPatch();
     } else {
         trdisGRpatch.averageD20Patch();
         trdisGRpatch.checkRollsPatch();
