@@ -153,9 +153,10 @@ Hooks.once("ready", function() {
     } else if (isNewerVersion('0.95', game.system.data.version)) {
       trdisGRpatch.v94_averageD20Patch();
       trdisGRpatch.v94_checkRollsPatch();
-    } else {
-        trdisGRpatch.averageD20Patch();
-        trdisGRpatch.checkRollsPatch();
+    // FIXME - Average rolls patch completely broken by v0.95 of dnd5e system; disabled for now
+    // } else {
+    //     trdisGRpatch.averageD20Patch();
+    //     trdisGRpatch.checkRollsPatch();
     }
   }
   trdisGRpatch.appTemplatePatch();
