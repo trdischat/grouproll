@@ -438,8 +438,8 @@ class GroupSaveDND5E extends GroupAbilityCheck {
 
   static get defaultOptions() {
     const options = super.defaultOptions;
-    options.id = "group-save";
-    options.title = "Group Save";
+    options.id = "group-saving-throw";
+    options.title = "Group Saving Throw";
     options.template = "modules/grouproll/templates/group-save-dnd5e.html";
     return options;
   }
