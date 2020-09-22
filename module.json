@@ -10,7 +10,7 @@
   "scripts": ["./scripts/main.js", "./scripts/patches.js", "./scripts/lib.js", "./scripts/patchlib.js"],
   "styles": ["./css/grouproll.css"],
   "packs": [],
-  "url": "https://github.com/trdischat/grouproll",
-  "manifest": "https://raw.githubusercontent.com/trdischat/grouproll/master/module.json",
-  "download": "https://github.com/trdischat/grouproll/archive/master.zip"
+  "url": "https://github.com/gareth3001/grouproll",
+  "manifest": "https://raw.githubusercontent.com/gareth3001/grouproll/master/module.json",
+  "download": "https://github.com/gareth3001/grouproll/archive/master.zip"
 }
