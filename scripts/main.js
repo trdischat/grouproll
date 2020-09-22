@@ -249,7 +249,7 @@ class GroupSkillCheck extends GroupRollApp {
       dc: this.dc,
       rollresult: this.groupRoll,
       rollgood: this.groupOutcome,
-      rollicon: this.groupCheckIcon 
+      rollicon: this.groupCheckIcon
     };
   }
 
@@ -416,6 +416,90 @@ class GroupAbilityCheck extends GroupRollApp {
     });
   }
 
+}
+
+class GroupSaveDND5E extends GroupAbilityCheck {
+
+  constructor(object, options) {
+    super(options);
+    this.saveRoll = true;
+    this.abilityName = CONFIG._grouproll_module_abilitycheck || "dex";
+    this.flavor = CONFIG.DND5E.abilities[this.abilityName] + " Save";
+    this.dc = "";
+    this.dmg = "";
+  }
+
+  _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+    // Remove the "Passive" button
+    buttons.splice(4, 1);
+    return buttons;
+  }
+
+  static get defaultOptions() {
+    const options = super.defaultOptions;
+    options.id = "group-save";
+    options.title = "Group Save";
+    options.template = "modules/grouproll/templates/group-save-dnd5e.html";
+    return options;
+  }
+
+  getData() {
+    this.tokList = this.getTokenList(true, this.abilityName);
+    return {
+      tok: this.tokList,
+      sav: true,
+      abl: this.abilityName,
+      abilities: CONFIG.DND5E.abilities,
+      dc: this.dc,
+      dmg: this.dmg
+    };
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Change target damage
+    html.find('.dmg-value').change(event => {
+      let newDmg = html.find('input[name="input-dmg"]').val();
+      if (this.dmg !== newDmg) {
+        this.dmg = newDmg;
+      }
+      this.render();
+    });
+
+    // Plug in the apply damage buttons
+    html.find('.grm-btn-damage-full').click(event => this._onApplyDamage(event));
+    html.find('.grm-btn-damage-half').click(event => this._onApplyDamage(event));
+    html.find('.grm-btn-damage-double').click(event => this._onApplyDamage(event));
+  }
+
+  applyDamage(t, modifier) {
+    let token = canvas.tokens.get(t.id);
+    let actor = token.actor;
+
+    actor.applyDamage(this.dmg, modifier);
+  }
+
+  _onApplyDamage(event) {
+    event.preventDefault();
+
+    let tokPass = this.tokList.filter(t => t.nat === 'grm-success');
+    let tokFail = this.tokList.filter(t => t.nat !== 'grm-success');
+
+    let fullModifier = event.target.parentNode.dataset.modifier;
+    let halfModifier = fullModifier / 2;
+
+    // Apply all the damage to tokens that failed the saving throw
+    for (let i = 0; i < tokFail.length; i++) {
+      this.applyDamage(tokFail[i], fullModifier);
+    }
+
+    // Apply half the damage to tokens that passed the saving throw
+    for (let i = 0; i < tokPass.length; i++) {
+      this.applyDamage(tokPass[i], halfModifier);
+    }
+  }
 }
 
 // Apps for Pathfinder 2e System
@@ -666,12 +750,22 @@ Hooks.on('getSceneControlButtons', controls => {
     {
       name: "ability",
       title: game.system.id === "pf2e" ? "Group Saving Throw" : "Group Ability Check",
-      icon: "fas fa-user-shield",
+      icon: "fas fa-user-friends",
       visible: game.user.isGM,
       onClick: () => {
         controls[0].activeTool = "select";
         if (game.system.id === "pf2e") return new GroupSavePF2E().render(true);
         else return new GroupAbilityCheck().render(true);
+      }
+    },
+    {
+      name: "save",
+      title: "Group Saving Throw",
+      icon: "fas fa-user-shield",
+      visible: (game.system.id === "dnd5e") && game.user.isGM,
+      onClick: () => {
+        controls[0].activeTool = "select";
+        return new GroupSaveDND5E().render(true);
       }
     }
   );

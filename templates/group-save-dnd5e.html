@@ -1,0 +1,44 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+
+  <div class="grm-grid" style="grid-template-columns: 1fr 2fr 2fr 2em 2fr 3em 1fr 1fr 1fr">
+    <div class="grm-label">Ability</div>
+    <div class="grm-select">          
+      <select name="select-ability" data-dtype="String">
+        {{#select abl}}
+        {{#each abilities as |value ability|}}
+        <option value="{{ability}}">{{value}}</option>
+        {{/each}}
+        {{/select}}
+      </select>
+    </div>
+    <div class="grm-label">DC</div>
+    <div class="grm-roll"><span class="dc-value"><input name="input-dc" value="{{dc}}" type="text" style="width: 2em; text-align: center"></span></div>
+    <div class="grm-label">Damage</div>
+    <div class="grm-roll"><span class="dmg-value"><input name="input-dmg" value="{{dmg}}" type="text" style="width: 3em; text-align: center"></span></div>
+
+    <button class="grm-btn-damage-full"   data-modifier="1"  ><i class="fas fa-user-minus"   title="Apply full damage"  ></i></button>
+    <button class="grm-btn-damage-half"   data-modifier="0.5"><i class="fas fa-user-shield"  title="Apply half damage"  ></i></button>
+    <button class="grm-btn-damage-double" data-modifier="2"  ><i class="fas fa-user-injured" title="Apply double damage"></i></button>
+  </div>
+
+  <div class="grm-grid grm-tbl-cols grm-hdr">
+    <div>&nbsp;</div>
+    <div class="grm-name-col">Name</div>
+    <div>Advantage</div>
+    <div>Bonus</div>
+    <div>Modifier</div>
+    <div>Roll</div>
+  </div>
+
+  <div class="grm-grid grm-tbl-cols grm-tbl-rows">
+    {{#each tok}}
+    <div><span class="value"><input type="hidden" name="rem-{{ this.id }}" value={{ this.id }} /><a class="remove-token" title="Remove from list"><i class="fas fa-times"></i></a></span></div>
+    <div class="grm-name-col"><span class="name">{{ this.name }}</span></div>
+    <div><span class="value"><input type="hidden" name="adv-{{ this.id }}" value={{ this.adv }} data-dtype="Number"/><a class="advantage-mode" title="{{this.hover}}">{{{this.icon}}}</a></span></div>
+    <div><span class="bonus-value"><input name="bon-{{ this.id }}" value={{ this.bon }} type="number" min="0" style="width: 4em; text-align: center"></span></div>
+    <div><span class="value">{{ this.mod }}</span></div>
+    <div><span class="value {{ this.nat }}" title="{{this.roll.result}}">{{ this.roll.total }}</span></div>
+    {{/each}}
+  </div>
+
+</form>
