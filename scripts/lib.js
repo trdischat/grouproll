@@ -35,7 +35,7 @@ class trRollLib {
             d20Roll.results[0] = newTotal;
         }
     }
-    // DEPRECATED - avgd20roll function for FVTT through v0.6.5
+    // DEPRECATED - avgd20roll function for FVTT through v0.6.6
     static avgD20roll_old(d20Roll) {
         let oldTotal = d20Roll.parts[0].total;
         let avgRoll = new Roll(`2d10+1-1d2`).roll();
