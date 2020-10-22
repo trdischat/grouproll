@@ -5,7 +5,7 @@ class trdisGRpatch {
    * only on one die, then keep the highest roll).
    */
 
-  // DEPRECATED - halflingLuckPatch only applies through v0.6.5 of FVTT
+  // DEPRECATED - halflingLuckPatch only applies through v0.6.6 of FVTT
   static halflingLuckPatch() {
     let newClass = Die;
     newClass = trPatchLib.patchMethod(newClass, "reroll", 0,
@@ -141,7 +141,7 @@ class trdisGRpatch {
 }
 
 Hooks.once("ready", function() {
-  // DEPRECATED - halflingLuckPatch only applies to through v0.6.5 of FVTT
+  // DEPRECATED - halflingLuckPatch only applies to through v0.6.6 of FVTT
   if (game.settings.get("grouproll", "halflingLuckEnabled") && isNewerVersion('0.7.0', game.data.version) ) trdisGRpatch.halflingLuckPatch();
   // DEPRECATED - averageD20Patch depends on version of dnd5e system
   if (game.system.id === "dnd5e" && game.settings.get("grouproll", "averageRolls")) {
