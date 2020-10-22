@@ -497,8 +497,8 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
-    buttons[2].label = "Skill DC";
-    buttons[1].title = "Reset fortune, bonus, and roll values";
+    buttons[4].label = "Skill DC";
+    buttons[3].title = "Reset fortune, bonus, and roll values";
     return buttons
   }
 
@@ -627,8 +627,8 @@ class GroupSavePF2E extends GroupRollApp {
 
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
-    buttons[2].label = "Save DC";
-    buttons[1].title = "Reset fortune, bonus, and roll values";
+    buttons[4].label = "Save DC";
+    buttons[3].title = "Reset fortune, bonus, and roll values";
     return buttons
   }
 
