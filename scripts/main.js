@@ -60,30 +60,59 @@ class GroupRollApp extends Application {
 
   async sendRollsToChat() {
     if(this.tokList.reduce((notready, t) => notready = (t.roll.dice && t.roll.dice.length > 0) ? notready : true, false)) return;
-    let tokRolls = this.tokList.map(t => {
-      let d = t.roll.dice[0];
-      return {
-        name: t.name,
-        total: t.roll.total,
-        formula: t.roll.result,
-        faces: d.faces,
-        nat: t.nat,
-        chk: t.chk,
-        rolls: d.rolls.map(r => {
-          return {
-            result: r.roll,
-            classes: [
-              "d"+d.faces,
-              r.rerolled ? "rerolled" : null,
-              r.exploded ? "exploded" : null,
-              r.discarded ? "discarded": null,
-              (r.roll === 1) ? "min" : null,
-              (r.roll === 20) ? "max" : null
-            ].filter(c => c).join(" ")
-          }
-        })
-      };
-    });
+    // XXX: d.rolls and r.roll deprecated
+    let tokRolls = ""
+    if (isNewerVersion('0.7.0', game.data.version)) {
+      tokRolls = this.tokList.map(t => {
+        let d = t.roll.dice[0];
+        return {
+          name: t.name,
+          total: t.roll.total,
+          formula: t.roll.result,
+          faces: d.faces,
+          nat: t.nat,
+          chk: t.chk,
+          rolls: d.rolls.map(r => {
+            return {
+              result: r.roll,
+              classes: [
+                "d20",
+                r.rerolled ? "rerolled" : null,
+                r.exploded ? "exploded" : null,
+                r.discarded ? "discarded": null,
+                (r.roll === 1) ? "min" : null,
+                (r.roll === 20) ? "max" : null
+              ].filter(c => c).join(" ")
+            }
+          })
+        };
+      });
+    } else {
+      tokRolls = this.tokList.map(t => {
+        let d = t.roll.dice[0];
+        return {
+          name: t.name,
+          total: t.roll.total,
+          formula: t.roll.result,
+          faces: d.faces,
+          nat: t.nat,
+          chk: t.chk,
+          rolls: d.results.map(r => {
+            return {
+              result: r.result,
+              classes: [
+                "d20",
+                r.rerolled ? "rerolled" : null,
+                r.exploded ? "exploded" : null,
+                r.discarded ? "discarded": null,
+                (r.result === 1) ? "min" : null,
+                (r.result === 20) ? "max" : null
+              ].filter(c => c).join(" ")
+            }
+          })
+        };
+      });
+    }
     let tooltip = await renderTemplate("modules/grouproll/templates/group-chat-tooltip.html",{
       tok: tokRolls
     });
@@ -111,7 +140,12 @@ class GroupRollApp extends Application {
         icon: "fas fa-user-friends",
         onclick: ev => {
           canvas.tokens.releaseAll();
-          canvas.tokens.ownedTokens.filter(t => t.actor && t.actor.isPC).map(t => t.control({updateSight: true, releaseOthers: false}));
+          // XXX: isPC deprecated
+          if (isNewerVersion('0.7.2', game.data.version)) {
+            canvas.tokens.ownedTokens.filter(t => t.actor && t.actor.isPC).map(t => t.control({updateSight: true, releaseOthers: false}));
+          } else {
+            canvas.tokens.ownedTokens.filter(t => t.actor && t.actor.hasPlayerOwner).map(t => t.control({updateSight: true, releaseOthers: false}));
+          }
           this.render();
         }
       },
@@ -141,7 +175,12 @@ class GroupRollApp extends Application {
         title: "Reset advantage, bonus, and roll values",
         icon: "fas fa-undo",
         onclick: ev => {
-          canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}});
+          // XXX: Roll.parts deprecated
+          if (isNewerVersion('0.7.0', game.data.version)) {
+            canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}});
+          } else {
+            canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", terms: [{total: 10}]}});
+          }
           this.render();
         }
       },
@@ -256,7 +295,12 @@ class GroupSkillCheck extends GroupRollApp {
   getTokenList(skillName, abilityName) {
     return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
-        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+        // XXX: Roll.parts deprecated
+        if (isNewerVersion('0.7.0', game.data.version)) {
+          this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+        } else {
+          this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", terms: [{total: 10}]}};
+        }
       }
       let m = this.mstList[t.id];
       let sklmod = t.actor.data.data.skills[skillName].total;
@@ -267,7 +311,13 @@ class GroupSkillCheck extends GroupRollApp {
       let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      // XXX: Roll.parts deprecated
+      let natRoll = ""
+      if (isNewerVersion('0.7.0', game.data.version)) {
+        natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      } else {
+        natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+      }
       let checkIcon = "";
       if (this.dc !== "" && !isNaN(this.dc)) {
         if (natRoll === "") {
@@ -290,7 +340,7 @@ class GroupSkillCheck extends GroupRollApp {
       let newAbility = html.find('[name="select-ability"]').val();
       if (this.skillName !== newSkill) {
         this.skillName = newSkill;
-        // DEPRECATED - for dnd5e before v0.94
+        // DEPRECATED: for dnd5e before v0.94
         if (isNewerVersion('0.94', game.system.data.version)) this.abilityName = game.system.template.Actor.templates.common.skills[this.skillName].ability;
         else this.abilityName = game.system.template.Actor.templates.creature.skills[this.skillName].ability;
       }
@@ -358,7 +408,12 @@ class GroupAbilityCheck extends GroupRollApp {
   getTokenList(saveRoll, abilityName) {
     return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
-        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+        // XXX: Roll.parts deprecated
+        if (isNewerVersion('0.7.0', game.data.version)) {
+          this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+        } else {
+          this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", terms: [{total: 10}]}};
+        }
       }
       let m = this.mstList[t.id];
       let ablmod = saveRoll ? t.actor.data.data.abilities[abilityName].save : t.actor.data.data.abilities[abilityName].mod;
@@ -367,7 +422,13 @@ class GroupAbilityCheck extends GroupRollApp {
       let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      // XXX: Roll.parts deprecated
+      let natRoll = ""
+      if (isNewerVersion('0.7.0', game.data.version)) {
+        natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      } else {
+        natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+      }
       let checkIcon = "";
       if (this.dc !== "" && !isNaN(this.dc)) {
         if (natRoll === "") {
@@ -520,8 +581,8 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
-    buttons[2].label = "Skill DC";
-    buttons[1].title = "Reset fortune, bonus, and roll values";
+    buttons[4].label = "Skill DC";
+    buttons[3].title = "Reset fortune, bonus, and roll values";
     return buttons
   }
 
@@ -565,7 +626,12 @@ class GroupSkillCheckPF2E extends GroupRollApp {
   getTokenList(skillName, abilityName) {
     return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
-        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+        // XXX: Roll.parts deprecated
+        if (isNewerVersion('0.7.0', game.data.version)) {
+          this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+        } else {
+          this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", terms: [{total: 10}]}};
+        }
       }
       let m = this.mstList[t.id];
       let prcData = t.actor.data.data.attributes.perception;
@@ -584,7 +650,13 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       let lucky = false;
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      // XXX: Roll.parts deprecated
+      let natRoll = ""
+      if (isNewerVersion('0.7.0', game.data.version)) {
+        natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      } else {
+        natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+      }
       let checkIcon = "";
       if (this.dc !== "" && !isNaN(this.dc)) {
         if (natRoll === "") {
@@ -639,8 +711,8 @@ class GroupSavePF2E extends GroupRollApp {
 
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
-    buttons[2].label = "Save DC";
-    buttons[1].title = "Reset fortune, bonus, and roll values";
+    buttons[4].label = "Save DC";
+    buttons[3].title = "Reset fortune, bonus, and roll values";
     return buttons
   }
 
@@ -679,14 +751,25 @@ class GroupSavePF2E extends GroupRollApp {
   getTokenList(abilityName) {
     return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
-        this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+        // XXX: Roll.parts deprecated
+        if (isNewerVersion('0.7.0', game.data.version)) {
+          this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
+        } else {
+          this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", terms: [{total: 10}]}};
+        }
       }
       let m = this.mstList[t.id];
       let ablmod = t.actor.data.data.saves[abilityName].value;
       let lucky = false;
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      let natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      // XXX: Roll.parts deprecated
+      let natRoll = ""
+      if (isNewerVersion('0.7.0', game.data.version)) {
+        natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
+      } else {
+        natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+      }
       let checkIcon = "";
       if (this.dc !== "" && !isNaN(this.dc)) {
         if (natRoll === "") {
