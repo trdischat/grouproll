@@ -11,7 +11,15 @@ Normally, roll results are only displayed in the `grouproll` dialog, which is on
 
 Finally, there is a "Passive" button to run passive skill or ability checks for a group in place of actual rolls.  Passive checks cannot be output to the Chat window since they are not actual rolls.
 
-The module also has options for (1) outputting roll results as PASS/FAIL checkmark icons instead of numbers; (2) a house rule that uses the average of 2d20 for normal skill and ability check rolls; and (3) a limit on total rerolls to properly implement the D&D 5e *Halfling Lucky* trait for any Actor that either has the word "halfling" anywhere in the Race field or has the *Halfling Lucky* trait checked in the Special Traits tab the dnd5e system.  Per Player's Handbook, page 173: *"When you have advantage or disadvantage and something in the game, such as the halfling's Lucky trait, lets you reroll or replace the d20, you can reroll or replace only one of the dice."*  All of these options are disabled by default, but can be individually enabled in the module configuration settings.
+The module also has options for: 
+1. Outputting roll results as PASS/FAIL checkmark icons instead of numbers
+2. Enabling a house rule that uses the average of 2d20 for normal skill and ability check rolls
+3. Setting a limit on total rerolls to properly implement the D&D 5e *Halfling Lucky* trait. See [Halfling Lucky Trait](##Halfling-Lucky-Trait)
+
+All of these options are disabled by default, but can be individually enabled in the module configuration settings.
+
+## Halfling Lucky Trait
+This is done for any Actor that has either the word "halfling" anywhere in the Race field or has the *Halfling Lucky* trait checked in the Special Traits tab the dnd5e system Per Player's Handbook, page 173: *"When you have advantage or disadvantage and something in the game, such as the halfling's Lucky trait, lets you reroll or replace the d20, you can reroll or replace only one of the dice."*  
 
 The module was designed for the D&D 5e system, but will also work for many group rolls in the Pathfinder 2e system.  It will handle all PF2e saving throws, as well as skill checks for player characters.  It will not work properly for skill checks for NPCs in PF2e, and therefore NPCs cannot be selected while the skill check window is open.
 
