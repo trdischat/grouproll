@@ -32,7 +32,7 @@ class trRollLib {
                 d20Roll.terms[0].results = [{result: newTotal, active: true}];
             }
             d20Roll._total = d20Roll._total + newTotal - oldTotal;
-            d20Roll.results[0] = newTotal;
+            if (isNewerVersion('0.8.0', game.data.version)) d20Roll.results[0] = newTotal;
         }
     }
     // DEPRECATED - avgd20roll function for FVTT through v0.6.6
