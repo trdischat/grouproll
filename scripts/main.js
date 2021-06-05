@@ -484,14 +484,19 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   constructor(object, options) {
     super(options);
-    let expandedSkills = Object.assign({prc: "Perception"}, CONFIG.PF2E.skills);
+    // DEPRECATED: for pf2e before v1.13
+    let expandedSkills = Object.assign({prc: "Perception"}, isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.skills : Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(([k, v]) => [k, game.i18n.localize(v)])));
     let allSorted = {};
     Object.keys(expandedSkills).sort().forEach(function(key) { allSorted[key] = expandedSkills[key]; });
     this.allSkills = allSorted;
     this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
     this.abilityName = CONFIG._grouproll_module_skillability || "dex";
-    this.flavor = this.allSkills[this.skillName] + " (" + CONFIG.PF2E.abilities[this.abilityName] + ") Check";
-    this.skillTemplate = Object.assign({prc: {value: 0, ability: "wis", armor: 0, rank: 0, item: 0, mod: 0, breakdown: ""}}, game.system.template.Actor.templates.common.skills);
+    // DEPRECATED: for pf2e before v1.13
+    this.flavor = this.allSkills[this.skillName] + " (" + (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
+    // DEPRECATED: for pf2e before v1.13
+    this.skillTemplate = isNewerVersion('1.13', game.system.data.version)
+      ? Object.assign({prc: {value: 0, ability: "wis", armor: 0, rank: 0, item: 0, mod: 0, breakdown: ""}}, game.system.template.Actor.templates.common.skills)
+      : Object.assign({prc: {value: 0, ability: "wis", armor: 0, rank: 0, mod: 0}}, game.system.template.Actor.character.skills);
     this.dc = "";
   }
 
@@ -531,7 +536,8 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       skl: this.skillName,
       abl: this.abilityName,
       skills: this.allSkills,
-      abilities: CONFIG.PF2E.abilities,
+      // DEPRECATED: for pf2e before v1.13
+      abilities: isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities : Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(([k, v]) => [k, game.i18n.localize(v)])),
       dc: this.dc,
       rollresult: this.groupRoll,
       rollgood: this.groupOutcome,
@@ -600,7 +606,8 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_skillcheck = this.skillName;
       CONFIG._grouproll_module_skillability = this.abilityName;
-      this.flavor = this.allSkills[this.skillName] + " (" + CONFIG.PF2E.abilities[this.abilityName] + ") Check";
+      // DEPRECATED: for pf2e before v1.13
+      this.flavor = this.allSkills[this.skillName] + " (" + (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
       this.render();
     });
 
@@ -621,7 +628,8 @@ class GroupSavePF2E extends GroupRollApp {
   constructor(object, options) {
     super(options);
     this.abilityName = CONFIG._grouproll_module_abilitycheck || "fortitude";
-    this.flavor = CONFIG.PF2E.saves[this.abilityName] + " Save";
+    // DEPRECATED: for pf2e before v1.13
+    this.flavor = (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
     this.dc = "";
   }
 
@@ -656,7 +664,8 @@ class GroupSavePF2E extends GroupRollApp {
     return {
       tok: this.tokList,
       abl: this.abilityName,
-      abilities: CONFIG.PF2E.saves,
+      // DEPRECATED: for pf2e before v1.13
+      abilities: isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves : Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(([k, v]) => [k, game.i18n.localize(v)])),
       dc: this.dc,
       rollresult: this.groupRoll,
       rollgood: this.groupOutcome,
@@ -710,7 +719,8 @@ class GroupSavePF2E extends GroupRollApp {
       }
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_abilitycheck = this.abilityName;
-      this.flavor = CONFIG.PF2E.saves[this.abilityName] + " Save";
+      // DEPRECATED: for pf2e before v1.13
+      this.flavor = (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
       this.render();
     });
 
@@ -759,3 +769,7 @@ Hooks.on('getSceneControlButtons', controls => {
     }
   );
 });
+
+// TODO Create release script
+// TODO Create branches for 0.6.x and 0.7.x
+// TODO Remove deprecated code
