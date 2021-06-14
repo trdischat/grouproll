@@ -5,7 +5,7 @@ class trdisGRpatch {
    * only on one die, then keep the highest roll).
    */
 
-  // DEPRECATED - halflingLuckPatch only applies through v0.6.6 of FVTT
+  // DEPRECATED (0.6.6) halflingLuckPatch only applies through v0.6.6 of FVTT
   static halflingLuckPatch() {
     let newClass = Die;
     newClass = trPatchLib.patchMethod(newClass, "reroll", 0,
@@ -31,7 +31,7 @@ class trdisGRpatch {
    * Average of two d20 approximated using 2d10+1-1d2.
    */
 
-  // DEPRECATED - averageD20Patch through v0.89 of dnd5e system
+  // DEPRECATED (s0.89) averageD20Patch through v0.89 of dnd5e system
   static v89_averageD20Patch() {
     let newFunc = trPatchLib.patchFunction(game.dnd5e.Dice5e.d20Roll, 52,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
@@ -41,7 +41,7 @@ class trdisGRpatch {
     game.dnd5e.Dice5e.d20Roll = newFunc;
   }  
 
-  // DEPRECATED - averageD20Patch through v0.93 of dnd5e system
+  // DEPRECATED (s0.93) averageD20Patch through v0.93 of dnd5e system
   static v93_averageD20Patch() {
     let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 54,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
@@ -51,7 +51,7 @@ class trdisGRpatch {
     trRollLib.MyD20Roll = newFunc;
   } 
 
-  // DEPRECATED - averageD20Patch for v0.94 of dnd5e system
+  // DEPRECATED (s0.94) averageD20Patch for v0.94 of dnd5e system
   static v94_averageD20Patch() {
   let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 62,
     `// Flag d20 options for any 20-sided dice in the roll`,
@@ -70,7 +70,7 @@ class trdisGRpatch {
   trRollLib.MyD20Roll = newFunc;
   } 
 
-  // DEPRECATED - checkRollsPatch through v0.93 of dnd5e system
+  // DEPRECATED (s0.93) checkRollsPatch through v0.93 of dnd5e system
   static v93_checkRollsPatch() {
     let newClass = game.dnd5e.entities.Actor5e;
     newClass = trPatchLib.patchMethod(newClass, "rollSkill", 24,
@@ -90,7 +90,7 @@ class trdisGRpatch {
     game.dnd5e.entities.Actor5e.prototype.rollAbilitySave = newClass.prototype.rollAbilitySave;
   }
 
-  // DEPRECATED - checkRollsPatch for v0.94 of dnd5e system
+  // DEPRECATED (s0.94) checkRollsPatch for v0.94 of dnd5e system
   static v94_checkRollsPatch() {
     let newClass = game.dnd5e.entities.Actor5e;
     newClass = trPatchLib.patchMethod(newClass, "rollSkill", 37,
@@ -141,9 +141,9 @@ class trdisGRpatch {
 }
 
 Hooks.once("ready", function() {
-  // DEPRECATED - halflingLuckPatch only applies to through v0.6.6 of FVTT
+  // DEPRECATED (0.6.6) halflingLuckPatch only applies to through v0.6.6 of FVTT
   if (game.settings.get("grouproll", "halflingLuckEnabled") && isNewerVersion('0.7.0', game.data.version) ) trdisGRpatch.halflingLuckPatch();
-  // DEPRECATED - averageD20Patch depends on version of dnd5e system
+  // DEPRECATED (s0.89) averageD20Patch depends on version of dnd5e system
   if (game.system.id === "dnd5e" && game.settings.get("grouproll", "averageRolls")) {
     if (isNewerVersion('0.9', game.system.data.version)) {
         trdisGRpatch.v89_averageD20Patch();
@@ -153,7 +153,7 @@ Hooks.once("ready", function() {
     } else if (isNewerVersion('0.95', game.system.data.version)) {
       trdisGRpatch.v94_averageD20Patch();
       trdisGRpatch.v94_checkRollsPatch();
-    // FIXME - Average rolls patch completely broken by v0.95 of dnd5e system; disabled for now
+    // FIXME (s0.94) Average rolls patch completely broken by v0.95 of dnd5e system; disabled for now
     // } else {
     //     trdisGRpatch.averageD20Patch();
     //     trdisGRpatch.checkRollsPatch();

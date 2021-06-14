@@ -17,6 +17,7 @@ class trRollLib {
      * is statistically equivalent and easier than actual averaging.
      * @param {Roll} d20Roll    Roll of 1d20 to be replaced
      */
+    // TODO Replace roll() with evaluate()
     static avgD20roll(d20Roll) {
         if (isNewerVersion('0.7.0', game.data.version)) {
             this.avgD20roll_old(d20Roll);
@@ -35,7 +36,7 @@ class trRollLib {
             if (isNewerVersion('0.8.0', game.data.version)) d20Roll.results[0] = newTotal;
         }
     }
-    // DEPRECATED - avgd20roll function for FVTT through v0.6.6
+    // DEPRECATED (0.6.6) avgd20roll function for FVTT through v0.6.6
     static avgD20roll_old(d20Roll) {
         let oldTotal = d20Roll.parts[0].total;
         let avgRoll = new Roll(`2d10+1-1d2`).roll();
@@ -61,6 +62,7 @@ class trRollLib {
      * @param {Boolean} lucky  Halfling luck
      * @return {Roll}          Ability or skill roll
      */
+    // TODO Replace roll() with evaluate()
     static chkRoll(adv, bon, mod, lucky) {
         let luck = lucky ? (game.settings.get("grouproll", "halflingLuckEnabled") ? "r1=1" : "r1") : "";
         let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
@@ -78,6 +80,7 @@ class trRollLib {
      * @param {Boolean} lucky  Halfling luck
      * @return {Roll}          Attack roll
      */
+    // TODO Replace roll() with evaluate()
     static hitRoll(adv, bon, mod, lucky) {
         let luck = lucky ? (game.settings.get("grouproll", "halflingLuckEnabled") ? "r1=1" : "r1") : "";
         let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
@@ -92,6 +95,7 @@ class trRollLib {
      * @param {Number} mod     Ability or skill modifier
      * @return {Roll}          Ability or skill roll
      */
+    // TODO Replace roll() with evaluate()
     static chkPassive(adv, bon, mod) {
         var rStr = "@base + @bonus + @modifier";
         var rData = {base: (adv * 5) + 10, bonus: bon, modifier: mod};
