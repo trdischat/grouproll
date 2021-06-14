@@ -60,7 +60,7 @@ class GroupRollApp extends Application {
 
   async sendRollsToChat() {
     if(this.tokList.reduce((notready, t) => notready = (t.roll.dice && t.roll.dice.length > 0) ? notready : true, false)) return;
-    // XXX: d.rolls and r.roll deprecated
+    // XXX (0.6.6) d.rolls and r.roll deprecated
     let tokRolls = ""
     if (isNewerVersion('0.7.0', game.data.version)) {
       tokRolls = this.tokList.map(t => {
@@ -140,7 +140,7 @@ class GroupRollApp extends Application {
         icon: "fas fa-user-friends",
         onclick: ev => {
           canvas.tokens.releaseAll();
-          // XXX: isPC deprecated
+          // XXX (0.7.1) isPC deprecated
           if (isNewerVersion('0.7.2', game.data.version)) {
             canvas.tokens.ownedTokens.filter(t => t.actor && t.actor.isPC).map(t => t.control({updateSight: true, releaseOthers: false}));
           } else {
@@ -175,7 +175,7 @@ class GroupRollApp extends Application {
         title: "Reset advantage, bonus, and roll values",
         icon: "fas fa-undo",
         onclick: ev => {
-          // XXX: Roll.parts deprecated
+          // XXX (0.6.6) Roll.parts deprecated
           if (isNewerVersion('0.7.0', game.data.version)) {
             canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}});
           } else {
@@ -295,7 +295,7 @@ class GroupSkillCheck extends GroupRollApp {
   getTokenList(skillName, abilityName) {
     return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
-        // XXX: Roll.parts deprecated
+        // XXX (0.6.6) Roll.parts deprecated
         if (isNewerVersion('0.7.0', game.data.version)) {
           this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
         } else {
@@ -311,7 +311,7 @@ class GroupSkillCheck extends GroupRollApp {
       let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      // XXX: Roll.parts deprecated
+      // XXX (0.6.6) Roll.parts deprecated
       let natRoll = ""
       if (isNewerVersion('0.7.0', game.data.version)) {
         natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
@@ -340,7 +340,7 @@ class GroupSkillCheck extends GroupRollApp {
       let newAbility = html.find('[name="select-ability"]').val();
       if (this.skillName !== newSkill) {
         this.skillName = newSkill;
-        // DEPRECATED: for dnd5e before v0.94
+        // DEPRECATED (s0.93) for dnd5e before v0.94
         if (isNewerVersion('0.94', game.system.data.version)) this.abilityName = game.system.template.Actor.templates.common.skills[this.skillName].ability;
         else this.abilityName = game.system.template.Actor.templates.creature.skills[this.skillName].ability;
       }
@@ -408,7 +408,7 @@ class GroupAbilityCheck extends GroupRollApp {
   getTokenList(saveRoll, abilityName) {
     return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
-        // XXX: Roll.parts deprecated
+        // XXX (0.6.6) Roll.parts deprecated
         if (isNewerVersion('0.7.0', game.data.version)) {
           this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
         } else {
@@ -422,7 +422,7 @@ class GroupAbilityCheck extends GroupRollApp {
       let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      // XXX: Roll.parts deprecated
+      // XXX (0.6.6) Roll.parts deprecated
       let natRoll = ""
       if (isNewerVersion('0.7.0', game.data.version)) {
         natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
@@ -484,16 +484,16 @@ class GroupSkillCheckPF2E extends GroupRollApp {
 
   constructor(object, options) {
     super(options);
-    // DEPRECATED: for pf2e before v1.13
+    // DEPRECATED (p1.12) for pf2e before v1.13
     let expandedSkills = Object.assign({prc: "Perception"}, isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.skills : Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(([k, v]) => [k, game.i18n.localize(v)])));
     let allSorted = {};
     Object.keys(expandedSkills).sort().forEach(function(key) { allSorted[key] = expandedSkills[key]; });
     this.allSkills = allSorted;
     this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
     this.abilityName = CONFIG._grouproll_module_skillability || "dex";
-    // DEPRECATED: for pf2e before v1.13
+    // DEPRECATED (p1.12) for pf2e before v1.13
     this.flavor = this.allSkills[this.skillName] + " (" + (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
-    // DEPRECATED: for pf2e before v1.13
+    // DEPRECATED (p1.12) for pf2e before v1.13
     this.skillTemplate = isNewerVersion('1.13', game.system.data.version)
       ? Object.assign({prc: {value: 0, ability: "wis", armor: 0, rank: 0, item: 0, mod: 0, breakdown: ""}}, game.system.template.Actor.templates.common.skills)
       : Object.assign({prc: {value: 0, ability: "wis", armor: 0, rank: 0, mod: 0}}, game.system.template.Actor.character.skills);
@@ -536,7 +536,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       skl: this.skillName,
       abl: this.abilityName,
       skills: this.allSkills,
-      // DEPRECATED: for pf2e before v1.13
+      // DEPRECATED (p1.12) for pf2e before v1.13
       abilities: isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities : Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(([k, v]) => [k, game.i18n.localize(v)])),
       dc: this.dc,
       rollresult: this.groupRoll,
@@ -548,7 +548,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
   getTokenList(skillName, abilityName) {
     return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
-        // XXX: Roll.parts deprecated
+        // XXX (0.6.6) Roll.parts deprecated
         if (isNewerVersion('0.7.0', game.data.version)) {
           this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
         } else {
@@ -572,7 +572,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       let lucky = false;
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      // XXX: Roll.parts deprecated
+      // XXX (0.6.6) Roll.parts deprecated
       let natRoll = ""
       if (isNewerVersion('0.7.0', game.data.version)) {
         natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
@@ -606,7 +606,7 @@ class GroupSkillCheckPF2E extends GroupRollApp {
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_skillcheck = this.skillName;
       CONFIG._grouproll_module_skillability = this.abilityName;
-      // DEPRECATED: for pf2e before v1.13
+      // DEPRECATED (p1.12) for pf2e before v1.13
       this.flavor = this.allSkills[this.skillName] + " (" + (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
       this.render();
     });
@@ -628,7 +628,7 @@ class GroupSavePF2E extends GroupRollApp {
   constructor(object, options) {
     super(options);
     this.abilityName = CONFIG._grouproll_module_abilitycheck || "fortitude";
-    // DEPRECATED: for pf2e before v1.13
+    // DEPRECATED (p1.12) for pf2e before v1.13
     this.flavor = (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
     this.dc = "";
   }
@@ -664,7 +664,7 @@ class GroupSavePF2E extends GroupRollApp {
     return {
       tok: this.tokList,
       abl: this.abilityName,
-      // DEPRECATED: for pf2e before v1.13
+      // DEPRECATED (p1.12) for pf2e before v1.13
       abilities: isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves : Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(([k, v]) => [k, game.i18n.localize(v)])),
       dc: this.dc,
       rollresult: this.groupRoll,
@@ -676,7 +676,7 @@ class GroupSavePF2E extends GroupRollApp {
   getTokenList(abilityName) {
     return canvas.tokens.controlled.map(t => {
       if (this.mstList[t.id] === undefined) {
-        // XXX: Roll.parts deprecated
+        // XXX (0.6.6) Roll.parts deprecated
         if (isNewerVersion('0.7.0', game.data.version)) {
           this.mstList[t.id] = {adv: 0, bon: 0, roll: {total: "", result: "", parts: [{total: 10}]}};
         } else {
@@ -688,7 +688,7 @@ class GroupSavePF2E extends GroupRollApp {
       let lucky = false;
       let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
       let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-      // XXX: Roll.parts deprecated
+      // XXX (0.6.6) Roll.parts deprecated
       let natRoll = ""
       if (isNewerVersion('0.7.0', game.data.version)) {
         natRoll = m.roll.parts[0].total === 1 ? "grm-fumble" : (m.roll.parts[0].total === 20 ? "grm-success" : "");
@@ -719,7 +719,7 @@ class GroupSavePF2E extends GroupRollApp {
       }
       else if (this.abilityName !== newAbility) this.abilityName = newAbility;
       CONFIG._grouproll_module_abilitycheck = this.abilityName;
-      // DEPRECATED: for pf2e before v1.13
+      // DEPRECATED (p1.12) for pf2e before v1.13
       this.flavor = (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
       this.render();
     });
