@@ -290,7 +290,7 @@ class GroupSkillCheck extends GroupRollApp {
       let newAbility = html.find('[name="select-ability"]').val();
       if (this.skillName !== newSkill) {
         this.skillName = newSkill;
-        // DEPRECATED (s0.93) for dnd5e before v0.94
+        // For dnd5e before v0.94
         if (isNewerVersion('0.94', game.system.data.version)) this.abilityName = game.system.template.Actor.templates.common.skills[this.skillName].ability;
         else this.abilityName = game.system.template.Actor.templates.creature.skills[this.skillName].ability;
       }

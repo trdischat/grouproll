@@ -1,6 +1,6 @@
 class trdisGRpatch {
 
-  /* Allow limit on number of dice to reroll (e.g., a halfing rolling an attack 
+  /* Allow limit on number of dice to reroll (e.g., a halfling rolling an attack 
    * with advantage would use '2d20r1=1kh' to roll two d20, reroll on a 1, but
    * only on one die, then keep the highest roll).
    */
@@ -30,7 +30,7 @@ class trdisGRpatch {
    * Average of two d20 approximated using 2d10+1-1d2.
    */
 
-  // DEPRECATED (s0.89) averageD20Patch through v0.89 of dnd5e system
+  // averageD20Patch through v0.89 of dnd5e system
   static v89_averageD20Patch() {
     let newFunc = trPatchLib.patchFunction(game.dnd5e.Dice5e.d20Roll, 52,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
@@ -40,7 +40,7 @@ class trdisGRpatch {
     game.dnd5e.Dice5e.d20Roll = newFunc;
   }  
 
-  // DEPRECATED (s0.93) averageD20Patch through v0.93 of dnd5e system
+  // averageD20Patch through v0.93 of dnd5e system
   static v93_averageD20Patch() {
     let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 54,
       `let roll = new Roll(parts.join(" + "), data).roll();`,
@@ -50,7 +50,7 @@ class trdisGRpatch {
     trRollLib.MyD20Roll = newFunc;
   } 
 
-  // DEPRECATED (s0.94) averageD20Patch for v0.94 of dnd5e system
+  // averageD20Patch for v0.94 of dnd5e system
   static v94_averageD20Patch() {
   let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 62,
     `// Flag d20 options for any 20-sided dice in the roll`,
@@ -60,16 +60,7 @@ class trdisGRpatch {
   trRollLib.MyD20Roll = newFunc;
   } 
 
-  static averageD20Patch() {
-  let newFunc = trPatchLib.patchFunction(game.dnd5e.dice.d20Roll, 76,
-    `// Flag d20 options for any 20-sided dice in the roll`,
-    `if (!(flavor.includes("Attack Roll") || adv !== 0)) trRollLib.avgD20roll(roll);
-    // Flag d20 options for any 20-sided dice in the roll`);
-  if (!newFunc) return;
-  trRollLib.MyD20Roll = newFunc;
-  } 
-
-  // DEPRECATED (s0.93) checkRollsPatch through v0.93 of dnd5e system
+  // checkRollsPatch through v0.93 of dnd5e system
   static v93_checkRollsPatch() {
     let newClass = game.dnd5e.entities.Actor5e;
     newClass = trPatchLib.patchMethod(newClass, "rollSkill", 24,
@@ -89,7 +80,7 @@ class trdisGRpatch {
     game.dnd5e.entities.Actor5e.prototype.rollAbilitySave = newClass.prototype.rollAbilitySave;
   }
 
-  // DEPRECATED (s0.94) checkRollsPatch for v0.94 of dnd5e system
+  // checkRollsPatch for v0.94 of dnd5e system
   static v94_checkRollsPatch() {
     let newClass = game.dnd5e.entities.Actor5e;
     newClass = trPatchLib.patchMethod(newClass, "rollSkill", 37,
@@ -109,25 +100,6 @@ class trdisGRpatch {
     game.dnd5e.entities.Actor5e.prototype.rollAbilitySave = newClass.prototype.rollAbilitySave;
   }
 
-  static checkRollsPatch() {
-    let newClass = game.dnd5e.entities.Actor5e;
-    newClass = trPatchLib.patchMethod(newClass, "rollSkill", 38,
-    `return d20Roll(rollData);`,
-    `return trRollLib.MyD20Roll(rollData);`);
-    if (!newClass) return;
-    game.dnd5e.entities.Actor5e.prototype.rollSkill = newClass.prototype.rollSkill;
-    newClass = trPatchLib.patchMethod(newClass, "rollAbilityTest", 40,
-    `return d20Roll(rollData);`,
-    `return trRollLib.MyD20Roll(rollData);`);
-    if (!newClass) return;
-    game.dnd5e.entities.Actor5e.prototype.rollAbilityTest = newClass.prototype.rollAbilityTest;
-    newClass = trPatchLib.patchMethod(newClass, "rollAbilitySave", 35,
-    `return d20Roll(rollData);`,
-    `return trRollLib.MyD20Roll(rollData);`);
-    if (!newClass) return;
-    game.dnd5e.entities.Actor5e.prototype.rollAbilitySave = newClass.prototype.rollAbilitySave;
-  }
-
   static appTemplatePatch() {
     let newClass = Application;
     newClass = trPatchLib.patchMethod(newClass, "_renderOuter", 13,
@@ -141,7 +113,7 @@ class trdisGRpatch {
 
 Hooks.once("ready", function() {
   if (game.settings.get("grouproll", "halflingLuckEnabled")) trdisGRpatch.halflingLuckPatch();
-  // DEPRECATED (s0.89) averageD20Patch depends on version of dnd5e system
+  // averageD20Patch depends on version of dnd5e system
   if (game.system.id === "dnd5e" && game.settings.get("grouproll", "averageRolls")) {
     if (isNewerVersion('0.9', game.system.data.version)) {
         trdisGRpatch.v89_averageD20Patch();
@@ -151,10 +123,7 @@ Hooks.once("ready", function() {
     } else if (isNewerVersion('0.95', game.system.data.version)) {
       trdisGRpatch.v94_averageD20Patch();
       trdisGRpatch.v94_checkRollsPatch();
-    // FIXME (s0.94) Average rolls patch completely broken by v0.95 of dnd5e system; disabled for now
-    // } else {
-    //     trdisGRpatch.averageD20Patch();
-    //     trdisGRpatch.checkRollsPatch();
+    // Average rolls patch completely broken by v0.95 of dnd5e system
     }
   }
   trdisGRpatch.appTemplatePatch();
