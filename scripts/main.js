@@ -61,29 +61,29 @@ class GroupRollApp extends Application {
   async sendRollsToChat() {
     if(this.tokList.reduce((notready, t) => notready = (t.roll.dice && t.roll.dice.length > 0) ? notready : true, false)) return;
     let tokRolls = this.tokList.map(t => {
-        let d = t.roll.dice[0];
-        return {
-          name: t.name,
-          total: t.roll.total,
-          formula: t.roll.result,
-          faces: d.faces,
-          nat: t.nat,
-          chk: t.chk,
-          rolls: d.rolls.map(r => {
-            return {
-              result: r.roll,
-              classes: [
-                "d20",
-                r.rerolled ? "rerolled" : null,
-                r.exploded ? "exploded" : null,
-                r.discarded ? "discarded": null,
-                (r.roll === 1) ? "min" : null,
-                (r.roll === 20) ? "max" : null
-              ].filter(c => c).join(" ")
-            }
-          })
-        };
-      });
+      let d = t.roll.dice[0];
+      return {
+        name: t.name,
+        total: t.roll.total,
+        formula: t.roll.result,
+        faces: d.faces,
+        nat: t.nat,
+        chk: t.chk,
+        rolls: d.results.map(r => {
+          return {
+            result: r.result,
+            classes: [
+              "d20",
+              r.rerolled ? "rerolled" : null,
+              r.exploded ? "exploded" : null,
+              r.discarded ? "discarded": null,
+              (r.result === 1) ? "min" : null,
+              (r.result === 20) ? "max" : null
+            ].filter(c => c).join(" ")
+          }
+        })
+      };
+    });
     let tooltip = await renderTemplate("modules/grouproll/templates/group-chat-tooltip.html",{
       tok: tokRolls
     });
