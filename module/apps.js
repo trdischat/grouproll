@@ -81,7 +81,7 @@ class GroupRollApp extends Application {
             tooltip: tooltip
         });
         let chatData = {
-            user: game.user._id,
+            user: game.user.id,
             content: content,
         };
         ChatMessage.create(chatData);
