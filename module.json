@@ -7,7 +7,7 @@
   "compatibleCoreVersion": "0.8.6",
   "author": "trdischat",
   "systems": ["dnd5e", "pf2e"],
-  "scripts": ["./scripts/main.js", "./scripts/patches.js", "./scripts/lib.js", "./scripts/patchlib.js"],
+  "esmodules": ["grouproll.js"],
   "styles": ["./css/grouproll.css"],
   "packs": [],
   "url": "https://github.com/trdischat/grouproll",
