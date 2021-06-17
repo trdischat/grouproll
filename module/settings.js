@@ -9,14 +9,20 @@ export const registerSettings = function () {
         onChange: s => {}
     });
     game.settings.register("grouproll", "averageRolls", {
-        name: "Average Rolls (House Rule)",
-        hint: "Standard checks and saves use average of 2d20",
+        name: "Average Rolls (Obscure House Rule)",
+        hint: "Use the average of 2d20 in place of 1d20 for normal rolls",
         scope: "world",
-        type: Boolean,
-        default: false,
+        type: String,
+        choices: {
+            "n": "No rolls are averaged (default)",
+            "c": "Checks and saves only",
+            "a": "Attacks, checks, and saves"
+        },
+        default: "n",
         config: true,
         onChange: s => {}
     });
+    // XXX Consider removing halfling luck option
     game.settings.register("grouproll", "halflingLuckEnabled", {
         name: "Halfling Luck (D&D 5e)",
         hint: "Only reroll one die when using the Halfling Lucky trait",
