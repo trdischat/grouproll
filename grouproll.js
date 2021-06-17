@@ -58,43 +58,47 @@ Hooks.once('ready', function () {
         CONFIG._grouproll_module_advantageStatus[-1].label = "Misfortune";
     };
 
-    // Regex for matching roll types
-    CONFIG._grouproll_module_matchrolls = new RegExp(
-        "(" + game.i18n.localize("GRTYPE.Death") + ")|(" +
-        game.i18n.localize("GRTYPE.Check") + "|" +
-        game.i18n.localize("GRTYPE.Save") + "|" +
-        game.i18n.localize("GRTYPE.Skill") + "|" +
-        game.i18n.localize("GRTYPE.Tool") + ")|(" +
-        game.i18n.localize("GRTYPE.Attack") + ")");
+    // Only insert code into dnd5e system if roll averaging is enabled in grouproll module
+    if (game.settings.get("grouproll", "averageRolls") != "n") {
 
-    // Insert d20 roll averaging function into dnd5e system
-    CONFIG.Dice.D20Roll.prototype.grouprollAverage = avgD20roll;
-    CONFIG.Dice.D20Roll.prototype.grouprollEvaluate = Roll.prototype.evaluate;
-    CONFIG.Dice.D20Roll.prototype.evaluate = function ({ minimize = false, maximize = false, async } = {}) {
-        let roll = this.grouprollEvaluate(minimize, maximize, async);
-        const rollType = roll.options.flavor.match(CONFIG._grouproll_module_matchrolls);
+        // Regex for matching roll types
+        CONFIG._grouproll_module_matchrolls = new RegExp(
+            "(" + game.i18n.localize("GRTYPE.Death") + ")|(" +
+            game.i18n.localize("GRTYPE.Check") + "|" +
+            game.i18n.localize("GRTYPE.Save") + "|" +
+            game.i18n.localize("GRTYPE.Skill") + "|" +
+            game.i18n.localize("GRTYPE.Tool") + ")|(" +
+            game.i18n.localize("GRTYPE.Attack") + ")");
 
-        // ! Uncomment next three lines to debug detection of roll types when adding languages !
-        // if (rollType[1]) console.log("grouproll | Death Saving Throw");
-        // else if (rollType[2]) console.log("grouproll | Check or Save");
-        // else if (rollType[3]) console.log("grouproll | Attack Roll");
+        // Insert d20 roll averaging function into dnd5e system
+        CONFIG.Dice.D20Roll.prototype.grouprollAverage = avgD20roll;
+        CONFIG.Dice.D20Roll.prototype.grouprollEvaluate = Roll.prototype.evaluate;
+        CONFIG.Dice.D20Roll.prototype.evaluate = function ({ minimize = false, maximize = false, async } = {}) {
+            let roll = this.grouprollEvaluate(minimize, maximize, async);
+            const rollType = roll.options.flavor.match(CONFIG._grouproll_module_matchrolls);
 
-        // Average normal d20 rolls only for selected roll types
-        if (roll.options.advantageMode === 0) {
-            switch (game.settings.get("grouproll", "averageRolls")) {
-                case "c":
-                    if (rollType[2]) this.grouprollAverage(roll);
-                    break;
-                case "a":
-                    if (rollType[2] || rollType[3]) this.grouprollAverage(roll);
-                    break;
-                default:
-            };
-        }
+            // ! Uncomment next three lines to debug detection of roll types when adding languages !
+            // if (rollType[1]) console.log("grouproll | Death Saving Throw");
+            // else if (rollType[2]) console.log("grouproll | Check or Save");
+            // else if (rollType[3]) console.log("grouproll | Attack Roll");
 
-        // Return adjusted roll
-        return roll;
-    };
+            // Average normal d20 rolls only for selected roll types
+            if (roll.options.advantageMode === 0) {
+                switch (game.settings.get("grouproll", "averageRolls")) {
+                    case "c":
+                        if (rollType[2]) this.grouprollAverage(roll);
+                        break;
+                    case "a":
+                        if (rollType[2] || rollType[3]) this.grouprollAverage(roll);
+                        break;
+                    default:
+                };
+            }
+
+            // Return adjusted roll
+            return roll;
+        };
+    }
 
 });
 
