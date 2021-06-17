@@ -22,14 +22,4 @@ export const registerSettings = function () {
         config: true,
         onChange: s => {}
     });
-    // XXX Consider removing halfling luck option
-    game.settings.register("grouproll", "halflingLuckEnabled", {
-        name: "Halfling Luck (D&D 5e)",
-        hint: "Only reroll one die when using the Halfling Lucky trait",
-        scope: "world",
-        type: Boolean,
-        default: true,
-        config: false,
-        onChange: s => {}
-    });  
 }

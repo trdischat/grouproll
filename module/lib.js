@@ -17,7 +17,7 @@ export function avgD20roll(d20Roll) {
     let oldTotal = d20Roll.terms[0].total;
     let avgRoll = new Roll(`2d10-1dc`).evaluate({async:false});
     let newTotal = avgRoll.total;
-    if (d20Roll.terms[0].formula.includes("r") && newTotal == 1) {
+    if (d20Roll.terms[0].formula.includes("r1=1") && newTotal == 1) {
         let altRoll = avgRoll.reroll();
         newTotal = altRoll.total;
         d20Roll.terms[0].results = [{result: 1, active: false, rerolled: true},{result: newTotal, active: true}];
@@ -38,9 +38,7 @@ export function avgD20roll(d20Roll) {
  * @return {Roll}          Ability or skill roll
  */
 export function chkRoll(adv, bon, mod, lucky) {
-    // XXX Consider removing halfling luck code
-    let luck = lucky ? (game.settings.get("grouproll", "halflingLuckEnabled") ? "r1=1" : "r1") : "";
-    let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
+    let rStr = ((adv === 0) ? "1" : "2") + "d20" + (lucky ? "r1=1" : "") + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
     let rData = {bonus: bon, modifier: mod};
     let roll = new Roll(rStr, rData).evaluate({async:false});
     if (adv === 0 && (game.settings.get("grouproll", "averageRolls") == "c" || game.settings.get("grouproll", "averageRolls") == "a")) avgD20roll(roll);
@@ -57,8 +55,7 @@ export function chkRoll(adv, bon, mod, lucky) {
  * @return {Roll}          Attack roll
  */
 export function hitRoll(adv, bon, mod, lucky) {
-    let luck = lucky ? (game.settings.get("grouproll", "halflingLuckEnabled") ? "r1=1" : "r1") : "";
-    let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
+    let rStr = ((adv === 0) ? "1" : "2") + "d20" + (lucky ? "r1=1" : "") + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
     let rData = {bonus: bon, modifier: mod};
     return new Roll(rStr, rData).evaluate({async:false});
 }
