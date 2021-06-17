@@ -38,15 +38,17 @@ export function avgD20roll(d20Roll) {
  * @return {Roll}          Ability or skill roll
  */
 export function chkRoll(adv, bon, mod, lucky) {
+    // XXX Consider removing halfling luck code
     let luck = lucky ? (game.settings.get("grouproll", "halflingLuckEnabled") ? "r1=1" : "r1") : "";
     let rStr = ((adv === 0) ? "1" : "2") + "d20" + luck + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
     let rData = {bonus: bon, modifier: mod};
     let roll = new Roll(rStr, rData).evaluate({async:false});
-    if (game.settings.get("grouproll", "averageRolls") && adv === 0) this.avgD20roll(roll);
+    if (adv === 0 && (game.settings.get("grouproll", "averageRolls") == "c" || game.settings.get("grouproll", "averageRolls") == "a")) avgD20roll(roll);
     return roll;
-    }
+}
 
 /**
+ * ! This function is not used in this module at all !
  * Roll an attack roll.
  * @param {Number} adv     1=advantage, -1=disadvantage, 0=normal
  * @param {Number} bon     Situational bonus
