@@ -4,7 +4,7 @@
   "description": "This module rolls skill and ability checks for groups of tokens.",
   "version": "0.7.5",
   "minimumCoreVersion": "0.7.2",
-  "compatibleCoreVersion": "0.8.6",
+  "compatibleCoreVersion": "0.8.7",
   "author": "trdischat",
   "systems": ["dnd5e", "pf2e"],
   "esmodules": ["grouproll.js"],
