@@ -20,6 +20,8 @@ export const registerSettings = function () {
         },
         default: "n",
         config: true,
-        onChange: s => {}
+        onChange: s => {
+            location.reload();
+        }
     });
 }
