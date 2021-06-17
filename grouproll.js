@@ -83,15 +83,12 @@ Hooks.once('ready', function () {
         if (roll.options.advantageMode === 0) {
             switch (game.settings.get("grouproll", "averageRolls")) {
                 case "c":
-                    console.log("grouproll | Average Checks and Saves");
                     if (rollType[2]) this.grouprollAverage(roll);
                     break;
                 case "a":
-                    console.log("grouproll | Average Attacks, Checks and Saves");
                     if (rollType[2] || rollType[3]) this.grouprollAverage(roll);
                     break;
                 default:
-                    console.log("grouproll | No Roll Averaging");
             };
         }
 
