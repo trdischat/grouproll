@@ -1,3 +1,5 @@
+const debouncedReload = debounce(() => window.location.reload(), 100);
+
 export const registerSettings = function () {
     game.settings.register("grouproll", "passfail", {
         name: "Pass or Fail",
@@ -20,8 +22,6 @@ export const registerSettings = function () {
         },
         default: "n",
         config: true,
-        onChange: s => {
-            location.reload();
-        }
+        onChange: debouncedReload
     });
 }
