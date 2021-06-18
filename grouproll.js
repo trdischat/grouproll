@@ -9,7 +9,7 @@ import {
 } from "./module/apps.js";
 import { avgD20roll, debugLog } from "./module/lib.js";
 
-CONFIG._tsrmod_debug = true;
+CONFIG._tsrmod_debug = false;
 
 /* ------------------------------------ */
 /* Initialize module					*/
