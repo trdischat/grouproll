@@ -103,12 +103,12 @@ Hooks.once('ready', function () {
                         break;
                     default:
                 };
-            }
+            };
 
             // Return adjusted roll
             return this;
         };
-    }
+    };
 
 });
 
@@ -118,7 +118,7 @@ Hooks.once('ready', function () {
 Hooks.on('getSceneControlButtons', controls => {
 
     // Add Group Roll buttons to UI
-    let tokenButton = controls.find(b => b.name == "token")
+    let tokenButton = controls.find(b => b.name == "token");
     if (tokenButton) {
         tokenButton.tools.push(
             {
@@ -144,6 +144,6 @@ Hooks.on('getSceneControlButtons', controls => {
                 }
             }
         );
-    }
+    };
 
 });
