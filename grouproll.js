@@ -7,7 +7,9 @@ import {
     GroupSkillCheckPF2E,
     GroupSavePF2E
 } from "./module/apps.js";
-import { avgD20roll } from "./module/lib.js";
+import { avgD20roll, debugLog } from "./module/lib.js";
+
+CONFIG._tsrmod_debug = true;
 
 /* ------------------------------------ */
 /* Initialize module					*/
@@ -81,11 +83,10 @@ Hooks.once('ready', function () {
 
                 // Use the flavor to identify the roll type
                 const rollType = this.options.flavor.match(CONFIG._grouproll_module_matchrolls);
-
-                // ! Uncomment next three lines to debug detection of roll types when adding new languages !
-                // if (rollType[1]) console.log("grouproll | Death Saving Throw");
-                // else if (rollType[2]) console.log("grouproll | Check or Save");
-                // else if (rollType[3]) console.log("grouproll | Attack Roll");
+                // Debug detection of roll types when adding new languages
+                if (rollType[1]) debugLog("grouproll", rollType[1] + " = Death Saving Throw");
+                else if (rollType[2]) debugLog("grouproll", rollType[2] + " = Check or Save");
+                else if (rollType[3]) debugLog("grouproll", rollType[3] + " = Attack Roll");
 
                 // Average normal d20 rolls only for selected roll types
                 switch (game.settings.get("grouproll", "averageRolls")) {

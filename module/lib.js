@@ -1,4 +1,13 @@
 /**
+ * Output message to console if debug flag is true
+ * @param {String} module    Name of software module
+ * @param {String} message   Debug message
+ */
+export function debugLog(module, message) {
+    if (CONFIG._tsrmod_debug) console.log(module + " | " + message);
+}
+
+/**
  * Alternate median function that does not average the two middle values
  * @param {Array} Number   Roll results to evaluate
  * @return {Number}        "Median" roll
@@ -26,6 +35,8 @@ export function avgD20roll(d20Roll) {
     }
     d20Roll._total = d20Roll._total + newTotal - oldTotal;
     if (isNewerVersion('0.8.0', game.data.version)) d20Roll.results[0] = newTotal;
+    debugLog("avgD20roll", "Old Total: " + oldTotal);
+    debugLog("avgD20roll", "New Total: " + newTotal);
 }
 
 /**
