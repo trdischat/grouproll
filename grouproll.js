@@ -60,8 +60,8 @@ Hooks.once('ready', function () {
         CONFIG._grouproll_module_advantageStatus[-1].label = "Misfortune";
     };
 
-    // Only insert code into dnd5e system if roll averaging is enabled in grouproll module
-    if (game.settings.get("grouproll", "averageRolls") != "n") {
+    // Only insert code into D&D 5e system if roll averaging is enabled in grouproll module
+    if (game.system.id === "dnd5e" && game.settings.get("grouproll", "averageRolls") != "n") {
 
         // Regex for matching roll types
         CONFIG._grouproll_module_matchrolls = new RegExp(
