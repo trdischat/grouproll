@@ -70,33 +70,37 @@ Hooks.once('ready', function () {
             game.i18n.localize("GRTYPE.Tool") + ")|(" +
             game.i18n.localize("GRTYPE.Attack") + ")");
 
-        // Insert d20 roll averaging function into dnd5e system
+        // Insert custom d20 roll averaging function into dnd5e system
         CONFIG.Dice.D20Roll.prototype.grouprollAverage = avgD20roll;
         CONFIG.Dice.D20Roll.prototype.grouprollEvaluate = Roll.prototype.evaluate;
-        CONFIG.Dice.D20Roll.prototype.evaluate = function ({ minimize = false, maximize = false, async } = {}) {
-            let roll = this.grouprollEvaluate(minimize, maximize, async);
-            const rollType = roll.options.flavor.match(CONFIG._grouproll_module_matchrolls);
+        CONFIG.Dice.D20Roll.prototype.evaluate = async function ({ minimize = false, maximize = false, async } = {}) {
+            await this.grouprollEvaluate({ minimize, maximize, async: true });
 
-            // ! Uncomment next three lines to debug detection of roll types when adding languages !
-            // if (rollType[1]) console.log("grouproll | Death Saving Throw");
-            // else if (rollType[2]) console.log("grouproll | Check or Save");
-            // else if (rollType[3]) console.log("grouproll | Attack Roll");
+            // Do not use averaging for manual rolls, and only for normal 1d20 rolls
+            if (!this.terms[0].options.isManualRoll && this.options.advantageMode === 0 && this.terms[0].faces === 20 && this.terms[0].number === 1) {
 
-            // Average normal d20 rolls only for selected roll types
-            if (roll.options.advantageMode === 0) {
+                // Use the flavor to identify the roll type
+                const rollType = this.options.flavor.match(CONFIG._grouproll_module_matchrolls);
+
+                // ! Uncomment next three lines to debug detection of roll types when adding new languages !
+                // if (rollType[1]) console.log("grouproll | Death Saving Throw");
+                // else if (rollType[2]) console.log("grouproll | Check or Save");
+                // else if (rollType[3]) console.log("grouproll | Attack Roll");
+
+                // Average normal d20 rolls only for selected roll types
                 switch (game.settings.get("grouproll", "averageRolls")) {
                     case "c":
-                        if (rollType[2]) this.grouprollAverage(roll);
+                        if (rollType[2]) this.grouprollAverage(this);
                         break;
                     case "a":
-                        if (rollType[2] || rollType[3]) this.grouprollAverage(roll);
+                        if (rollType[2] || rollType[3]) this.grouprollAverage(this);
                         break;
                     default:
                 };
             }
 
             // Return adjusted roll
-            return roll;
+            return this;
         };
     }
 
