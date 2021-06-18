@@ -52,7 +52,7 @@ export function chkRoll(adv, bon, mod, lucky) {
     let rStr = ((adv === 0) ? "1" : "2") + "d20" + (lucky ? "r1=1" : "") + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
     let rData = { bonus: bon, modifier: mod };
     let roll = new Roll(rStr, rData).evaluate({ async: false });
-    if (adv === 0 && (game.settings.get("grouproll", "averageRolls") == "c" || game.settings.get("grouproll", "averageRolls") == "a")) avgD20roll(roll);
+    if (adv === 0 && (game.settings.get("grouproll", "averageRolls") === "c" || game.settings.get("grouproll", "averageRolls") === "a")) avgD20roll(roll);
     return roll;
 }
 
