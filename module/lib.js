@@ -4,7 +4,7 @@
  * @param {String} message   Debug message
  */
 export function debugLog(module, message) {
-    if (CONFIG._tsrmod_debug) console.log(module + " | " + message);
+    if ((CONFIG._tsrmod_debug && game.user.isGM) || CONFIG._tsrmod_debug === "all") console.log("DEBUG " + module + " | " + message);
 }
 
 /**
