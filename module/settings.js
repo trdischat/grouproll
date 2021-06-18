@@ -8,7 +8,7 @@ export const registerSettings = function () {
         type: Boolean,
         default: false,
         config: true,
-        onChange: s => {}
+        onChange: s => { }
     });
     game.settings.register("grouproll", "averageRolls", {
         name: "Average Rolls (Obscure House Rule)",
