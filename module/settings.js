@@ -11,8 +11,8 @@ export const registerSettings = function () {
         onChange: s => { }
     });
     game.settings.register("grouproll", "averageRolls", {
-        name: "Average Rolls (Obscure House Rule)",
-        hint: "Use the average of 2d20 in place of 1d20 for normal rolls",
+        name: "Average Rolls",
+        hint: "This personal house rule uses the average of 2d20 in place of 1d20 for NORMAL rolls. Outside of the Group Roll app, this setting only applies to the D&D 5e system and is disabled when using the BetterRolls5e module.",
         scope: "world",
         type: String,
         choices: {
