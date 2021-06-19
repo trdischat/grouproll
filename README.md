@@ -1,4 +1,5 @@
 # Group Rolls for D&D 5e (with limited support for Pathfinder 2e)
+
 The primary purpose of this module is to facilitate group ability and skill check rolls per the D&D 5e Player's Handbook, page 175: *"If at least half the group succeeds, the whole group succeeds."*  It also displays the rolls for each individual token, and therefore can be used to roll individual saving throws for an entire groups of tokens at once. It was not intended to be used to automate combat or apply damage. There are far better tools for that, such as [midi-QoL](https://foundryvtt.com/packages/midi-qol).
 
 ## Launching the Application and Selecting Tokens
@@ -30,6 +31,7 @@ The module also has options for (1) outputting roll results as PASS/FAIL checkma
 The module was designed for the D&D 5e system, but will also work for many group rolls in the Pathfinder 2e system.  It will handle all PF2e saving throws, as well as skill checks for player characters.  It will not work properly for skill checks for NPCs in PF2e, and therefore NPCs cannot be selected while the skill check window is open.
 
 ## License
+
 This Foundry VTT module, written by trdischat with major assistance from Atropos, ayan, and KaKaRoTo, is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
 # Appendix: Why Average Normal Rolls?
