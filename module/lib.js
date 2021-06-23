@@ -1,10 +1,28 @@
-/**
- * Output message to console if debug flag is true
- * @param {String} module    Name of software module
- * @param {String} message   Debug message
- */
-export function debugLog(module, message) {
-    if ((CONFIG._tsrmod_debug && game.user.isGM) || CONFIG._tsrmod_debug === "all") console.log("DEBUG " + module + " | " + message);
+export const MODULE_ID = 'grouproll';
+
+/** Class to send debug messages to console if enabled in DevMode module. */
+export class debug {
+    /**
+     * Getter tests if debug is enabled.
+     * @return {boolean}        True if debug is enabled.
+     */
+    static get enabled() {
+        return window.DEV?.getPackageDebugValue(MODULE_ID);
+    }
+    /**
+     * Helper function to output debug messages to console if debug is enabled.
+     * @param {boolean} force    True = output always, False = output only if debugging enabled.
+     * @param  {...any} args     Arguments to pass through to console.log().
+     */
+    static log(force, ...args) {
+        try {
+            if (force || this.enabled) {
+                console.log(MODULE_ID, '|', ...args);
+            }
+        } catch (e) {
+            console.log(`ERROR: ${MODULE_ID} debug logging function failed`, e);
+        }
+    }
 }
 
 /**
@@ -35,8 +53,8 @@ export function avgD20roll(d20Roll) {
     }
     d20Roll._total = d20Roll._total + newTotal - oldTotal;
     if (isNewerVersion('0.8.0', game.data.version)) d20Roll.results[0] = newTotal;
-    debugLog("avgD20roll", "Old Total: " + oldTotal);
-    debugLog("avgD20roll", "New Total: " + newTotal);
+    debug.log(false, "avgD20roll-Old Total: " + oldTotal);
+    debug.log(false, "avgD20roll-New Total: " + newTotal);
 }
 
 /**
