@@ -6,7 +6,7 @@
   "minimumCoreVersion": "0.7.2",
   "compatibleCoreVersion": "0.8.8",
   "author": "trdischat",
-  "systems": ["dnd5e", "pf2e"],
+  "system": ["dnd5e", "pf2e"],
   "esmodules": ["main.js"],
   "styles": ["./css/grouproll.css"],
   "languages": [
