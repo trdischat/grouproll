@@ -65,6 +65,7 @@ Hooks.once('ready', function () {
 
     // Only insert averaging code if roll averaging is enabled in grouproll module
     if (averagingOK && game.settings.get("grouproll", "averageRolls") !== "n") {
+        debug.log(false, "Averaging Enabled for d20 rolls");
 
         // Regex for matching roll types
         CONFIG._grouproll_module_matchrolls = new RegExp(
