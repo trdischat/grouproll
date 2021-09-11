@@ -36,8 +36,8 @@ export function midValue(rolls) {
 }
 
 /**
- * Substitute average of two d20 rolls for a single d20 roll.  2d10+1-1d2
- * is statistically equivalent and easier than actual averaging.
+ * Substitute average of two d20 rolls for a single d20 roll.
+ * 2d10+1-1dc is statistically equivalent and easier than actual averaging.
  * @param {Roll} d20Roll    Roll of 1d20 to be replaced
  */
 export function avgD20roll(d20Roll) {
@@ -54,8 +54,8 @@ export function avgD20roll(d20Roll) {
     }
     d20Roll._total = d20Roll._total + newTotal - oldTotal;
     if (isNewerVersion('0.8.0', game.data.version)) d20Roll.results[0] = newTotal;
-    debug.log(false, "avgD20roll | Old Total: " + oldTotal);
-    debug.log(false, "avgD20roll | New Total: " + newTotal);
+    debug.log(false, "avgD20roll | Original Roll: " + oldTotal);
+    debug.log(false, "avgD20roll | Averaged Roll: " + newTotal);
 }
 
 /**
