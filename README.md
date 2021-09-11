@@ -44,7 +44,7 @@ When it comes to skill checks, ability checks, and saving throws, my general imp
 
 The key difference between normal 1d20 rolls and rolling with either advantage or disadvantage is that a single die produces a completely flat distribution of results, while two or more dice create a distribution of probabilities that is skewed in a particular direction. As you add more dice to the roll, the distribution of outcomes approaches the so-called "normal" distribution. As shown in the charts below, advantage and disadvantage rolls are strongly skewed to the top or bottom of the range of outcomes, with 75% of the results of an advantage roll falling between 11-20, and 75% of the results of a disadvantage roll falling between 1-10. In contrast, a standard 1d20 roll yields a completely flat distribution with no particular direction to it. I realized that if I used the average of two d20 rolls in place of a single d20, the distribution had a strong bias towards the middle of the range, with 75% of the results falling between 6-15.
 
-|Disadvantage Roll (2d20kh)|Advantage Roll (2d20kh)|
+|Disadvantage Roll (2d20kl)|Advantage Roll (2d20kh)|
 |:----:|:----:|
 |![Disadvantage Roll](images/Roll_Disadvantage.jpg)|![Advantage Roll](images/Roll_Advantage.jpg)|
 |75% between 1 and 10|75% between 11 and 20|
@@ -60,8 +60,14 @@ The implication of using an average of 2d20 is that a character with a +1 bonus 
 
 I should note that I personally decided not to use the average of 2d20 for attack rolls. The reason for this different treatment is that combat is inherently more chaotic, and crits and fumbles are an important part of the drama of combat. Using the average of 2d20 for attack rolls would reduce the odds of rolling a crit or a fumble from 5% down to a mere 0.5%. I am not a big fan of automatic success or failure on checks and saves, and thus don't mind this lower probability of rolling a 1 or a 20 when applied to skill and ability rolls.  So my personal choice is to use average rolls for checks and saves, but traditional 1d20 rolls for normal attack rolls.
 
-In closing, it needs to be said that this rule is not very practical if you are rolling physical dice. There are lots of ways to do it. I started off by rolling two d20 and computing the average roll as `ROUNDUP(1d20/2)+ROUNDDOWN(1d20/2)`. I found that trying to do this in my head while rolling actual dice was painful. I then realized that the you could get the exact same probabilities by rolling 2d10 and subtracting a coin flip (heads is 1, tails is 0). So my current approach is to compute the average in Foundry using a roll of `2d10-1dc`.  Even this requires a bit too much mental gymnastics when rolling actual dice. So this rule really only makes sense if a computer does all the math for you in the background. And that is ultimately why I included it for my own use in this module. For those of you who made it this far, thanks for listening.
+In closing, it needs to be said that this rule can be a bit challenging to use if you are rolling physical dice. There are lots of ways to do it. I started off by rolling two d20 and computing the average roll as `ROUNDUP(1d20/2)+ROUNDDOWN(1d20/2)`. I found that trying to do this in my head while rolling actual dice was painful. I then realized that the you could get the exact same probabilities by rolling 2d10 and subtracting a coin flip (heads is 1, tails is 0). Even this requires a bit too much mental gymnastics when rolling actual dice. So my current approach is to compute the average in Foundry using a roll of `2d10-1dc`. Having a computer do all the math for you in the background is pretty nice. And that is ultimately why I included it for my own use in this module.
 
 |Rules as Written|My House Rules|
 |:----:|:----:|
 |![Standard Rules](images/Rolls_Standard.jpg)|![House Rules](images/Rolls_House.jpg)|
+
+POSTSCRIPT: I subsequently hit upon a fairly elegant way to roll averages with physical dice using two old-school d20s that are numbered 0-9 twice. Just leave a single zero on one of the two dice uninked. Treat all three of the inked zeros as 10, but treat the single uninked zero as a true 0. Now roll both dice as 2d10, add the results of the two dice, with inked zeros counting as 10 and the single uninked zero treated as 0 (i.e., ignore it). The example roll below is 14. If instead we rolled the uninked zero from the left die and the four on the right die, the result would be 4 rather than 14.  Having a single 0 and a single 10 on the left die yields the exact same result as subtracting a coin flip from 1d10. The beauty of this method is that you just add the two dice; no mental gymnastics required!
+
+![2d10](images/2d10.jpg)
+
+For those of you who made it this far, thanks for listening.
