@@ -42,7 +42,8 @@ export function midValue(rolls) {
  */
 export function avgD20roll(d20Roll) {
     let oldTotal = d20Roll.terms[0].total;
-    let avgRoll = new Roll(`2d10-1dc`).evaluate({ async: false });
+    let avgRoll = new Roll(`2d10-1dc`);
+    avgRoll.evaluate({ async: false });
     let newTotal = avgRoll.total;
     if (d20Roll.terms[0].formula.includes("r1=1") && newTotal == 1) {
         let altRoll = avgRoll.reroll();
@@ -69,7 +70,8 @@ export function avgD20roll(d20Roll) {
 export function chkRoll(adv, bon, mod, lucky) {
     let rStr = ((adv === 0) ? "1" : "2") + "d20" + (lucky ? "r1=1" : "") + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
     let rData = { bonus: bon, modifier: mod };
-    let roll = new Roll(rStr, rData).evaluate({ async: false });
+    let roll = new Roll(rStr, rData);
+    roll.evaluate({ async: false });
     if (adv === 0 && (game.settings.get("grouproll", "averageRolls") === "c" || game.settings.get("grouproll", "averageRolls") === "a")) avgD20roll(roll);
     return roll;
 }
@@ -86,7 +88,8 @@ export function chkRoll(adv, bon, mod, lucky) {
 export function hitRoll(adv, bon, mod, lucky) {
     let rStr = ((adv === 0) ? "1" : "2") + "d20" + (lucky ? "r1=1" : "") + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
     let rData = { bonus: bon, modifier: mod };
-    return new Roll(rStr, rData).evaluate({ async: false });
+    let roll = new Roll(rStr, rData);
+    return roll.evaluate({ async: false });
 }
 
 /**
@@ -99,5 +102,6 @@ export function hitRoll(adv, bon, mod, lucky) {
 export function chkPassive(adv, bon, mod) {
     var rStr = "@base + @bonus + @modifier";
     var rData = { base: (adv * 5) + 10, bonus: bon, modifier: mod };
-    return new Roll(rStr, rData).evaluate({ async: false });
+    let roll = new Roll(rStr, rData);
+    return roll.evaluate({ async: false });
 }
