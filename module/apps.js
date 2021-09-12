@@ -20,7 +20,7 @@ class GroupRollApp extends Application {
 
     static get defaultOptions() {
         const options = super.defaultOptions;
-        options.width = 550;
+        options.width = 600;
         options.height = "auto";
         options.resizable = false;
         return options;
