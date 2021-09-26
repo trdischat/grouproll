@@ -12,7 +12,7 @@ export const registerSettings = function () {
     });
     game.settings.register("grouproll", "send2chat", {
         name: "Output Rolls to Chat",
-        hint: "The default behavior when this option is set to false is to hide rolls from the chat window; Shift-Click the Roll button to send rolls to chat.  To reverse this behavior, set this option to true to automatically output all rolls to the chat window; Shift-Click the Roll button to hide rolls from chat.",
+        hint: "The default behavior when this option is set to false is to hide rolls from the Chat log; Shift-Click the Roll button to send rolls to Chat.  To reverse this behavior, set this option to true to automatically output all rolls to the Chat log; Shift-Click the Roll button to hide rolls from Chat.",
         scope: "world",
         type: Boolean,
         default: false,

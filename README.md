@@ -4,7 +4,7 @@ The primary purpose of this module is to facilitate group ability and skill chec
 
 ## Launching the Application and Selecting Tokens
 
-The module adds two buttons to the Token menu on the left of the canvas. Group skill and ability checks can be launched by selecting tokens, then clicking the relevant group roll button. The window can be left open, and it will update automatically if the token selection is changed.  The "PCs" button will select all player character tokens on the canvas.  The "Pass" button selects only tokens with successful rolls, while the "Fail" button selects only tokens with failed rolls.  Individual tokens can be deselected by clicking the "x" next to the token name.
+The module adds two buttons to the Token menu on the left of the canvas. Group skill and ability checks can be launched by selecting tokens, then clicking the relevant group roll button. The window can be left open, and it will update automatically if the token selection is changed.  The "PCs" button will select all player character tokens on the canvas.  The "Pass" button toggles the display between all selected tokens or only those tokens with successful rolls, while the "Fail" button toggles the display between all selected tokens or only those tokens with failed rolls.  Individual tokens can be deselected by clicking the "x" next to the token name.
 
 ![App](images/App.jpg)
 
@@ -18,13 +18,19 @@ Finally, there is a "Passive" button to run passive skill or ability checks for 
 
 ## Displaying the Results
 
-Normally, roll results are only displayed in the Group Roll application window, which is only visible to the GM.  However, if the GM holds down the "Shift" key while clicking the Roll button, the results of the new roll will also be displayed in the Chat Log, where they are visible to the players.  If the GM holds down the "Ctrl" key while clicking the Roll button, the results of the previous roll will be retained.  That means that holding down "Ctrl-Shift" while clicking the Roll button displays the previous roll results in the Chat Log without rolling new rolls.  As shown below, clicking on the Group Roll result bar in the Chat Log reveals the details for each token's rolls.  Passive checks cannot be output to the Chat Log since they are not actual rolls.
+Normally, roll results are only displayed in the Group Roll application window, which is only visible to the GM.  However, if the GM holds down the "Shift" key while clicking the Roll button, the results of the new roll will also be displayed in the Chat Log, where they are visible to the players (this behavior can be inverted in the module configuration settings).  If the GM holds down the "Ctrl" key while clicking the Roll button, the results of the previous roll will be retained.  That means that holding down "Ctrl-Shift" while clicking the Roll button displays the previous roll results in the Chat Log without rolling new rolls.  As shown below, clicking on the Group Roll result bar in the Chat Log reveals the details for each token's rolls.  Passive checks cannot be output to the Chat Log since they are not actual rolls.
 
 ![Chat](images/Chat.jpg)
 
 ## Additional Options
 
-The module also has options for (1) outputting roll results as PASS/FAIL checkmark icons instead of numbers; and (2) a personal house rule of mine that uses the average of 2d20 in place of normal 1d20 rolls (detailed explanation below).  Both of these options are disabled by default, but can be individually enabled in the module configuration settings.
+The module also has the following configuration options:
+
+1. Output roll results as PASS/FAIL checkmark icons instead of numbers.
+2. Output roll results to the Chat log automatically. If the GM holds down the "Shift" key while clicking the Roll button, output to the Chat log is suppressed. Setting this option to True reverses the normal behavior for displaying roll results in the Chat log, as described in the previous section.
+3. Enable a personal house rule of mine that uses the average of 2d20 in place of normal 1d20 rolls (detailed explanation below).
+
+All of these options are disabled by default, but they can be individually enabled in the module configuration settings.
 
 ## System Compatibility
 
