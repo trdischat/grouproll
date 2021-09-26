@@ -11,6 +11,7 @@ class GroupRollApp extends Application {
         this.flavor = "";
         this.groupOutcome = "";
         this.groupCheckIcon = "";
+        this.tok2Show = "all";
         // Update dialog display on changes to token selection
         Hooks.on("controlToken", async (object, controlled) => {
             let x = await canvas.tokens.controlled;
@@ -45,8 +46,9 @@ class GroupRollApp extends Application {
     }
 
     async sendRollsToChat() {
-        if (this.tokList.reduce((notready, t) => notready = (t.roll.dice && t.roll.dice.length > 0) ? notready : true, false)) return;
-        let tokRolls = this.tokList.map(t => {
+        let tokChatList = this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) );
+        if (tokChatList.reduce((notready, t) => notready = (t.roll.dice && t.roll.dice.length > 0) ? notready : true, false)) return;
+        let tokRolls = tokChatList.map(t => {
             let d = t.roll.dice[0];
             return {
                 name: t.name,
@@ -107,7 +109,7 @@ class GroupRollApp extends Application {
                 title: "Select only tokens with successful rolls",
                 icon: "fas fa-check",
                 onclick: ev => {
-                    this.tokList.filter(t => t.nat !== 'grm-success').map(t => canvas.tokens.get(t.id).release());
+                    this.tok2Show = this.tok2Show === "pass" ? "all" : "pass";
                     this.render();
                 }
             },
@@ -117,7 +119,7 @@ class GroupRollApp extends Application {
                 title: "Select only tokens with failed rolls",
                 icon: "fas fa-times",
                 onclick: ev => {
-                    this.tokList.filter(t => (t.nat !== 'grm-fumble') || !(t.roll instanceof Roll)).map(t => canvas.tokens.get(t.id).release());
+                    this.tok2Show = this.tok2Show === "fail" ? "all" : "fail";
                     this.render();
                 }
             },
@@ -274,7 +276,7 @@ export class GroupSkillCheck extends GroupRollApp {
             }
         }
         return {
-            tok: this.tokList,
+            tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             skl: this.skillName,
             abl: this.abilityName,
             skills: CONFIG.DND5E.skills,
@@ -373,7 +375,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             }
         }
         return {
-            tok: this.tokList,
+            tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             sav: this.saveRoll,
             abl: this.abilityName,
             abilities: CONFIG.DND5E.abilities,
@@ -498,7 +500,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             }
         }
         return {
-            tok: this.tokList,
+            tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             skl: this.skillName,
             abl: this.abilityName,
             skills: this.allSkills,
@@ -617,7 +619,7 @@ export class GroupSavePF2E extends GroupRollApp {
             }
         }
         return {
-            tok: this.tokList,
+            tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             abl: this.abilityName,
             // DEPRECATED for pf2e before v1.13
             abilities: isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves : Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(([k, v]) => [k, game.i18n.localize(v)])),
