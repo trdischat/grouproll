@@ -141,11 +141,11 @@ class GroupRollApp extends Application {
             {
                 label: "Roll",
                 class: "grm-btn-roll",
-                title: "Roll for all selected tokens\nShift: Output rolls to chat\nCtrl: Keep same rolls",
+                title: game.settings.get("grouproll", "send2chat") ? "Roll for all selected tokens\nShift: Hide rolls from chat\nCtrl: Keep same rolls" : "Roll for all selected tokens\nShift: Output rolls to chat\nCtrl: Keep same rolls",
                 icon: "fas fa-dice-d20",
                 onclick: ev => {
                     if (!ev.ctrlKey) this.doGroupCheck();
-                    if (ev.shiftKey) this.sendRollsToChat();
+                    if (ev.shiftKey !== game.settings.get("grouproll", "send2chat")) this.sendRollsToChat();
                 }
             }
         ].concat(buttons);
