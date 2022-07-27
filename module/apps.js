@@ -12,6 +12,7 @@ class GroupRollApp extends Application {
         this.groupOutcome = "";
         this.groupCheckIcon = "";
         this.tok2Show = "all";
+        this.isV10 = trRollLib.minGen(10);
         // Update dialog display on changes to token selection
         Hooks.on("controlToken", async (object, controlled) => {
             let x = await canvas.tokens.controlled;
@@ -290,13 +291,15 @@ export class GroupSkillCheck extends GroupRollApp {
 
     getTokenList(skillName, abilityName) {
         return canvas.tokens.controlled.map(t => {
+            const dataPath = this.isV10 ? t.actor.system : t.actor.data.data;
+            const flagPath = this.isV10 ? t.actor.flags : t.actor.data.flags;
             if (this.mstList[t.id] === undefined) this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } };
             let m = this.mstList[t.id];
-            let sklmod = t.actor.data.data.skills[skillName].total;
-            let abilityDef = t.actor.data.data.skills[skillName].ability;
-            if (abilityName !== abilityDef) sklmod = sklmod - t.actor.data.data.abilities[abilityDef].mod + t.actor.data.data.abilities[abilityName].mod;
-            let tokRace = t.actor.data.data.details.race;
-            let trtLuck = t.actor.data.flags.dnd5e ? (t.actor.data.flags.dnd5e.halflingLucky ? true : false) : false;
+            let sklmod = dataPath.skills[skillName].total;
+            let abilityDef = dataPath.skills[skillName].ability;
+            if (abilityName !== abilityDef) sklmod = sklmod - dataPath.abilities[abilityDef].mod + dataPath.abilities[abilityName].mod;
+            let tokRace = dataPath.details.race;
+            let trtLuck = flagPath.dnd5e ? (flagPath.dnd5e.halflingLucky ? true : false) : false;
             let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
@@ -388,11 +391,13 @@ export class GroupAbilityCheck extends GroupRollApp {
 
     getTokenList(saveRoll, abilityName) {
         return canvas.tokens.controlled.map(t => {
+            const dataPath = this.isV10 ? t.actor.system : t.actor.data.data;
+            const flagPath = this.isV10 ? t.actor.flags : t.actor.data.flags;
             if (this.mstList[t.id] === undefined) this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } };
             let m = this.mstList[t.id];
-            let ablmod = saveRoll ? t.actor.data.data.abilities[abilityName].save : t.actor.data.data.abilities[abilityName].mod;
-            let tokRace = t.actor.data.data.details.race;
-            let trtLuck = t.actor.data.flags.dnd5e ? (t.actor.data.flags.dnd5e.halflingLucky ? true : false) : false;
+            let ablmod = saveRoll ? dataPath.abilities[abilityName].save : dataPath.abilities[abilityName].mod;
+            let tokRace = dataPath.details.race;
+            let trtLuck = flagPath.dnd5e ? (flagPath.dnd5e.halflingLucky ? true : false) : false;
             let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
@@ -515,9 +520,10 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
 
     getTokenList(skillName, abilityName) {
         return canvas.tokens.controlled.map(t => {
+            const dataPath = this.isV10 ? t.actor.system : t.actor.data.data;
             if (this.mstList[t.id] === undefined) this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } };
             let m = this.mstList[t.id];
-            let prcData = t.actor.data.data.attributes.perception;
+            let prcData = dataPath.attributes.perception;
             let tokenSkills = Object.assign({
                 prc: {
                     value: prcData.value,
@@ -525,13 +531,13 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
                     armor: 0,
                     rank: prcData.rank,
                     item: prcData.item,
-                    mod: t.actor.data.data.abilities[prcData.ability].mod,
+                    mod: dataPath.abilities[prcData.ability].mod,
                     breakdown: prcData.breakdown
                 }
-            }, t.actor.data.data.skills);
+            }, dataPath.skills);
             let sklmod = tokenSkills[skillName].value;
             let abilityDef = tokenSkills[skillName].ability;
-            if (abilityName !== abilityDef) sklmod = sklmod - t.actor.data.data.abilities[abilityDef].mod + t.actor.data.data.abilities[abilityName].mod;
+            if (abilityName !== abilityDef) sklmod = sklmod - dataPath.abilities[abilityDef].mod + dataPath.abilities[abilityName].mod;
             let lucky = false;
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
@@ -632,9 +638,10 @@ export class GroupSavePF2E extends GroupRollApp {
 
     getTokenList(abilityName) {
         return canvas.tokens.controlled.map(t => {
+            const dataPath = this.isV10 ? t.actor.system : t.actor.data.data;
             if (this.mstList[t.id] === undefined) this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } };
             let m = this.mstList[t.id];
-            let ablmod = t.actor.data.data.saves[abilityName].value;
+            let ablmod = dataPath.saves[abilityName].value;
             let lucky = false;
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;

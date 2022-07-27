@@ -1,5 +1,23 @@
 export const MODULE_ID = 'grouproll';
 
+/**
+ * Helper function to test game generation
+ * @param {Number} val   Minimum generation (major version number)
+ * @returns {Boolean}    True if game generation equals or exceed minimum
+ */
+export function minGen(val) {
+    return val <= ( game.release?.generation || parseInt((game.version || game.data.version).split(".")[1]) );
+} 
+
+/**
+ * Helper function to test game version
+ * @param {String} val   Minimum version (full version string)
+ * @returns {Boolean}    True if game version equals or exceeds minimum
+ */
+export function minVer(val) {
+    return !(isNewerVersion(val, game.version || game.data.version));
+} 
+
 /** Class to send debug messages to console if enabled in DevMode module. */
 export class debug {
   /**
@@ -53,7 +71,7 @@ export function avgD20roll(d20Roll) {
         d20Roll.terms[0].results = [{ result: newTotal, active: true }];
     }
     d20Roll._total = d20Roll._total + newTotal - oldTotal;
-    if (isNewerVersion('0.8.0', game.version || game.data.version)) d20Roll.results[0] = newTotal;
+    if (!(minVer('0.8.0'))) d20Roll.results[0] = newTotal;
     debug.log(false, "avgD20roll | Original Roll: " + oldTotal);
     debug.log(false, "avgD20roll | Averaged Roll: " + newTotal);
 }
