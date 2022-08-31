@@ -147,7 +147,7 @@ Hooks.on('getSceneControlButtons', controls => {
                     icon: "fas fa-user-check",
                     visible: game.user.isGM,
                     onClick: () => {
-                        tokenButton.activeTool = "select";
+                        ui.controls.initialize({tool: "select"});
                         if (game.system.id === "pf2e") return new GroupSkillCheckPF2E().render(true);
                         else return new GroupSkillCheck().render(true);
                     }
@@ -158,7 +158,7 @@ Hooks.on('getSceneControlButtons', controls => {
                     icon: "fas fa-user-shield",
                     visible: game.user.isGM,
                     onClick: () => {
-                        tokenButton.activeTool = "select";
+                        ui.controls.initialize({tool: "select"});
                         if (game.system.id === "pf2e") return new GroupSavePF2E().render(true);
                         else return new GroupAbilityCheck().render(true);
                     }
