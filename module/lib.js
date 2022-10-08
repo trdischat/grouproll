@@ -18,6 +18,15 @@ export function minVer(val) {
     return !(isNewerVersion(val, game.version || game.data.version));
 } 
 
+/**
+ * Helper function to test game system version
+ * @param {String} val   Minimum version (full version string)
+ * @returns {Boolean}    True if game system version equals or exceeds minimum
+ */
+ export function minSys(val) {
+    return !(isNewerVersion(val, game.system.version || game.system.data.version));
+} 
+
 /** Class to send debug messages to console if enabled in DevMode module. */
 export class debug {
   /**
