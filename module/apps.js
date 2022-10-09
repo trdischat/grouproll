@@ -252,7 +252,7 @@ export class GroupSkillCheck extends GroupRollApp {
         super(options);
         this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
         this.abilityName = CONFIG._grouproll_module_skillability || "dex";
-        this.flavor = CONFIG.DND5E.skills[this.skillName] + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
+        this.flavor = (CONFIG.DND5E.skills[this.skillName].label || CONFIG.DND5E.skills[this.skillName]) + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
         this.dc = "";
     }
 
@@ -280,7 +280,7 @@ export class GroupSkillCheck extends GroupRollApp {
             tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             skl: this.skillName,
             abl: this.abilityName,
-            skills: CONFIG.DND5E.skills,
+            skills: trRollLib.minSys('2.0.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.skills).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.skills,
             abilities: CONFIG.DND5E.abilities,
             dc: this.dc,
             rollresult: this.groupRoll,
@@ -331,7 +331,7 @@ export class GroupSkillCheck extends GroupRollApp {
             else if (this.abilityName !== newAbility) this.abilityName = newAbility;
             CONFIG._grouproll_module_skillcheck = this.skillName;
             CONFIG._grouproll_module_skillability = this.abilityName;
-            this.flavor = CONFIG.DND5E.skills[this.skillName] + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
+            this.flavor = (CONFIG.DND5E.skills[this.skillName].label || CONFIG.DND5E.skills[this.skillName]) + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
             this.render();
         });
 
