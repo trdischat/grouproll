@@ -24,8 +24,7 @@ class GroupRollApp extends Application {
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.width = 600;
-        options.height = "auto";
-        options.resizable = false;
+        options.resizable = true;
         return options;
     }
 
@@ -168,53 +167,6 @@ class GroupRollApp extends Application {
             }
         ].concat(buttons);
         return buttons
-    }
-
-    /**
-    * Render the outer application wrapper
-    * @return {Promise.<HTMLElement>}   A promise resolving to the constructed jQuery object
-    * @private
-    */
-    async _renderOuter() {
-
-        // Gather basic application data
-        const classes = this.options.classes;
-        const windowData = {
-            id: this.id,
-            classes: classes.join(" "),
-            appId: this.appId,
-            title: this.title,
-            headerButtons: this._getHeaderButtons()
-        };
-
-        // Render the template and return the promise
-        let html = await renderTemplate("modules/grouproll/templates/group-app-window.html", windowData);
-        html = $(html);
-
-        // Activate header button click listeners after a slight timeout to prevent immediate interaction
-        setTimeout(() => {
-            html.find(".header-button").click(event => {
-                event.preventDefault();
-                const button = windowData.headerButtons.find(b => event.currentTarget.classList.contains(b.class));
-                button.onclick(event);
-            });
-        }, 500);
-
-        // Make the outer window draggable
-        const header = html.find('header')[0];
-        new Draggable(this, html, header, this.options.resizable);
-
-        // Make the outer window minimizable
-        if (this.options.minimizable) {
-            header.addEventListener('dblclick', this._onToggleMinimize.bind(this));
-        }
-
-        // Set the outer frame z-index
-        if (Object.keys(ui.windows).length === 0) _maxZ = 100 - 1;
-        html.css({ zIndex: Math.min(++_maxZ, 9999) });
-
-        // Return the outer frame
-        return html;
     }
 
     activateListeners(html) {
