@@ -16,6 +16,7 @@ class GroupRollApp extends Application {
         // Update dialog display on changes to token selection
         Hooks.on("controlToken", async (object, controlled) => {
             let x = await canvas.tokens.controlled;
+            this.commitValues();
             this.render();
         });
     }
@@ -28,22 +29,32 @@ class GroupRollApp extends Application {
         return options;
     }
 
-    doGroupCheck() {
-        this.tokList = this.tokList.map(t => {
-            t.roll = trRollLib.chkRoll(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
-            this.mstList[t.id].roll = t.roll;
-            return t;
-        });
+    commitValues() {
+        // Ensure the DC and bonus values from the form are committed to the object
+        this.dc = this.element.find('input[name="input-dc"]').val();
+
+        for (const t of this.tokList) {
+            const value = this.element.find(`input[name="bon-${t.id}"]`).val();
+            if (value)
+                this.mstList[t.id].bon = t.bon = value;
+        }
+    }
+
+    doCheck(rollFunc) {
+        this.commitValues();
+
+        for (const t of this.tokList)
+            this.mstList[t.id].roll = t.roll = rollFunc(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
+
         this.render();
     }
 
+    doGroupCheck() {
+        this.doCheck(trRollLib.chkRoll);
+    }
+
     doPassiveCheck() {
-        this.tokList = this.tokList.map(t => {
-            t.roll = trRollLib.chkPassive(Number(t.adv), Number(t.bon), Number(t.mod));
-            this.mstList[t.id].roll = t.roll;
-            return t;
-        });
-        this.render();
+        this.doCheck(trRollLib.chkPassive);
     }
 
     async sendRollsToChat() {
@@ -101,6 +112,7 @@ class GroupRollApp extends Application {
                 onclick: ev => {
                     canvas.tokens.releaseAll();
                     canvas.tokens.ownedTokens.filter(t => t.actor && t.actor.hasPlayerOwner).map(t => t.control({ updateSight: true, releaseOthers: false }));
+                    this.commitValues();
                     this.render();
                 }
             },
@@ -111,6 +123,7 @@ class GroupRollApp extends Application {
                 icon: "fas fa-check",
                 onclick: ev => {
                     this.tok2Show = this.tok2Show === "pass" ? "all" : "pass";
+                    this.commitValues();
                     this.render();
                 }
             },
@@ -121,6 +134,7 @@ class GroupRollApp extends Application {
                 icon: "fas fa-times",
                 onclick: ev => {
                     this.tok2Show = this.tok2Show === "fail" ? "all" : "fail";
+                    this.commitValues();
                     this.render();
                 }
             },
@@ -131,6 +145,7 @@ class GroupRollApp extends Application {
                 icon: "fas fa-undo",
                 onclick: ev => {
                     canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } });
+                    this.commitValues();
                     this.render();
                 }
             },
@@ -205,16 +220,6 @@ class GroupRollApp extends Application {
     activateListeners(html) {
         super.activateListeners(html);
 
-        // Change roll bonus
-        html.find('.bonus-value').change(event => {
-            this.tokList = this.tokList.map(t => {
-                t.bon = html.find('input[name="bon-' + t.id + '"]').val();
-                this.mstList[t.id].bon = t.bon;
-                return t;
-            });
-            this.render();
-        });
-
         // Toggle advantage status
         html.find('.advantage-mode').click(event => {
             event.preventDefault();
@@ -222,11 +227,11 @@ class GroupRollApp extends Application {
             let level = Number(field.val());
             let newLevel = (level === 1) ? -1 : level + 1;
             field.val(newLevel);
-            this.tokList = this.tokList.map(t => {
-                t.adv = html.find('input[name="adv-' + t.id + '"]').val();
+            for (const t of this.tokList) {
+                t.adv = html.find(`input[name="adv-${t.id}"]`).val();
                 this.mstList[t.id].adv = t.adv;
-                return t;
-            });
+            };
+            this.commitValues();
             this.render();
         });
 
@@ -238,6 +243,7 @@ class GroupRollApp extends Application {
             canvas.tokens.controlled.map(t => {
                 if (t.id === tokID) t.release();
             });
+            this.commitValues();
             this.render();
         });
 
@@ -332,6 +338,7 @@ export class GroupSkillCheck extends GroupRollApp {
             CONFIG._grouproll_module_skillcheck = this.skillName;
             CONFIG._grouproll_module_skillability = this.abilityName;
             this.flavor = (CONFIG.DND5E.skills[this.skillName].label || CONFIG.DND5E.skills[this.skillName]) + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
+            this.commitValues();
             this.render();
         });
 
@@ -341,6 +348,7 @@ export class GroupSkillCheck extends GroupRollApp {
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
+            this.commitValues();
             this.render();
         });
     }
@@ -428,6 +436,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             CONFIG._grouproll_module_abilitycheck = this.abilityName;
             CONFIG._grouproll_module_saveroll = this.saveRoll;
             this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
+            this.commitValues();
             this.render();
         });
 
@@ -436,6 +445,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             this.saveRoll = event.target.checked;
             CONFIG._grouproll_module_saveroll = this.saveRoll;
             this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
+            this.commitValues();
             this.render();
         });
 
@@ -445,6 +455,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
+            this.commitValues();
             this.render();
         });
     }
@@ -570,6 +581,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             CONFIG._grouproll_module_skillability = this.abilityName;
             // DEPRECATED for pf2e before v1.13
             this.flavor = this.allSkills[this.skillName] + " (" + (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
+            this.commitValues();
             this.render();
         });
 
@@ -579,6 +591,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
+            this.commitValues();
             this.render();
         });
     }
@@ -671,6 +684,7 @@ export class GroupSavePF2E extends GroupRollApp {
             CONFIG._grouproll_module_abilitycheck = this.abilityName;
             // DEPRECATED for pf2e before v1.13
             this.flavor = (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
+            this.commitValues();
             this.render();
         });
 
@@ -680,6 +694,7 @@ export class GroupSavePF2E extends GroupRollApp {
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
+            this.commitValues();
             this.render();
         });
     }
