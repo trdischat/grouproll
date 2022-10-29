@@ -81,6 +81,7 @@ export function avgD20roll(d20Roll) {
     }
     d20Roll._total = d20Roll._total + newTotal - oldTotal;
     if (!(minVer('0.8.0'))) d20Roll.results[0] = newTotal;
+    show3dDice(avgRoll);
     debug.log(false, "avgD20roll | Original Roll: " + oldTotal);
     debug.log(false, "avgD20roll | Averaged Roll: " + newTotal);
 }
@@ -99,7 +100,11 @@ export function chkRoll(adv, bon, mod, lucky) {
     let rData = { bonus: bon, modifier: mod };
     let roll = new Roll(rStr, rData);
     roll.evaluate({ async: false });
-    if (adv === 0 && (game.settings.get("grouproll", "averageRolls") === "c" || game.settings.get("grouproll", "averageRolls") === "a")) avgD20roll(roll);
+    if (adv === 0 && (game.settings.get("grouproll", "averageRolls") === "c" || game.settings.get("grouproll", "averageRolls") === "a"))
+        avgD20roll(roll);
+    else
+        show3dDice(roll);
+
     return roll;
 }
 
@@ -131,4 +136,25 @@ export function chkPassive(adv, bon, mod) {
     var rData = { base: (adv * 5) + 10, bonus: bon, modifier: mod };
     let roll = new Roll(rStr, rData);
     return roll.evaluate({ async: false });
+}
+
+/**
+ * Show the 3D dice for a roll.  The dice will only be shown to the relevant players/GMs depending on the current roll mode.
+ */
+export function show3dDice(roll) {
+    if (!game.settings.get("grouproll", "diceSoNiceIntegration") || !game.modules.get('dice-so-nice')?.active)
+        return;
+
+    let showToOthers = false;
+    let whisperList = null;
+
+    const rollMode = game.settings.get("core", "rollMode");
+    if (rollMode === "publicroll") {
+        showToOthers = true;
+    } else if ((rollMode === "gmroll") || (rollMode === "blindroll")) {
+        showToOthers = true;
+        whisperList = game.users.contents.filter(u => u.isGM).map(u => u.id);
+    }
+
+    return game.dice3d.showForRoll(roll, game.user, showToOthers, whisperList);
 }
