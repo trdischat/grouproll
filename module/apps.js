@@ -57,9 +57,9 @@ class GroupRollApp extends Application {
     }
 
     async sendRollsToChat() {
-        let tokChatList = this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) );
+        const tokChatList = this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) );
         if (tokChatList.reduce((notready, t) => notready = (t.roll.dice && t.roll.dice.length > 0) ? notready : true, false)) return;
-        let tokRolls = tokChatList.map(t => {
+        const tokRolls = tokChatList.map(t => {
             let d = t.roll.dice[0];
             return {
                 name: t.name,
@@ -83,19 +83,28 @@ class GroupRollApp extends Application {
                 })
             };
         });
-        let tooltip = await renderTemplate("modules/grouproll/templates/group-chat-tooltip.html", {
+        const tooltip = await renderTemplate("modules/grouproll/templates/group-chat-tooltip.html", {
             tok: tokRolls
         });
-        let content = await renderTemplate("modules/grouproll/templates/group-chat-roll.html", {
+        const content = await renderTemplate("modules/grouproll/templates/group-chat-roll.html", {
             flavor: this.flavor,
             total: this.groupRoll,
             groupoutcome: this.groupOutcome,
             groupcheck: this.groupCheckIcon,
-            tooltip: tooltip
+            tooltip
         });
-        let chatData = {
+
+        let whisper = null;
+        const rollMode = game.settings.get("core", "rollMode");
+        if ((rollMode === "gmroll") || (rollMode === "blindroll"))
+            whisper = game.users.contents.filter(u => u.isGM).map(u => u.id);
+        else if (rollMode === "selfroll")
+            whisper = game.user.id;
+
+            const chatData = {
             user: game.user.id,
-            content: content,
+            content,
+            whisper
         };
         ChatMessage.create(chatData);
     }
