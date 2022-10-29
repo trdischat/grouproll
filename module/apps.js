@@ -423,7 +423,6 @@ export class GroupAbilityCheck extends GroupRollApp {
             let newAbility = html.find('[name="select-ability"]').val();
             if (this.abilityName !== newAbility) {
                 this.abilityName = newAbility;
-                this.saveRoll = false;
             }
             else if (this.abilityName !== newAbility) this.abilityName = newAbility;
             CONFIG._grouproll_module_abilitycheck = this.abilityName;
