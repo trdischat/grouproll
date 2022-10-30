@@ -271,7 +271,9 @@ export class GroupSkillCheck extends GroupRollApp {
             let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-            let natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+            let natRoll = "";
+            if (game.settings.get("grouproll", "critPassFail"))
+                natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
             let checkIcon = "";
             if (this.dc !== "" && !isNaN(this.dc)) {
                 if (natRoll === "") {
@@ -371,7 +373,9 @@ export class GroupAbilityCheck extends GroupRollApp {
             let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-            let natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+            let natRoll = "";
+            if (game.settings.get("grouproll", "critPassFail"))
+                natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
             let checkIcon = "";
             if (this.dc !== "" && !isNaN(this.dc)) {
                 if (natRoll === "") {
@@ -513,7 +517,9 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             let lucky = false;
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-            let natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+            let natRoll = "";
+            if (game.settings.get("grouproll", "critPassFail"))
+                natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
             let checkIcon = "";
             if (this.dc !== "" && !isNaN(this.dc)) {
                 if (natRoll === "") {
@@ -619,7 +625,9 @@ export class GroupSavePF2E extends GroupRollApp {
             let lucky = false;
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-            let natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+            let natRoll = "";
+            if (game.settings.get("grouproll", "critPassFail"))
+                natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
             let checkIcon = "";
             if (this.dc !== "" && !isNaN(this.dc)) {
                 if (natRoll === "") {
