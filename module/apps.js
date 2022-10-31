@@ -223,6 +223,12 @@ class GroupRollApp extends Application {
             this.render();
         });
 
+        // Double click on a name to open the character sheet
+        html.find(".grm-tbl-rows").on("dblclick", "div.grm-name-col", event => {
+            const tokenId = event.currentTarget.getAttribute("value");
+            const token = canvas.tokens.get(tokenId);
+            token?.actor?.sheet?.render(true);
+        });
     }
 
 }
