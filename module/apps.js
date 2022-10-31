@@ -29,7 +29,7 @@ class GroupRollApp extends Application {
     }
 
     commitValues() {
-        // Ensure the DC and bonus values from the form are committed to the object
+        // Ensure the DC, bonus and damage values from the form are committed to the object
         this.dc = this.element.find('input[name="input-dc"]').val();
 
         for (const t of this.tokList) {
@@ -37,6 +37,10 @@ class GroupRollApp extends Application {
             if (value)
                 this.mstList[t.id].bon = t.bon = value;
         }
+
+        const damage = this.element.find('input[name="grm-dmg-input"]').val();
+        if (damage)
+            this.dmg = damage;
     }
 
     doCheck(rollFunc) {
@@ -107,6 +111,16 @@ class GroupRollApp extends Application {
             whisper
         };
         ChatMessage.create(chatData);
+    }
+
+    async applyDamage(multiplier) {
+        const value = Math.abs(this.element.find('input[name="grm-dmg-input"]').val());
+        if (!value)
+            return;
+
+        const tokens = (this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ));
+        const promises = tokens.map(t => canvas.tokens.get(t.id)?.actor?.applyDamage(value, multiplier));
+        return Promise.all(promises);
     }
 
     _getHeaderButtons() {
@@ -327,6 +341,7 @@ export class GroupAbilityCheck extends GroupRollApp {
         this.abilityName = CONFIG._grouproll_module_abilitycheck || "dex";
         this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
         this.dc = "";
+        this.dmg = "";
     }
 
     static get defaultOptions() {
@@ -357,7 +372,8 @@ export class GroupAbilityCheck extends GroupRollApp {
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
-            rollicon: this.groupCheckIcon
+            rollicon: this.groupCheckIcon,
+            dmg: this.dmg
         };
     }
 
@@ -424,8 +440,20 @@ export class GroupAbilityCheck extends GroupRollApp {
             this.commitValues();
             this.render();
         });
-    }
 
+        html.find('input[name="grm-dmg-input"]').keypress(event => {
+            if (event.key === "Enter") {
+                const value = this.element.find('input[name="grm-dmg-input"]').val();
+                const multiplier = (value.startsWith("+") ? -1 : 1);
+                this.applyDamage(multiplier);
+            }
+        });
+
+        html.find("button.grm-dmg-button").click(event => {
+            const multiplier = parseFloat(event.currentTarget.getAttribute("multiplier"));
+            this.applyDamage(multiplier);
+        });
+    }
 }
 
 // Apps for Pathfinder 2e System
