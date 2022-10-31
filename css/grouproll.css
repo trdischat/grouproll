@@ -57,3 +57,8 @@
   color: #257f11;
   font-weight: bold;
 }
+
+.grm-dmg-button {
+  align-content: center;
+  line-height: var(--form-field-height);
+}

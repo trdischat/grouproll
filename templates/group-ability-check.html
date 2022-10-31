@@ -49,4 +49,16 @@
     {{/each}}
   </div>
 
+  <div class="grm-grid" style="grid-template-columns: 2fr 1fr 3em 4em 3em 3em 3em 3em 2fr">
+    <div>&nbsp;</div>
+    <div class="grm-label">Damage/Healing</div>
+    <button type="button" class="grm-dmg-button" multiplier="-1" title="Apply healing"><i class="fa-solid fa-heart-circle-plus"></i></button>
+    <input name="grm-dmg-input" value="{{ dmg }}" type="text" style="text-align: center">
+    <button type="button" class="grm-dmg-button" multiplier="1" title="Apply damage"><i class="fa-solid fa-shield-minus"></i></button>
+    <button type="button" class="grm-dmg-button" multiplier="0.5" title="Apply 1/2 damage"><i class="fa-solid fa-shield-halved"></i></button>
+    <button type="button" class="grm-dmg-button" multiplier="0.25" title="Apply 1/4 damage"><i class="fa-solid fa-shield-quartered"></i></button>
+    <button type="button" class="grm-dmg-button" multiplier="2" title="Apply double damage"><i class="fa-solid fa-shield-xmark"></i></button>
+    <div>&nbsp;</div>
+  </div>
+
 </form>
