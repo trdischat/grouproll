@@ -455,7 +455,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             }
         });
 
-        html.find("button.grm-dmg-button").click(event => {
+        html.find("#grm-damage-buttons").on("click", "button.grm-dmg-button", event => {
             const multiplier = parseFloat(event.currentTarget.getAttribute("multiplier"));
             this.applyDamage(multiplier);
         });
