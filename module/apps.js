@@ -168,7 +168,6 @@ class GroupRollApp extends Application {
                 onclick: ev => {
                     this.tok2Show = "all";
                     canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } });
-                    this.commitValues();
                     this.render();
                 }
             },
