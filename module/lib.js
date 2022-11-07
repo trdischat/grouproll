@@ -81,7 +81,6 @@ export function avgD20roll(d20Roll) {
     }
     d20Roll._total = d20Roll._total + newTotal - oldTotal;
     if (!(minVer('0.8.0'))) d20Roll.results[0] = newTotal;
-    show3dDice(avgRoll);
     debug.log(false, "avgD20roll | Original Roll: " + oldTotal);
     debug.log(false, "avgD20roll | Averaged Roll: " + newTotal);
 }
@@ -102,9 +101,7 @@ export function chkRoll(adv, bon, mod, lucky) {
     roll.evaluate({ async: false });
     if (adv === 0 && (game.settings.get("grouproll", "averageRolls") === "c" || game.settings.get("grouproll", "averageRolls") === "a"))
         avgD20roll(roll);
-    else
-        show3dDice(roll);
-
+    show3dDice(roll);
     return roll;
 }
 
