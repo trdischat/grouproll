@@ -392,7 +392,7 @@ export class GroupAbilityCheck extends GroupRollApp {
 
     constructor(object, options) {
         super(options);
-        this.saveRoll = CONFIG._grouproll_module_saveroll || false;
+        this.saveRoll = CONFIG._grouproll_module_saveroll ?? true;
         this.abilityName = CONFIG._grouproll_module_abilitycheck || "dex";
         this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
         this.dc = "";
