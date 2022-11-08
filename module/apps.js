@@ -144,7 +144,14 @@ class GroupRollApp extends Application {
                 title: "Toggle display of tokens with successful rolls",
                 icon: "fas fa-check",
                 onclick: ev => {
-                    this.tok2Show = this.tok2Show === "pass" ? "all" : "pass";
+                    if (this.tok2Show === "pass") {
+                        this.tok2Show = "all";
+                        ev.currentTarget.classList.remove("grm-success");
+                    } else {
+                        this.tok2Show = "pass";
+                        ev.currentTarget.classList.add("grm-success");
+                        ev.currentTarget.parentElement.querySelector(".grm-btn-fail").classList.remove("grm-fumble");
+                    }
                     this.commitValues();
                     this.render();
                 }
@@ -155,7 +162,14 @@ class GroupRollApp extends Application {
                 title: "Toggle display of tokens with failed rolls",
                 icon: "fas fa-times",
                 onclick: ev => {
-                    this.tok2Show = this.tok2Show === "fail" ? "all" : "fail";
+                    if (this.tok2Show === "fail") {
+                        this.tok2Show = "all";
+                        ev.currentTarget.classList.remove("grm-fumble");
+                    } else {
+                        this.tok2Show = "fail";
+                        ev.currentTarget.classList.add("grm-fumble");
+                        ev.currentTarget.parentElement.querySelector(".grm-btn-pass").classList.remove("grm-success");
+                    }
                     this.commitValues();
                     this.render();
                 }
@@ -168,6 +182,8 @@ class GroupRollApp extends Application {
                 onclick: ev => {
                     this.tok2Show = "all";
                     canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } });
+                    ev.currentTarget.parentElement.querySelector(".grm-btn-fail").classList.remove("grm-fumble");
+                    ev.currentTarget.parentElement.querySelector(".grm-btn-pass").classList.remove("grm-success");
                     this.render();
                 }
             },
