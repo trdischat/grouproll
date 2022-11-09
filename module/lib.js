@@ -64,7 +64,7 @@ export function midValue(rolls) {
 
 /**
  * Substitute average of two d20 rolls for a single d20 roll.
- * 2d10+1-1dc is statistically equivalent and easier than actual averaging.
+ * 2d10-1dc is statistically equivalent and easier than actual averaging.
  * @param {Roll} d20Roll    Roll of 1d20 to be replaced
  */
 export function avgD20roll(d20Roll) {
