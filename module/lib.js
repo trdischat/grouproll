@@ -99,8 +99,7 @@ export function chkRoll(adv, bon, mod, lucky) {
     let rData = { bonus: bon, modifier: mod };
     let roll = new Roll(rStr, rData);
     roll.evaluate({ async: false });
-    if (adv === 0 && (game.settings.get("grouproll", "averageRolls") === "c" || game.settings.get("grouproll", "averageRolls") === "a"))
-        avgD20roll(roll);
+    if (adv === 0 && (game.settings.get("grouproll", "averageRolls") === "c" || game.settings.get("grouproll", "averageRolls") === "a")) avgD20roll(roll);
     show3dDice(roll);
     return roll;
 }
