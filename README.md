@@ -42,8 +42,7 @@ This module was designed for the D&D 5e system. The module also provides limited
 
 ## License
 
-This Foundry VTT module, written by trdischat with major assistance from Atropos, 
-ayan, KaKaRoTo, and cs96and is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+This Foundry VTT module, written by trdischat with major assistance from Atropos, ayan, KaKaRoTo, and cs96and is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
 # Appendix: Why Average Normal Rolls?
 
