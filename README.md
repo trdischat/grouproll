@@ -1,16 +1,18 @@
 # Group Rolls for D&D 5e
 
-The primary purpose of this module is to facilitate group ability and skill check rolls per the D&D 5e Player's Handbook, page 175: *"If at least half the group succeeds, the whole group succeeds."*  It also displays the rolls for each individual token, and therefore can be used to roll individual saving throws for an entire groups of tokens at once. It was not intended to be used to automate combat or apply damage. There are far better tools for that, such as [midi-QoL](https://foundryvtt.com/packages/midi-qol).
+The primary purpose of this module is to facilitate group ability and skill check rolls per the D&D 5e Player's Handbook, page 175: *"If at least half the group succeeds, the whole group succeeds."*  It also displays the rolls for each individual token, and therefore can be used to roll individual saving throws for an entire groups of tokens at once. It was not intended to be used to automate combat.  There are far better tools for that, such as [midi-QoL](https://foundryvtt.com/packages/midi-qol).  However, a new feature (not yet illustrated here) lets you apply a fixed amount of damage or healing to all tokens in the list.
 
 ## Launching the Application and Selecting Tokens
 
-The module adds two buttons to the Token menu on the left of the canvas. Group skill and ability checks can be launched by selecting tokens, then clicking the relevant group roll button. The window can be left open, and it will update automatically if the token selection is changed.  The "PCs" button will select all player character tokens on the canvas.  The "Pass" button toggles the display between all selected tokens or only those tokens with successful rolls, while the "Fail" button toggles the display between all selected tokens or only those tokens with failed rolls.  Individual tokens can be deselected by clicking the "x" next to the token name.
+The module adds two buttons to the Token menu on the left of the canvas. Group skill and ability checks can be launched by selecting tokens, then clicking the relevant group roll button. The window can be left open, and it will update automatically if the token selection is changed.  The "PCs" button will select all player character tokens on the canvas.  Individual tokens can be deselected by clicking the "x" next to the token name.  Double-clicking a token's name opens the token's character sheet.
+
+The "Pass" button toggles the display between all selected tokens or only those tokens with successful rolls, while the "Fail" button toggles the display between all selected tokens or only those tokens with failed rolls.  A new feature (not yet shown in the illustration below) lets you apply a fixed amount of damage or healing to all tokens currently displayed in the dialog.  So to apply the same amount of damage to all tokens that failed a saving throw, for example, click the "Fail" button to display on those tokens that failed their roll, then enter the amount of damage and click the apply damage button.
 
 ![App](images/App.jpg)
 
 ## Selecting Roll Options
 
-Skills and abilities are selected from the dropdowns.  If desired, the DC for the roll can be entered.  If the DC is set, a successful roll is colored green, while a failed roll is colored red.  If the DC is not set, natural 20 rolls are highlighted in green, while natural 1 rolls are highlighted in red.
+Skills and abilities are selected from the dropdowns.  If desired, the DC for the roll can be entered.  A successful roll is colored green, while a failed roll is colored red.
 
 Advantage, disadvantage, and situational bonuses can be set individually for each token.  The "Reset" button clears advantage, bonuses, and rolls for all tokens.  The "Roll" button rolls for all tokens at once, taking into account all advantage and bonus settings, then calculates the minimum roll achieved by at least half of the group.
 
@@ -18,7 +20,7 @@ Finally, there is a "Passive" button to run passive skill or ability checks for 
 
 ## Displaying the Results
 
-Normally, roll results are only displayed in the Group Roll application window, which is only visible to the GM.  However, if the GM holds down the "Shift" key while clicking the Roll button, the results of the new roll will also be displayed in the Chat Log, where they are visible to the players (this behavior can be inverted in the module configuration settings).  If the GM holds down the "Ctrl" key while clicking the Roll button, the results of the previous roll will be retained.  That means that holding down "Ctrl-Shift" while clicking the Roll button displays the previous roll results in the Chat Log without rolling new rolls.  As shown below, clicking on the Group Roll result bar in the Chat Log reveals the details for each token's rolls.  Passive checks cannot be output to the Chat Log since they are not actual rolls.
+Normally, roll results are only displayed in the Group Roll application window, which is only visible to the GM.  However, if the GM holds down the "Shift" key while clicking the Roll button, the results of the new roll will also be displayed in the Chat Log, where they are visible to both the GM and the players, or to just the GM, depending on whether "Public Roll" or "Private GM Roll" is selected as the roll mode in the Chat Log. This behavior can be inverted in the module configuration settings.  If the GM holds down the "Ctrl" key while clicking the Roll button, the results of the previous roll will be retained.  That means that holding down "Ctrl-Shift" while clicking the Roll button displays the previous roll results in the Chat Log without rolling new rolls.  As shown below, clicking on the Group Roll result bar in the Chat Log reveals the details for each token's rolls.  Passive checks cannot be output to the Chat Log since they are not actual rolls.
 
 ![Chat](images/Chat.jpg)
 
@@ -28,7 +30,9 @@ The module also has the following configuration options:
 
 1. Output roll results as PASS/FAIL checkmark icons instead of numbers.
 2. Output roll results to the Chat log automatically. If the GM holds down the "Shift" key while clicking the Roll button, output to the Chat log is suppressed. Setting this option to True reverses the normal behavior for displaying roll results in the Chat log, as described in the previous section.
-3. Enable a personal house rule of mine that uses the average of 2d20 in place of normal 1d20 rolls (detailed explanation below).
+3. Enable integration with Dice So Nice, if that module is installed.
+4. Enable a house rule to treat natural 20 or 1 as critical sucess or failure (this is not RAW).
+5. Enable a personal house rule of mine that uses the average of 2d20 in place of normal 1d20 rolls (detailed explanation below).
 
 All of these options are disabled by default, but they can be individually enabled in the module configuration settings.
 
@@ -38,7 +42,8 @@ This module was designed for the D&D 5e system. The module also provides limited
 
 ## License
 
-This Foundry VTT module, written by trdischat with major assistance from Atropos, ayan, and KaKaRoTo, is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+This Foundry VTT module, written by trdischat with major assistance from Atropos, 
+ayan, KaKaRoTo, and cs96and is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
 # Appendix: Why Average Normal Rolls?
 
