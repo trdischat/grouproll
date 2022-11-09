@@ -141,7 +141,7 @@ class GroupRollApp extends Application {
             {
                 label: "Pass",
                 class: "grm-btn-pass",
-                title: "Select only tokens with successful rolls",
+                title: "Toggle display of tokens with successful rolls",
                 icon: "fas fa-check",
                 onclick: ev => {
                     this.tok2Show = this.tok2Show === "pass" ? "all" : "pass";
@@ -152,7 +152,7 @@ class GroupRollApp extends Application {
             {
                 label: "Fail",
                 class: "grm-btn-fail",
-                title: "Select only tokens with failed rolls",
+                title: "Toggle display of tokens with failed rolls",
                 icon: "fas fa-times",
                 onclick: ev => {
                     this.tok2Show = this.tok2Show === "fail" ? "all" : "fail";
