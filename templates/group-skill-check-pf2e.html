@@ -1,4 +1,4 @@
-<form autocomplete="off" onsubmit="event.preventDefault();">
+<form class="flexcol" autocomplete="off" onsubmit="event.preventDefault();">
 
   <div class="grm-grid" style="grid-template-columns: 1fr 4fr 1fr 4fr 2em 2em 3fr 2em">
     <div class="grm-label">Skill</div>
@@ -45,7 +45,7 @@
     <div><span class="value"><input type="hidden" name="rem-{{ this.id }}" value={{ this.id }} /><a class="remove-token" title="Remove from list"><i class="fas fa-times"></i></a></span></div>
     <div class="grm-name-col"><span class="name">{{ this.name }}</span></div>
     <div><span class="value"><input type="hidden" name="adv-{{ this.id }}" value={{ this.adv }} data-dtype="Number"/><a class="advantage-mode" title="{{this.hover}}">{{{this.icon}}}</a></span></div>
-    <div><span class="bonus-value"><input name="bon-{{ this.id }}" value={{ this.bon }} type="number" min="0" style="width: 4em; text-align: center"></span></div>
+    <div><span class="bonus-value"><input name="bon-{{ this.id }}" value={{ this.bon }} type="number" style="width: 4em; text-align: center"></span></div>
     <div><span class="value">{{ this.mod }}</span></div>
     {{#if this.chk}}
     <div><span class="value {{ this.nat }}" title="{{this.roll.result}}">{{{ this.chk }}}</span></div>

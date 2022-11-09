@@ -8,6 +8,7 @@
   align-items: center;
   grid-auto-flow: row;
   border: 1px solid black;
+  flex: none;
 }
 
 .grm-label {
@@ -34,6 +35,7 @@
   align-content: start;
   grid-row-gap: 0.7ex;
   height: 23.1ex;
+  flex: inherit !important;
 }
 
 .grm-tbl-cols {
@@ -54,4 +56,9 @@
 .grm-success {
   color: #257f11;
   font-weight: bold;
+}
+
+.grm-dmg-button {
+  align-content: center;
+  line-height: var(--form-field-height);
 }

@@ -33,4 +33,20 @@ export const registerSettings = function () {
         config: true,
         onChange: debouncedReload
     });
+    game.settings.register("grouproll", "critPassFail", {
+        name: "Enable critical success/failure",
+        hint: "When enabled, a natural 20 or 1 will be treated as a critical success or failure, regardless of the DC",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true
+    });
+    game.settings.register("grouproll", "diceSoNiceIntegration", {
+        name: "Dice So Nice Integration",
+        hint: "Show 3D dice if Dice So Nice module is installed. The dice will only be show to players if the roll mode is set to \"Public Roll\"",
+        scope: "world",
+        type: Boolean,
+        default: true,
+        config: true
+    });
 }

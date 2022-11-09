@@ -16,6 +16,7 @@ class GroupRollApp extends Application {
         // Update dialog display on changes to token selection
         Hooks.on("controlToken", async (object, controlled) => {
             let x = await canvas.tokens.controlled;
+            this.commitValues();
             this.render();
         });
     }
@@ -23,33 +24,46 @@ class GroupRollApp extends Application {
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.width = 600;
-        options.height = "auto";
-        options.resizable = false;
+        options.resizable = true;
         return options;
     }
 
-    doGroupCheck() {
-        this.tokList = this.tokList.map(t => {
-            t.roll = trRollLib.chkRoll(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
-            this.mstList[t.id].roll = t.roll;
-            return t;
-        });
+    commitValues() {
+        // Ensure the DC, bonus and damage values from the form are committed to the object
+        this.dc = this.element.find('input[name="input-dc"]').val();
+
+        for (const t of this.tokList) {
+            const value = this.element.find(`input[name="bon-${t.id}"]`).val();
+            if (value)
+                this.mstList[t.id].bon = t.bon = value;
+        }
+
+        const damage = this.element.find('input[name="grm-dmg-input"]').val();
+        if (damage)
+            this.dmg = damage;
+    }
+
+    doCheck(rollFunc) {
+        this.commitValues();
+
+        for (const t of this.tokList)
+            this.mstList[t.id].roll = t.roll = rollFunc(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
+
         this.render();
+    }
+
+    doGroupCheck() {
+        this.doCheck(trRollLib.chkRoll);
     }
 
     doPassiveCheck() {
-        this.tokList = this.tokList.map(t => {
-            t.roll = trRollLib.chkPassive(Number(t.adv), Number(t.bon), Number(t.mod));
-            this.mstList[t.id].roll = t.roll;
-            return t;
-        });
-        this.render();
+        this.doCheck(trRollLib.chkPassive);
     }
 
     async sendRollsToChat() {
-        let tokChatList = this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) );
+        const tokChatList = this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) );
         if (tokChatList.reduce((notready, t) => notready = (t.roll.dice && t.roll.dice.length > 0) ? notready : true, false)) return;
-        let tokRolls = tokChatList.map(t => {
+        const tokRolls = tokChatList.map(t => {
             let d = t.roll.dice[0];
             return {
                 name: t.name,
@@ -73,21 +87,40 @@ class GroupRollApp extends Application {
                 })
             };
         });
-        let tooltip = await renderTemplate("modules/grouproll/templates/group-chat-tooltip.html", {
+        const tooltip = await renderTemplate("modules/grouproll/templates/group-chat-tooltip.html", {
             tok: tokRolls
         });
-        let content = await renderTemplate("modules/grouproll/templates/group-chat-roll.html", {
+        const content = await renderTemplate("modules/grouproll/templates/group-chat-roll.html", {
             flavor: this.flavor,
             total: this.groupRoll,
             groupoutcome: this.groupOutcome,
             groupcheck: this.groupCheckIcon,
-            tooltip: tooltip
+            tooltip
         });
-        let chatData = {
+
+        let whisper = null;
+        const rollMode = game.settings.get("core", "rollMode");
+        if ((rollMode === "gmroll") || (rollMode === "blindroll"))
+            whisper = game.users.contents.filter(u => u.isGM).map(u => u.id);
+        else if (rollMode === "selfroll")
+            whisper = game.user.id;
+
+            const chatData = {
             user: game.user.id,
-            content: content,
+            content,
+            whisper
         };
         ChatMessage.create(chatData);
+    }
+
+    async applyDamage(multiplier) {
+        const value = Math.abs(this.element.find('input[name="grm-dmg-input"]').val());
+        if (!value)
+            return;
+
+        const tokens = (this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ));
+        const promises = tokens.map(t => canvas.tokens.get(t.id)?.actor?.applyDamage(value, multiplier));
+        return Promise.all(promises);
     }
 
     _getHeaderButtons() {
@@ -101,6 +134,7 @@ class GroupRollApp extends Application {
                 onclick: ev => {
                     canvas.tokens.releaseAll();
                     canvas.tokens.ownedTokens.filter(t => t.actor && t.actor.hasPlayerOwner).map(t => t.control({ updateSight: true, releaseOthers: false }));
+                    this.commitValues();
                     this.render();
                 }
             },
@@ -111,6 +145,7 @@ class GroupRollApp extends Application {
                 icon: "fas fa-check",
                 onclick: ev => {
                     this.tok2Show = this.tok2Show === "pass" ? "all" : "pass";
+                    this.commitValues();
                     this.render();
                 }
             },
@@ -121,6 +156,7 @@ class GroupRollApp extends Application {
                 icon: "fas fa-times",
                 onclick: ev => {
                     this.tok2Show = this.tok2Show === "fail" ? "all" : "fail";
+                    this.commitValues();
                     this.render();
                 }
             },
@@ -130,6 +166,7 @@ class GroupRollApp extends Application {
                 title: "Reset advantage, bonus, and roll values",
                 icon: "fas fa-undo",
                 onclick: ev => {
+                    this.tok2Show = "all";
                     canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } });
                     this.render();
                 }
@@ -156,10 +193,10 @@ class GroupRollApp extends Application {
     }
 
     /**
-    * Render the outer application wrapper
-    * @return {Promise.<HTMLElement>}   A promise resolving to the constructed jQuery object
-    * @private
-    */
+     * Render the outer application wrapper
+     * @returns {Promise<jQuery>}   A promise resolving to the constructed jQuery object
+     * @protected
+     */
     async _renderOuter() {
 
         // Gather basic application data
@@ -186,17 +223,19 @@ class GroupRollApp extends Application {
         }, 500);
 
         // Make the outer window draggable
-        const header = html.find('header')[0];
+        const header = html.find("header")[0];
         new Draggable(this, html, header, this.options.resizable);
 
         // Make the outer window minimizable
-        if (this.options.minimizable) {
-            header.addEventListener('dblclick', this._onToggleMinimize.bind(this));
+        if ( this.options.minimizable ) {
+            header.addEventListener("dblclick", this._onToggleMinimize.bind(this));
         }
 
         // Set the outer frame z-index
-        if (Object.keys(ui.windows).length === 0) _maxZ = 100 - 1;
-        html.css({ zIndex: Math.min(++_maxZ, 9999) });
+        if ( Object.keys(ui.windows).length === 0 ) _maxZ = 100 - 1;
+        this.position.zIndex = Math.min(++_maxZ, 9999);
+        html.css({zIndex: this.position.zIndex});
+        ui.activeWindow = this;
 
         // Return the outer frame
         return html;
@@ -205,16 +244,6 @@ class GroupRollApp extends Application {
     activateListeners(html) {
         super.activateListeners(html);
 
-        // Change roll bonus
-        html.find('.bonus-value').change(event => {
-            this.tokList = this.tokList.map(t => {
-                t.bon = html.find('input[name="bon-' + t.id + '"]').val();
-                this.mstList[t.id].bon = t.bon;
-                return t;
-            });
-            this.render();
-        });
-
         // Toggle advantage status
         html.find('.advantage-mode').click(event => {
             event.preventDefault();
@@ -222,11 +251,11 @@ class GroupRollApp extends Application {
             let level = Number(field.val());
             let newLevel = (level === 1) ? -1 : level + 1;
             field.val(newLevel);
-            this.tokList = this.tokList.map(t => {
-                t.adv = html.find('input[name="adv-' + t.id + '"]').val();
+            for (const t of this.tokList) {
+                t.adv = html.find(`input[name="adv-${t.id}"]`).val();
                 this.mstList[t.id].adv = t.adv;
-                return t;
-            });
+            };
+            this.commitValues();
             this.render();
         });
 
@@ -238,9 +267,16 @@ class GroupRollApp extends Application {
             canvas.tokens.controlled.map(t => {
                 if (t.id === tokID) t.release();
             });
+            this.commitValues();
             this.render();
         });
 
+        // Double click on a name to open the character sheet
+        html.find(".grm-tbl-rows").on("dblclick", "div.grm-name-col", event => {
+            const tokenId = event.currentTarget.getAttribute("value");
+            const token = canvas.tokens.get(tokenId);
+            token?.actor?.sheet?.render(true);
+        });
     }
 
 }
@@ -303,7 +339,9 @@ export class GroupSkillCheck extends GroupRollApp {
             let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-            let natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+            let natRoll = "";
+            if (game.settings.get("grouproll", "critPassFail"))
+                natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
             let checkIcon = "";
             if (this.dc !== "" && !isNaN(this.dc)) {
                 if (natRoll === "") {
@@ -332,6 +370,7 @@ export class GroupSkillCheck extends GroupRollApp {
             CONFIG._grouproll_module_skillcheck = this.skillName;
             CONFIG._grouproll_module_skillability = this.abilityName;
             this.flavor = (CONFIG.DND5E.skills[this.skillName].label || CONFIG.DND5E.skills[this.skillName]) + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
+            this.commitValues();
             this.render();
         });
 
@@ -341,6 +380,7 @@ export class GroupSkillCheck extends GroupRollApp {
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
+            this.commitValues();
             this.render();
         });
     }
@@ -351,10 +391,11 @@ export class GroupAbilityCheck extends GroupRollApp {
 
     constructor(object, options) {
         super(options);
-        this.saveRoll = CONFIG._grouproll_module_saveroll || false;
+        this.saveRoll = CONFIG._grouproll_module_saveroll ?? true;
         this.abilityName = CONFIG._grouproll_module_abilitycheck || "dex";
         this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
         this.dc = "";
+        this.dmg = "";
     }
 
     static get defaultOptions() {
@@ -385,7 +426,8 @@ export class GroupAbilityCheck extends GroupRollApp {
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
-            rollicon: this.groupCheckIcon
+            rollicon: this.groupCheckIcon,
+            dmg: this.dmg
         };
     }
 
@@ -401,7 +443,9 @@ export class GroupAbilityCheck extends GroupRollApp {
             let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-            let natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+            let natRoll = "";
+            if (game.settings.get("grouproll", "critPassFail"))
+                natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
             let checkIcon = "";
             if (this.dc !== "" && !isNaN(this.dc)) {
                 if (natRoll === "") {
@@ -423,12 +467,12 @@ export class GroupAbilityCheck extends GroupRollApp {
             let newAbility = html.find('[name="select-ability"]').val();
             if (this.abilityName !== newAbility) {
                 this.abilityName = newAbility;
-                this.saveRoll = false;
             }
             else if (this.abilityName !== newAbility) this.abilityName = newAbility;
             CONFIG._grouproll_module_abilitycheck = this.abilityName;
             CONFIG._grouproll_module_saveroll = this.saveRoll;
             this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
+            this.commitValues();
             this.render();
         });
 
@@ -437,6 +481,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             this.saveRoll = event.target.checked;
             CONFIG._grouproll_module_saveroll = this.saveRoll;
             this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
+            this.commitValues();
             this.render();
         });
 
@@ -446,10 +491,23 @@ export class GroupAbilityCheck extends GroupRollApp {
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
+            this.commitValues();
             this.render();
         });
-    }
 
+        html.find('input[name="grm-dmg-input"]').keypress(event => {
+            if (event.key === "Enter") {
+                const value = this.element.find('input[name="grm-dmg-input"]').val();
+                const multiplier = (value.startsWith("+") ? -1 : 1);
+                this.applyDamage(multiplier);
+            }
+        });
+
+        html.find("#grm-damage-buttons").on("click", "button.grm-dmg-button", event => {
+            const multiplier = parseFloat(event.currentTarget.getAttribute("multiplier"));
+            this.applyDamage(multiplier);
+        });
+    }
 }
 
 // Apps for Pathfinder 2e System
@@ -541,7 +599,9 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             let lucky = false;
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-            let natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+            let natRoll = "";
+            if (game.settings.get("grouproll", "critPassFail"))
+                natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
             let checkIcon = "";
             if (this.dc !== "" && !isNaN(this.dc)) {
                 if (natRoll === "") {
@@ -571,6 +631,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             CONFIG._grouproll_module_skillability = this.abilityName;
             // DEPRECATED for pf2e before v1.13
             this.flavor = this.allSkills[this.skillName] + " (" + (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
+            this.commitValues();
             this.render();
         });
 
@@ -580,6 +641,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
+            this.commitValues();
             this.render();
         });
     }
@@ -645,7 +707,9 @@ export class GroupSavePF2E extends GroupRollApp {
             let lucky = false;
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
-            let natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
+            let natRoll = "";
+            if (game.settings.get("grouproll", "critPassFail"))
+                natRoll = m.roll.terms[0].total === 1 ? "grm-fumble" : (m.roll.terms[0].total === 20 ? "grm-success" : "");
             let checkIcon = "";
             if (this.dc !== "" && !isNaN(this.dc)) {
                 if (natRoll === "") {
@@ -672,6 +736,7 @@ export class GroupSavePF2E extends GroupRollApp {
             CONFIG._grouproll_module_abilitycheck = this.abilityName;
             // DEPRECATED for pf2e before v1.13
             this.flavor = (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
+            this.commitValues();
             this.render();
         });
 
@@ -681,6 +746,7 @@ export class GroupSavePF2E extends GroupRollApp {
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
+            this.commitValues();
             this.render();
         });
     }
