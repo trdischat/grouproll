@@ -2,12 +2,12 @@
     "id": "grouproll",
     "title": "Group Roll Checks and Saves",
     "description": "This module rolls skill and ability checks for groups of tokens.",
-    "version": "0.10.2",
+    "version": "0.10.3",
     "minimumCoreVersion": "0.7.2",
     "compatibleCoreVersion": "10",
     "compatibility": {
         "minimum": "0.7.2",
-        "verified": "10.287"
+        "verified": "10.288"
     },
     "author": "trdischat",
     "authors": [{
@@ -34,6 +34,6 @@
         "path": "lang/en.json"
     }],
     "url": "https://github.com/trdischat/grouproll",
-    "manifest": "https://github.com/trdischat/grouproll/releases/download/0.10.2/module.json",
-    "download": "https://github.com/trdischat/grouproll/releases/download/0.10.2/module.zip"
+    "manifest": "https://github.com/trdischat/grouproll/releases/download/0.10.3/module.json",
+    "download": "https://github.com/trdischat/grouproll/releases/download/0.10.3/module.zip"
 }
