@@ -11,6 +11,11 @@
   flex: none;
 }
 
+.grm-subgrid {
+  justify-self: start;
+  border: none;
+}
+
 .grm-label {
   justify-self: end;
   font-weight: bold;

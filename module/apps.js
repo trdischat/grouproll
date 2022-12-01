@@ -144,7 +144,14 @@ class GroupRollApp extends Application {
                 title: "Toggle display of tokens with successful rolls",
                 icon: "fas fa-check",
                 onclick: ev => {
-                    this.tok2Show = this.tok2Show === "pass" ? "all" : "pass";
+                    if (this.tok2Show === "pass") {
+                        this.tok2Show = "all";
+                        ev.currentTarget.classList.remove("grm-success");
+                    } else {
+                        this.tok2Show = "pass";
+                        ev.currentTarget.classList.add("grm-success");
+                        ev.currentTarget.parentElement.querySelector(".grm-btn-fail").classList.remove("grm-fumble");
+                    }
                     this.commitValues();
                     this.render();
                 }
@@ -155,7 +162,14 @@ class GroupRollApp extends Application {
                 title: "Toggle display of tokens with failed rolls",
                 icon: "fas fa-times",
                 onclick: ev => {
-                    this.tok2Show = this.tok2Show === "fail" ? "all" : "fail";
+                    if (this.tok2Show === "fail") {
+                        this.tok2Show = "all";
+                        ev.currentTarget.classList.remove("grm-fumble");
+                    } else {
+                        this.tok2Show = "fail";
+                        ev.currentTarget.classList.add("grm-fumble");
+                        ev.currentTarget.parentElement.querySelector(".grm-btn-pass").classList.remove("grm-success");
+                    }
                     this.commitValues();
                     this.render();
                 }
@@ -168,6 +182,8 @@ class GroupRollApp extends Application {
                 onclick: ev => {
                     this.tok2Show = "all";
                     canvas.tokens.ownedTokens.map(t => this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } });
+                    ev.currentTarget.parentElement.querySelector(".grm-btn-fail").classList.remove("grm-fumble");
+                    ev.currentTarget.parentElement.querySelector(".grm-btn-pass").classList.remove("grm-success");
                     this.render();
                 }
             },
@@ -375,8 +391,8 @@ export class GroupSkillCheck extends GroupRollApp {
         });
 
         // Change target DC
-        html.find('.dc-value').change(event => {
-            let newDC = html.find('input[name="input-dc"]').val();
+        html.find('input[name="input-dc"]').change(event => {
+            let newDC = event.currentTarget.value;
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
@@ -396,6 +412,12 @@ export class GroupAbilityCheck extends GroupRollApp {
         this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
         this.dc = "";
         this.dmg = "";
+        this.sortedEffects = [...CONFIG.statusEffects].sort((a, b) => {
+            const labelA = game.i18n.localize(a.label);
+            const labelB = game.i18n.localize(b.label);
+            return labelA.localeCompare(labelB);
+        });
+        this.effect = this.sortedEffects[0].id;
     }
 
     static get defaultOptions() {
@@ -427,7 +449,9 @@ export class GroupAbilityCheck extends GroupRollApp {
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
             rollicon: this.groupCheckIcon,
-            dmg: this.dmg
+            dmg: this.dmg,
+            statusEffects: this.sortedEffects,
+            effect: this.effect
         };
     }
 
@@ -463,8 +487,8 @@ export class GroupAbilityCheck extends GroupRollApp {
         super.activateListeners(html);
 
         // Change ability
-        html.find('select').change(event => {
-            let newAbility = html.find('[name="select-ability"]').val();
+        html.find('select[name="select-ability"]').change(event => {
+            let newAbility = event.currentTarget.value;
             if (this.abilityName !== newAbility) {
                 this.abilityName = newAbility;
             }
@@ -486,8 +510,8 @@ export class GroupAbilityCheck extends GroupRollApp {
         });
 
         // Change target DC
-        html.find('.dc-value').change(event => {
-            let newDC = html.find('input[name="input-dc"]').val();
+        html.find('input[name="input-dc"]').change(event => {
+            let newDC = event.currentTarget.value;
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
@@ -506,6 +530,29 @@ export class GroupAbilityCheck extends GroupRollApp {
         html.find("#grm-damage-buttons").on("click", "button.grm-dmg-button", event => {
             const multiplier = parseFloat(event.currentTarget.getAttribute("multiplier"));
             this.applyDamage(multiplier);
+        });
+
+        html.find('select[name="select-effect"]').change(event => {
+            this.effect = event.currentTarget.value;
+        });
+
+        html.find("button.grm-effect-button").mousedown(event => {
+            if ((event.which < 1) || (event.which > 3)) return;
+
+            const active = !(event.shiftKey || (2 === event.which));
+            const overlay = (3 === event.which);
+
+            const effectData = CONFIG.statusEffects.find(e => e.id === this.effect);
+            const tokens = (this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ));
+
+            for (const t of tokens) {
+                const token = canvas.tokens.get(t.id);
+                if (token) {
+                    if (active !== token.actor.effects.some(e => e.getFlag("core", "statusId") === effectData.id)) {
+                        token.toggleEffect(effectData, { active, overlay });
+                    }
+                }
+            }
         });
     }
 }
@@ -636,8 +683,8 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
         });
 
         // Change target DC
-        html.find('.dc-value').change(event => {
-            let newDC = html.find('input[name="input-dc"]').val();
+        html.find('input[name="input-dc"]').change(event => {
+            let newDC = event.currentTarget.value;
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }
@@ -741,8 +788,8 @@ export class GroupSavePF2E extends GroupRollApp {
         });
 
         // Change target DC
-        html.find('.dc-value').change(event => {
-            let newDC = html.find('input[name="input-dc"]').val();
+        html.find('input[name="input-dc"]').change(event => {
+            let newDC = event.currentTarget.value;
             if (this.dc !== newDC) {
                 this.dc = newDC;
             }

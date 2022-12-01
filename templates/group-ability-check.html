@@ -16,7 +16,7 @@
       <input type="checkbox" name="sav" {{checked sav}}/>
     </div>
     <div class="grm-label">DC</div>
-    <div class="grm-roll"><span class="dc-value"><input name="input-dc" value="{{dc}}" type="text" style="width: 2em; text-align: center"></span></div>
+    <div class="grm-roll"><input name="input-dc" value="{{dc}}" type="text" style="width: 2em; text-align: center"></div>
     <div class="grm-label">Group&nbsp;Roll</div>
     {{#if rollicon}}
     <div class="grm-roll {{rollgood}}" title="At least half of the group succeeded">{{{rollicon}}}</div>
@@ -49,7 +49,7 @@
     {{/each}}
   </div>
 
-  <div id="grm-damage-buttons" class="grm-grid" style="grid-template-columns: 2fr 1fr 3em 4em 3em 3em 3em 3em 2fr">
+  <div id="grm-damage-buttons" class="grm-grid" style="grid-template-columns: 0.5em 1.5fr 2.5em 4em 2.5em 2.5em 2.5em 2.5em 0.5em 2fr 0.5em">
     <div>&nbsp;</div>
     <div class="grm-label">Damage/Healing</div>
     <button type="button" class="grm-dmg-button" multiplier="-1" title="Apply healing"><i class="fa-solid fa-heart-circle-plus"></i></button>
@@ -58,6 +58,17 @@
     <button type="button" class="grm-dmg-button" multiplier="0.5" title="Apply 1/2 damage"><i class="fa-solid fa-shield-halved"></i></button>
     <button type="button" class="grm-dmg-button" multiplier="0.25" title="Apply 1/4 damage"><i class="fa-solid fa-shield-quartered"></i></button>
     <button type="button" class="grm-dmg-button" multiplier="2" title="Apply double damage"><i class="fa-solid fa-shield-xmark"></i></button>
+    <div>&nbsp;</div>
+    <div class="grm-grid grm-subgrid" style="grid-template-columns: 1fr 2.5em">
+      <select name="select-effect" data-dtype="String">
+        {{#select effect}}
+        {{#each statusEffects}}
+        <option value="{{this.id}}">{{localize this.label}}</option>
+        {{/each}}
+        {{/select}}
+      </select>
+      <button type="button" class="grm-effect-button" title="Apply effect (shift or middle click to remove)"><i class="fa-solid fa-sparkles"></i></button>
+    </div>
     <div>&nbsp;</div>
   </div>
 
