@@ -1,3 +1,5 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <form class="flexcol" autocomplete="off" onsubmit="event.preventDefault();">
 
   <div class="grm-grid" style="grid-template-columns: 1fr 4fr 3fr 2fr 2em 2em 3fr 2em">
@@ -52,6 +54,7 @@
   <div id="grm-damage-buttons" class="grm-grid" style="grid-template-columns: 0.5em 1.5fr 2.5em 4em 2.5em 2.5em 2.5em 2.5em 0.5em 2fr 0.5em">
     <div>&nbsp;</div>
     <div class="grm-label">Damage/Healing</div>
+    {{#if this.ver10}}
     <button type="button" class="grm-dmg-button" multiplier="-1" title="Apply healing"><i class="fa-solid fa-heart-circle-plus"></i></button>
     <input name="grm-dmg-input" value="{{ dmg }}" type="text" style="text-align: center">
     <button type="button" class="grm-dmg-button" multiplier="1" title="Apply damage"><i class="fa-solid fa-shield-minus"></i></button>
@@ -69,6 +72,25 @@
       </select>
       <button type="button" class="grm-effect-button" title="Apply effect (shift or middle click to remove)"><i class="fa-solid fa-sparkles"></i></button>
     </div>
+    {{else}}
+    <button type="button" class="grm-dmg-button" multiplier="-1" title="Apply healing"><i class="fas fa-heart"></i></button>
+    <input name="grm-dmg-input" value="{{ dmg }}" type="text" style="text-align: center">
+    <button type="button" class="grm-dmg-button" multiplier="1" title="Apply damage"><i class="material-icons md-small">shield</i></button>
+    <button type="button" class="grm-dmg-button" multiplier="0.5" title="Apply 1/2 damage"><i class="fas fa-shield-alt"></i></button>
+    <button type="button" class="grm-dmg-button" multiplier="0.25" title="Apply 1/4 damage"><i class="material-icons md-small">security</i></button>
+    <button type="button" class="grm-dmg-button" multiplier="2" title="Apply double damage"><i class="material-icons md-small">gpp_bad</i></button>
+    <div>&nbsp;</div>
+    <div class="grm-grid grm-subgrid" style="grid-template-columns: 1fr 2.5em">
+      <select name="select-effect" data-dtype="String">
+        {{#select effect}}
+        {{#each statusEffects}}
+        <option value="{{this.id}}">{{localize this.label}}</option>
+        {{/each}}
+        {{/select}}
+      </select>
+      <button type="button" class="grm-effect-button" title="Apply effect (shift or middle click to remove)"><i class="material-icons md-small">auto_awesome</i></button>
+    </div>
+    {{/if}}
     <div>&nbsp;</div>
   </div>
 

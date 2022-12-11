@@ -451,7 +451,8 @@ export class GroupAbilityCheck extends GroupRollApp {
             rollicon: this.groupCheckIcon,
             dmg: this.dmg,
             statusEffects: this.sortedEffects,
-            effect: this.effect
+            effect: this.effect,
+            ver10: trRollLib.minGen(10)
         };
     }
 
