@@ -423,7 +423,7 @@ export class GroupAbilityCheck extends GroupRollApp {
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.id = "group-ability-check";
-        options.title = "Group Ability Check";
+        options.title = "Group Saving Throw / Ability Check";
         options.template = "modules/grouproll/templates/group-ability-check.html";
         return options;
     }
