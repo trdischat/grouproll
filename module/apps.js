@@ -546,10 +546,17 @@ export class GroupAbilityCheck extends GroupRollApp {
             const effectData = CONFIG.statusEffects.find(e => e.id === this.effect);
             const tokens = (this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ));
 
+            const hasStatus = (actor, statusId) => {
+                if (!isNewerVersion("11", game.version))
+                    return actor.statuses.has(statusId);
+                else
+                    return actor.effects.some(e => e.getFlag("core", "statusId") === statusId);
+            }
+
             for (const t of tokens) {
                 const token = canvas.tokens.get(t.id);
                 if (token) {
-                    if (active !== token.actor.effects.some(e => e.getFlag("core", "statusId") === effectData.id)) {
+                    if (active !== hasStatus(token.actor,  effectData.id)) {
                         token.toggleEffect(effectData, { active, overlay });
                     }
                 }
