@@ -154,7 +154,7 @@ Hooks.on('getSceneControlButtons', controls => {
                 },
                 {
                     name: "ability",
-                    title: game.system.id === "pf2e" ? "Group Saving Throw" : "Group Ability Check",
+                    title: game.system.id === "pf2e" ? "Group Saving Throw" : "Group Saving Throw / Ability Check",
                     icon: "fas fa-user-shield",
                     visible: game.user.isGM,
                     onClick: () => {
