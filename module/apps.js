@@ -304,7 +304,7 @@ export class GroupSkillCheck extends GroupRollApp {
         super(options);
         this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
         this.abilityName = CONFIG._grouproll_module_skillability || "dex";
-        this.flavor = (CONFIG.DND5E.skills[this.skillName].label || CONFIG.DND5E.skills[this.skillName]) + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
+        this.flavor = (CONFIG.DND5E.skills[this.skillName].label || CONFIG.DND5E.skills[this.skillName]) + " (" + (CONFIG.DND5E.abilities[this.abilityName].label || CONFIG.DND5E.abilities[this.abilityName]) + ") Check";
         this.dc = "";
     }
 
@@ -333,7 +333,7 @@ export class GroupSkillCheck extends GroupRollApp {
             skl: this.skillName,
             abl: this.abilityName,
             skills: trRollLib.minSys('2.0.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.skills).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.skills,
-            abilities: CONFIG.DND5E.abilities,
+            abilities: trRollLib.minSys('2.2.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.abilities,
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -385,7 +385,7 @@ export class GroupSkillCheck extends GroupRollApp {
             else if (this.abilityName !== newAbility) this.abilityName = newAbility;
             CONFIG._grouproll_module_skillcheck = this.skillName;
             CONFIG._grouproll_module_skillability = this.abilityName;
-            this.flavor = (CONFIG.DND5E.skills[this.skillName].label || CONFIG.DND5E.skills[this.skillName]) + " (" + CONFIG.DND5E.abilities[this.abilityName] + ") Check";
+            this.flavor = (CONFIG.DND5E.skills[this.skillName].label || CONFIG.DND5E.skills[this.skillName]) + " (" + (CONFIG.DND5E.abilities[this.abilityName].label || CONFIG.DND5E.abilities[this.abilityName]) + ") Check";
             this.commitValues();
             this.render();
         });
@@ -409,7 +409,7 @@ export class GroupAbilityCheck extends GroupRollApp {
         super(options);
         this.saveRoll = CONFIG._grouproll_module_saveroll ?? true;
         this.abilityName = CONFIG._grouproll_module_abilitycheck || "dex";
-        this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
+        this.flavor = (CONFIG.DND5E.abilities[this.abilityName].label || CONFIG.DND5E.abilities[this.abilityName]) + (this.saveRoll ? " Save" : " Check");
         this.dc = "";
         this.dmg = "";
         this.sortedEffects = [...CONFIG.statusEffects].sort((a, b) => {
@@ -444,7 +444,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             sav: this.saveRoll,
             abl: this.abilityName,
-            abilities: CONFIG.DND5E.abilities,
+            abilities: trRollLib.minSys('2.2.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.abilities,
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -496,7 +496,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             else if (this.abilityName !== newAbility) this.abilityName = newAbility;
             CONFIG._grouproll_module_abilitycheck = this.abilityName;
             CONFIG._grouproll_module_saveroll = this.saveRoll;
-            this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
+            this.flavor = (CONFIG.DND5E.abilities[this.abilityName].label || CONFIG.DND5E.abilities[this.abilityName]) + (this.saveRoll ? " Save" : " Check");
             this.commitValues();
             this.render();
         });
@@ -505,7 +505,7 @@ export class GroupAbilityCheck extends GroupRollApp {
         html.find('input[type="checkbox"]').change(event => {
             this.saveRoll = event.target.checked;
             CONFIG._grouproll_module_saveroll = this.saveRoll;
-            this.flavor = CONFIG.DND5E.abilities[this.abilityName] + (this.saveRoll ? " Save" : " Check");
+            this.flavor = (CONFIG.DND5E.abilities[this.abilityName].label || CONFIG.DND5E.abilities[this.abilityName]) + (this.saveRoll ? " Save" : " Check");
             this.commitValues();
             this.render();
         });
