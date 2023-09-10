@@ -116,6 +116,13 @@ Hooks.once('ready', function () {
                 return this;
             };
         };
+
+        // Copy name to label; fix for DFreds Convenient Effects 
+        CONFIG.statusEffects = CONFIG.statusEffects.map( x => {
+            x.label = x.label || x.name;
+            return x;
+        });
+
     } else {
         debug.log(true, "Current game system not supported")
     };
