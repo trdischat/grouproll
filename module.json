@@ -8,7 +8,7 @@
     "compatibleCoreVersion": "11",
     "compatibility": {
         "minimum": "0.7.2",
-        "verified": "11.308"
+        "verified": "11.315"
     },
     "author": "trdischat",
     "authors": [{
@@ -23,7 +23,7 @@
             "type": "system",
             "manifest": "https://raw.githubusercontent.com/foundryvtt/dnd5e/master/system.json",
             "compatibility": {
-                "verified": "2.3.1"
+                "verified": "2.4.0"
             }
         }]
     },
