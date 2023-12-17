@@ -16,7 +16,7 @@ Hooks.once('init', async function () {
     debug.log(true, 'Initializing');
 
     // Test whether game system is supported by the module
-    CONFIG._grouproll_systemSupported = game.system.id === "dnd5e" || ( game.system.id === "pf2e" && isNewerVersion('2.0.0', game.system.data.version) );
+    CONFIG._grouproll_systemSupported = game.system.id === "dnd5e" || ( game.system.id === "pf2e" && foundry.utils.isNewerVersion('2.0.0', game.system.data.version) );
 
     // Assign custom classes and constants
     CONFIG._grouproll_module_advantageStatus = {

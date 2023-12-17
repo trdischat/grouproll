@@ -547,7 +547,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             const tokens = (this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ));
 
             const hasStatus = (actor, statusId) => {
-                if (!isNewerVersion("11", game.version))
+                if (!foundry.utils.isNewerVersion("11", game.version))
                     return actor.statuses.has(statusId);
                 else
                     return actor.effects.some(e => e.getFlag("core", "statusId") === statusId);
@@ -571,16 +571,16 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
     constructor(object, options) {
         super(options);
         // DEPRECATED for pf2e before v1.13
-        let expandedSkills = Object.assign({ prc: "Perception" }, isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.skills : Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(([k, v]) => [k, game.i18n.localize(v)])));
+        let expandedSkills = Object.assign({ prc: "Perception" }, foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.skills : Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(([k, v]) => [k, game.i18n.localize(v)])));
         let allSorted = {};
         Object.keys(expandedSkills).sort().forEach(function (key) { allSorted[key] = expandedSkills[key]; });
         this.allSkills = allSorted;
         this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
         this.abilityName = CONFIG._grouproll_module_skillability || "dex";
         // DEPRECATED for pf2e before v1.13
-        this.flavor = this.allSkills[this.skillName] + " (" + (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
+        this.flavor = this.allSkills[this.skillName] + " (" + (foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
         // DEPRECATED for pf2e before v1.13
-        this.skillTemplate = isNewerVersion('1.13', game.system.data.version)
+        this.skillTemplate = foundry.utils.isNewerVersion('1.13', game.system.data.version)
             ? Object.assign({ prc: { value: 0, ability: "wis", armor: 0, rank: 0, item: 0, mod: 0, breakdown: "" } }, game.system.template.Actor.templates.common.skills)
             : Object.assign({ prc: { value: 0, ability: "wis", armor: 0, rank: 0, mod: 0 } }, game.system.template.Actor.character.skills);
         this.dc = "";
@@ -623,7 +623,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             abl: this.abilityName,
             skills: this.allSkills,
             // DEPRECATED for pf2e before v1.13
-            abilities: isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities : Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(([k, v]) => [k, game.i18n.localize(v)])),
+            abilities: foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities : Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(([k, v]) => [k, game.i18n.localize(v)])),
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -685,7 +685,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             CONFIG._grouproll_module_skillcheck = this.skillName;
             CONFIG._grouproll_module_skillability = this.abilityName;
             // DEPRECATED for pf2e before v1.13
-            this.flavor = this.allSkills[this.skillName] + " (" + (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
+            this.flavor = this.allSkills[this.skillName] + " (" + (foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
             this.commitValues();
             this.render();
         });
@@ -709,7 +709,7 @@ export class GroupSavePF2E extends GroupRollApp {
         super(options);
         this.abilityName = CONFIG._grouproll_module_abilitycheck || "fortitude";
         // DEPRECATED for pf2e before v1.13
-        this.flavor = (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
+        this.flavor = (foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
         this.dc = "";
     }
 
@@ -745,7 +745,7 @@ export class GroupSavePF2E extends GroupRollApp {
             tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             abl: this.abilityName,
             // DEPRECATED for pf2e before v1.13
-            abilities: isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves : Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(([k, v]) => [k, game.i18n.localize(v)])),
+            abilities: foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves : Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(([k, v]) => [k, game.i18n.localize(v)])),
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -790,7 +790,7 @@ export class GroupSavePF2E extends GroupRollApp {
             else if (this.abilityName !== newAbility) this.abilityName = newAbility;
             CONFIG._grouproll_module_abilitycheck = this.abilityName;
             // DEPRECATED for pf2e before v1.13
-            this.flavor = (isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
+            this.flavor = (foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
             this.commitValues();
             this.render();
         });

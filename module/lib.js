@@ -15,7 +15,7 @@ export function minGen(val) {
  * @returns {Boolean}    True if game version equals or exceeds minimum
  */
 export function minVer(val) {
-    return !(isNewerVersion(val, game.version || game.data.version));
+    return !(foundry.utils.isNewerVersion(val, game.version || game.data.version));
 } 
 
 /**
@@ -24,7 +24,7 @@ export function minVer(val) {
  * @returns {Boolean}    True if game system version equals or exceeds minimum
  */
  export function minSys(val) {
-    return !(isNewerVersion(val, game.system.version || game.system.data.version));
+    return !(foundry.utils.isNewerVersion(val, game.system.version || game.system.data.version));
 } 
 
 /** Class to send debug messages to console if enabled in DevMode module. */
