@@ -5,7 +5,7 @@ import {
     GroupSkillCheck,
     GroupAbilityCheck
 } from "./module/apps.js";
-import { avgD20roll, debug, minSys } from "./module/lib.js";
+import { avgD20roll, debug } from "./module/lib.js";
 
 /* ------------------------------------ */
 /* Initialize module					*/

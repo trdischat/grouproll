@@ -80,7 +80,6 @@ export function avgD20roll(d20Roll) {
         d20Roll.terms[0].results = [{ result: newTotal, active: true }];
     }
     d20Roll._total = d20Roll._total + newTotal - oldTotal;
-    if (!(minVer('0.8.0'))) d20Roll.results[0] = newTotal;
     debug.log(false, "avgD20roll | Original Roll: " + oldTotal);
     debug.log(false, "avgD20roll | Averaged Roll: " + newTotal);
 }

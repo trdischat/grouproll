@@ -1,4 +1,4 @@
-import { chkRoll, chkPassive, midValue, minGen, minSys } from "./lib.js"
+import { chkRoll, chkPassive, midValue } from "./lib.js"
 
 // Base class for group roll apps
 class GroupRollApp extends Application {
@@ -12,7 +12,6 @@ class GroupRollApp extends Application {
         this.groupOutcome = "";
         this.groupCheckIcon = "";
         this.tok2Show = "all";
-        this.isV10 = minGen(10);
         // Update dialog display on changes to token selection
         Hooks.on("controlToken", async (object, controlled) => {
             let x = await canvas.tokens.controlled;
@@ -332,8 +331,8 @@ export class GroupSkillCheck extends GroupRollApp {
             tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             skl: this.skillName,
             abl: this.abilityName,
-            skills: minSys('2.0.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.skills).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.skills,
-            abilities: minSys('2.2.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.abilities,
+            skills: Object.fromEntries(Object.entries(CONFIG.DND5E.skills).map(([k,v]) => [k, v.label])),
+            abilities: Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])),
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -343,8 +342,8 @@ export class GroupSkillCheck extends GroupRollApp {
 
     getTokenList(skillName, abilityName) {
         return canvas.tokens.controlled.map(t => {
-            const dataPath = this.isV10 ? t.actor.system : t.actor.data.data;
-            const flagPath = this.isV10 ? t.actor.flags : t.actor.data.flags;
+            const dataPath = t.actor.system;
+            const flagPath = t.actor.flags;
             if (this.mstList[t.id] === undefined) this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } };
             let m = this.mstList[t.id];
             let sklmod = dataPath.skills[skillName].total;
@@ -444,7 +443,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             sav: this.saveRoll,
             abl: this.abilityName,
-            abilities: minSys('2.2.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.abilities,
+            abilities: Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])),
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -452,14 +451,13 @@ export class GroupAbilityCheck extends GroupRollApp {
             dmg: this.dmg,
             statusEffects: this.sortedEffects,
             effect: this.effect,
-            ver10: minGen(10)
         };
     }
 
     getTokenList(saveRoll, abilityName) {
         return canvas.tokens.controlled.map(t => {
-            const dataPath = this.isV10 ? t.actor.system : t.actor.data.data;
-            const flagPath = this.isV10 ? t.actor.flags : t.actor.data.flags;
+            const dataPath = t.actor.system;
+            const flagPath = t.actor.flags;
             if (this.mstList[t.id] === undefined) this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } };
             let m = this.mstList[t.id];
             let ablmod = saveRoll ? dataPath.abilities[abilityName].save : dataPath.abilities[abilityName].mod;
@@ -547,10 +545,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             const tokens = (this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ));
 
             const hasStatus = (actor, statusId) => {
-                if (minGen(11))
-                    return actor.statuses.has(statusId);
-                else
-                    return actor.effects.some(e => e.getFlag("core", "statusId") === statusId);
+                return actor.statuses.has(statusId);
             }
 
             for (const t of tokens) {
