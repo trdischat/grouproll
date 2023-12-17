@@ -7,7 +7,7 @@ import {
     GroupSkillCheckPF2E,
     GroupSavePF2E
 } from "./module/apps.js";
-import { avgD20roll, debug } from "./module/lib.js";
+import { avgD20roll, debug, minSys } from "./module/lib.js";
 
 /* ------------------------------------ */
 /* Initialize module					*/
@@ -16,7 +16,7 @@ Hooks.once('init', async function () {
     debug.log(true, 'Initializing');
 
     // Test whether game system is supported by the module
-    CONFIG._grouproll_systemSupported = game.system.id === "dnd5e" || ( game.system.id === "pf2e" && foundry.utils.isNewerVersion('2.0.0', game.system.data.version) );
+    CONFIG._grouproll_systemSupported = game.system.id === "dnd5e" || ( game.system.id === "pf2e" && !(minSys('2.0.0')) );
 
     // Assign custom classes and constants
     CONFIG._grouproll_module_advantageStatus = {

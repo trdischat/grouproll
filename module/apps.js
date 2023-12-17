@@ -1,4 +1,4 @@
-import * as trRollLib from "./lib.js"
+import { chkRoll, chkPassive, midValue, minGen, minSys } from "./lib.js"
 
 // Base class for group roll apps
 class GroupRollApp extends Application {
@@ -12,7 +12,7 @@ class GroupRollApp extends Application {
         this.groupOutcome = "";
         this.groupCheckIcon = "";
         this.tok2Show = "all";
-        this.isV10 = trRollLib.minGen(10);
+        this.isV10 = minGen(10);
         // Update dialog display on changes to token selection
         Hooks.on("controlToken", async (object, controlled) => {
             let x = await canvas.tokens.controlled;
@@ -53,11 +53,11 @@ class GroupRollApp extends Application {
     }
 
     doGroupCheck() {
-        this.doCheck(trRollLib.chkRoll);
+        this.doCheck(chkRoll);
     }
 
     doPassiveCheck() {
-        this.doCheck(trRollLib.chkPassive);
+        this.doCheck(chkPassive);
     }
 
     async sendRollsToChat() {
@@ -319,7 +319,7 @@ export class GroupSkillCheck extends GroupRollApp {
     getData() {
         this.tokList = this.getTokenList(this.skillName, this.abilityName);
         let groupWins = (this.tokList.filter(t => t.nat === "grm-success").length / this.tokList.length) >= 0.5;
-        this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
+        this.groupRoll = midValue(this.tokList.map(t => t.roll.total));
         this.groupOutcome = "";
         this.groupCheckIcon = "";
         if (this.dc !== "" && !isNaN(this.dc)) {
@@ -332,8 +332,8 @@ export class GroupSkillCheck extends GroupRollApp {
             tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             skl: this.skillName,
             abl: this.abilityName,
-            skills: trRollLib.minSys('2.0.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.skills).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.skills,
-            abilities: trRollLib.minSys('2.2.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.abilities,
+            skills: minSys('2.0.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.skills).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.skills,
+            abilities: minSys('2.2.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.abilities,
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -431,7 +431,7 @@ export class GroupAbilityCheck extends GroupRollApp {
     getData() {
         this.tokList = this.getTokenList(this.saveRoll, this.abilityName);
         let groupWins = (this.tokList.filter(t => t.nat === "grm-success").length / this.tokList.length) >= 0.5;
-        this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
+        this.groupRoll = midValue(this.tokList.map(t => t.roll.total));
         this.groupOutcome = "";
         this.groupCheckIcon = "";
         if (this.dc !== "" && !isNaN(this.dc)) {
@@ -444,7 +444,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             sav: this.saveRoll,
             abl: this.abilityName,
-            abilities: trRollLib.minSys('2.2.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.abilities,
+            abilities: minSys('2.2.0') ? Object.fromEntries(Object.entries(CONFIG.DND5E.abilities).map(([k,v]) => [k, v.label])) : CONFIG.DND5E.abilities,
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -452,7 +452,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             dmg: this.dmg,
             statusEffects: this.sortedEffects,
             effect: this.effect,
-            ver10: trRollLib.minGen(10)
+            ver10: minGen(10)
         };
     }
 
@@ -547,7 +547,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             const tokens = (this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ));
 
             const hasStatus = (actor, statusId) => {
-                if (!foundry.utils.isNewerVersion("11", game.version))
+                if (minGen(11))
                     return actor.statuses.has(statusId);
                 else
                     return actor.effects.some(e => e.getFlag("core", "statusId") === statusId);
@@ -571,16 +571,16 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
     constructor(object, options) {
         super(options);
         // DEPRECATED for pf2e before v1.13
-        let expandedSkills = Object.assign({ prc: "Perception" }, foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.skills : Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(([k, v]) => [k, game.i18n.localize(v)])));
+        let expandedSkills = Object.assign({ prc: "Perception" }, !(minSys('1.13')) ? CONFIG.PF2E.skills : Object.fromEntries(Object.entries(CONFIG.PF2E.skills).map(([k, v]) => [k, game.i18n.localize(v)])));
         let allSorted = {};
         Object.keys(expandedSkills).sort().forEach(function (key) { allSorted[key] = expandedSkills[key]; });
         this.allSkills = allSorted;
         this.skillName = CONFIG._grouproll_module_skillcheck || "acr";
         this.abilityName = CONFIG._grouproll_module_skillability || "dex";
         // DEPRECATED for pf2e before v1.13
-        this.flavor = this.allSkills[this.skillName] + " (" + (foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
+        this.flavor = this.allSkills[this.skillName] + " (" + (!(minSys('1.13')) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
         // DEPRECATED for pf2e before v1.13
-        this.skillTemplate = foundry.utils.isNewerVersion('1.13', game.system.data.version)
+        this.skillTemplate = !(minSys('1.13'))
             ? Object.assign({ prc: { value: 0, ability: "wis", armor: 0, rank: 0, item: 0, mod: 0, breakdown: "" } }, game.system.template.Actor.templates.common.skills)
             : Object.assign({ prc: { value: 0, ability: "wis", armor: 0, rank: 0, mod: 0 } }, game.system.template.Actor.character.skills);
         this.dc = "";
@@ -608,7 +608,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
         });
         this.tokList = this.getTokenList(this.skillName, this.abilityName);
         let groupWins = (this.tokList.filter(t => t.nat === "grm-success").length / this.tokList.length) >= 0.5;
-        this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
+        this.groupRoll = midValue(this.tokList.map(t => t.roll.total));
         this.groupOutcome = "";
         this.groupCheckIcon = "";
         if (this.dc !== "" && !isNaN(this.dc)) {
@@ -623,7 +623,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             abl: this.abilityName,
             skills: this.allSkills,
             // DEPRECATED for pf2e before v1.13
-            abilities: foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities : Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(([k, v]) => [k, game.i18n.localize(v)])),
+            abilities: !(minSys('1.13')) ? CONFIG.PF2E.abilities : Object.fromEntries(Object.entries(CONFIG.PF2E.abilities).map(([k, v]) => [k, game.i18n.localize(v)])),
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -685,7 +685,7 @@ export class GroupSkillCheckPF2E extends GroupRollApp {
             CONFIG._grouproll_module_skillcheck = this.skillName;
             CONFIG._grouproll_module_skillability = this.abilityName;
             // DEPRECATED for pf2e before v1.13
-            this.flavor = this.allSkills[this.skillName] + " (" + (foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
+            this.flavor = this.allSkills[this.skillName] + " (" + (!(minSys('1.13')) ? CONFIG.PF2E.abilities[this.abilityName] : game.i18n.localize(CONFIG.PF2E.abilities[this.abilityName])) + ") Check";
             this.commitValues();
             this.render();
         });
@@ -709,7 +709,7 @@ export class GroupSavePF2E extends GroupRollApp {
         super(options);
         this.abilityName = CONFIG._grouproll_module_abilitycheck || "fortitude";
         // DEPRECATED for pf2e before v1.13
-        this.flavor = (foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
+        this.flavor = (!(minSys('1.13')) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
         this.dc = "";
     }
 
@@ -732,7 +732,7 @@ export class GroupSavePF2E extends GroupRollApp {
     getData() {
         this.tokList = this.getTokenList(this.abilityName);
         let groupWins = (this.tokList.filter(t => t.nat === "grm-success").length / this.tokList.length) >= 0.5;
-        this.groupRoll = trRollLib.midValue(this.tokList.map(t => t.roll.total));
+        this.groupRoll = midValue(this.tokList.map(t => t.roll.total));
         this.groupOutcome = "";
         this.groupCheckIcon = "";
         if (this.dc !== "" && !isNaN(this.dc)) {
@@ -745,7 +745,7 @@ export class GroupSavePF2E extends GroupRollApp {
             tok: this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ),
             abl: this.abilityName,
             // DEPRECATED for pf2e before v1.13
-            abilities: foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves : Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(([k, v]) => [k, game.i18n.localize(v)])),
+            abilities: !(minSys('1.13')) ? CONFIG.PF2E.saves : Object.fromEntries(Object.entries(CONFIG.PF2E.saves).map(([k, v]) => [k, game.i18n.localize(v)])),
             dc: this.dc,
             rollresult: this.groupRoll,
             rollgood: this.groupOutcome,
@@ -790,7 +790,7 @@ export class GroupSavePF2E extends GroupRollApp {
             else if (this.abilityName !== newAbility) this.abilityName = newAbility;
             CONFIG._grouproll_module_abilitycheck = this.abilityName;
             // DEPRECATED for pf2e before v1.13
-            this.flavor = (foundry.utils.isNewerVersion('1.13', game.system.data.version) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
+            this.flavor = (!(minSys('1.13')) ? CONFIG.PF2E.saves[this.abilityName] : game.i18n.localize(CONFIG.PF2E.saves[this.abilityName])) + " Save";
             this.commitValues();
             this.render();
         });
