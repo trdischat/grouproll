@@ -3,9 +3,7 @@ import { registerSettings } from "./module/settings.js";
 import { preloadTemplates } from "./module/templates.js";
 import {
     GroupSkillCheck,
-    GroupAbilityCheck,
-    GroupSkillCheckPF2E,
-    GroupSavePF2E
+    GroupAbilityCheck
 } from "./module/apps.js";
 import { avgD20roll, debug, minSys } from "./module/lib.js";
 
@@ -16,7 +14,7 @@ Hooks.once('init', async function () {
     debug.log(true, 'Initializing');
 
     // Test whether game system is supported by the module
-    CONFIG._grouproll_systemSupported = game.system.id === "dnd5e" || ( game.system.id === "pf2e" && !(minSys('2.0.0')) );
+    CONFIG._grouproll_systemSupported = game.system.id === "dnd5e";
 
     // Assign custom classes and constants
     CONFIG._grouproll_module_advantageStatus = {
@@ -57,12 +55,6 @@ Hooks.once('ready', function () {
 
     // Enable module if game system is supported
     if (CONFIG._grouproll_systemSupported) {
-
-        // Alter Advantage Type labels for Pathfinder 2e
-        if (game.system.id === "pf2e") {
-            CONFIG._grouproll_module_advantageStatus[1].label = "Fortune";
-            CONFIG._grouproll_module_advantageStatus[-1].label = "Misfortune";
-        };
 
         // Flag whether it is safe to insert code to average 1d20 rolls
         // - Only use with D&D 5e system
@@ -155,19 +147,17 @@ Hooks.on('getSceneControlButtons', controls => {
                     visible: game.user.isGM,
                     onClick: () => {
                         ui.controls.initialize({tool: "select"});
-                        if (game.system.id === "pf2e") return new GroupSkillCheckPF2E().render(true);
-                        else return new GroupSkillCheck().render(true);
+                        return new GroupSkillCheck().render(true);
                     }
                 },
                 {
                     name: "ability",
-                    title: game.system.id === "pf2e" ? "Group Saving Throw" : "Group Saving Throw / Check",
+                    title: "Group Saving Throw",
                     icon: "fas fa-user-shield",
                     visible: game.user.isGM,
                     onClick: () => {
                         ui.controls.initialize({tool: "select"});
-                        if (game.system.id === "pf2e") return new GroupSavePF2E().render(true);
-                        else return new GroupAbilityCheck().render(true);
+                        return new GroupAbilityCheck().render(true);
                     }
                 }
             );

@@ -37,8 +37,7 @@ The module also has the following configuration options:
 All of these options are disabled by default, but they can be individually enabled in the module configuration settings.
 
 ## System Compatibility
-
-This module was designed for the D&D 5e system. The module also provides limited support for certain group rolls in older versions of the Pathfinder 2e system. Unfortunately, due to major changes to the data structure in the PF2e system, support for the current version of that system had to be dropped.
+This module was designed for the D&D 5e system. Older versions of the module also provided limited support for certain group rolls in older versions of the Pathfinder 2e system. Unfortunately, due to major changes to the data structure in the PF2e system, support for that system has been dropped.
 
 ## License
 
