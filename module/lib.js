@@ -27,15 +27,15 @@ export function minVer(val) {
     return !(foundry.utils.isNewerVersion(val, game.system.version || game.system.data.version));
 } 
 
-/** Class to send debug messages to console if enabled in DevMode module. */
+/** Class to send debug messages to console if enabled */
 export class debug {
-  /**
-   * Getter tests if debug is enabled.
-   * @return {boolean}        True if debug is enabled.
-   */
-  static get enabled() {
-      return game.modules.get('_dev-mode')?.api?.getPackageDebugValue(MODULE_ID);
-  }
+    /**
+     * Getter tests if debug is enabled.
+     * @return {boolean}        True if debug is enabled.
+     */
+    static get enabled() {
+        return false;
+    }
   /**
    * Helper function to output debug messages to console if debug is enabled.
    * @param {boolean} force    True = output always, False = output only if debugging enabled.

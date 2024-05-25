@@ -122,13 +122,6 @@ Hooks.once('ready', function () {
 });
 
 /* ------------------------------------ */
-/* Devmode Hook                         */
-/* ------------------------------------ */
-Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
-    registerPackageDebugFlag('grouproll');
-});
-
-/* ------------------------------------ */
 /* Additional Hooks                     */
 /* ------------------------------------ */
 Hooks.on('getSceneControlButtons', controls => {
