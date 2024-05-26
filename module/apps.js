@@ -349,9 +349,7 @@ export class GroupSkillCheck extends GroupRollApp {
             let sklmod = dataPath.skills[skillName].total;
             let abilityDef = dataPath.skills[skillName].ability;
             if (abilityName !== abilityDef) sklmod = sklmod - dataPath.abilities[abilityDef].mod + dataPath.abilities[abilityName].mod;
-            let tokRace = dataPath.details.race;
-            let trtLuck = flagPath.dnd5e ? (flagPath.dnd5e.halflingLucky ? true : false) : false;
-            let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
+            let lucky = flagPath.dnd5e ? (flagPath.dnd5e.halflingLucky ? true : false) : false;
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
             let natRoll = "";
@@ -461,9 +459,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             if (this.mstList[t.id] === undefined) this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } };
             let m = this.mstList[t.id];
             let ablmod = saveRoll ? dataPath.abilities[abilityName].save : dataPath.abilities[abilityName].mod;
-            let tokRace = dataPath.details.race;
-            let trtLuck = flagPath.dnd5e ? (flagPath.dnd5e.halflingLucky ? true : false) : false;
-            let lucky = trtLuck ? true : (tokRace ? tokRace.toLowerCase().includes("halfling") : false);
+            let lucky = flagPath.dnd5e ? (flagPath.dnd5e.halflingLucky ? true : false) : false;
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
             let natRoll = "";
