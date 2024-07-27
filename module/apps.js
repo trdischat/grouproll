@@ -192,15 +192,15 @@ class GroupRollApp extends Application {
                 class: "grm-btn-nodice",
                 title: "Compute fixed outcomes without rolls",
                 icon: "fas fa-lock",
-                onclick: ev => this.doPassiveCheck()
+                onclick: async ev => await this.doPassiveCheck()
             },
             {
                 label: "Roll",
                 class: "grm-btn-roll",
                 title: "Roll for all selected tokens\nShift: " + (game.settings.get("grouproll", "send2chat") ? "Hide rolls from chat" : "Output rolls to chat") + "\nCtrl: Keep same rolls",
                 icon: "fas fa-dice-d20",
-                onclick: ev => {
-                    if (!ev.ctrlKey) this.doGroupCheck();
+                onclick: async ev => {
+                    if (!ev.ctrlKey) await this.doGroupCheck();
                     if (ev.shiftKey !== game.settings.get("grouproll", "send2chat")) this.sendRollsToChat();
                 }
             }
