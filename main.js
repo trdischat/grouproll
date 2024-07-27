@@ -77,8 +77,8 @@ Hooks.once('ready', function () {
             // Insert custom d20 roll averaging function into dnd5e system
             CONFIG.Dice.D20Roll.prototype.grouprollAverage = avgD20roll;
             CONFIG.Dice.D20Roll.prototype.grouprollEvaluate = Roll.prototype.evaluate;
-            CONFIG.Dice.D20Roll.prototype.evaluate = async function ({ minimize = false, maximize = false, async } = {}) {
-                await this.grouprollEvaluate({ minimize, maximize, async: true });
+            CONFIG.Dice.D20Roll.prototype.evaluate = async function ({ minimize = false, maximize = false, allowStrings = false, allowInteractive = true, ...options} = {}) {
+                await this.grouprollEvaluate({ minimize, maximize, allowStrings, allowInteractive });
 
                 // Do not use averaging for manual rolls, and only for normal 1d20 rolls
                 if (!this.terms[0].options.isManualRoll && this.options.advantageMode === 0 && this.terms[0].faces === 20 && this.terms[0].number === 1) {
@@ -95,10 +95,10 @@ Hooks.once('ready', function () {
                     // Average normal d20 rolls only for selected roll types
                     switch (game.settings.get("grouproll", "averageRolls")) {
                         case "c":
-                            if (rollType[2]) this.grouprollAverage(this);
+                            if (rollType[2]) await this.grouprollAverage(this);
                             break;
                         case "a":
-                            if (rollType[2] || rollType[3]) this.grouprollAverage(this);
+                            if (rollType[2] || rollType[3]) await this.grouprollAverage(this);
                             break;
                         default:
                     };

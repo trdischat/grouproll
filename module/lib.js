@@ -67,10 +67,10 @@ export function midValue(rolls) {
  * 2d10-1dc is statistically equivalent and easier than actual averaging.
  * @param {Roll} d20Roll    Roll of 1d20 to be replaced
  */
-export function avgD20roll(d20Roll) {
+export async function avgD20roll(d20Roll) {
     let oldTotal = d20Roll.terms[0].total;
     let avgRoll = new Roll(`2d10-1dc`);
-    avgRoll.evaluate({ async: false });
+    await avgRoll.evaluate();
     let newTotal = avgRoll.total;
     if (d20Roll.terms[0].formula.includes("r1=1") && newTotal == 1) {
         let altRoll = avgRoll.reroll();
@@ -93,12 +93,12 @@ export function avgD20roll(d20Roll) {
  * @param {Boolean} lucky  Halfling luck
  * @return {Roll}          Ability or skill roll
  */
-export function chkRoll(adv, bon, mod, lucky) {
+export async function chkRoll(adv, bon, mod, lucky) {
     let rStr = ((adv === 0) ? "1" : "2") + "d20" + (lucky ? "r1=1" : "") + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
     let rData = { bonus: bon, modifier: mod };
     let roll = new Roll(rStr, rData);
-    roll.evaluate({ async: false });
-    if (adv === 0 && (game.settings.get("grouproll", "averageRolls") === "c" || game.settings.get("grouproll", "averageRolls") === "a")) avgD20roll(roll);
+    await roll.evaluate();
+    if (adv === 0 && (game.settings.get("grouproll", "averageRolls") === "c" || game.settings.get("grouproll", "averageRolls") === "a")) await avgD20roll(roll);
     show3dDice(roll);
     return roll;
 }
@@ -112,11 +112,12 @@ export function chkRoll(adv, bon, mod, lucky) {
  * @param {Boolean} lucky  Halfling luck
  * @return {Roll}          Attack roll
  */
-export function hitRoll(adv, bon, mod, lucky) {
+export async function hitRoll(adv, bon, mod, lucky) {
     let rStr = ((adv === 0) ? "1" : "2") + "d20" + (lucky ? "r1=1" : "") + ((adv === 1) ? "kh" : ((adv === -1) ? "kl" : "")) + " + @bonus + @modifier";
     let rData = { bonus: bon, modifier: mod };
     let roll = new Roll(rStr, rData);
-    return roll.evaluate({ async: false });
+    await roll.evaluate();
+    return roll;
 }
 
 /**
@@ -126,11 +127,12 @@ export function hitRoll(adv, bon, mod, lucky) {
  * @param {Number} mod     Ability or skill modifier
  * @return {Roll}          Ability or skill roll
  */
-export function chkPassive(adv, bon, mod) {
+export async function chkPassive(adv, bon, mod) {
     var rStr = "@base + @bonus + @modifier";
     var rData = { base: (adv * 5) + 10, bonus: bon, modifier: mod };
     let roll = new Roll(rStr, rData);
-    return roll.evaluate({ async: false });
+    await roll.evaluate();
+    return roll;
 }
 
 /**

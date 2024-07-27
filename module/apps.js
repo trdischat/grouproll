@@ -42,21 +42,22 @@ class GroupRollApp extends Application {
             this.dmg = damage;
     }
 
-    doCheck(rollFunc) {
+    async doGroupCheck() {
         this.commitValues();
 
         for (const t of this.tokList)
-            this.mstList[t.id].roll = t.roll = rollFunc(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
+            this.mstList[t.id].roll = t.roll = await chkRoll(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
 
         this.render();
     }
 
-    doGroupCheck() {
-        this.doCheck(chkRoll);
-    }
+    async doPassiveCheck() {
+        this.commitValues();
 
-    doPassiveCheck() {
-        this.doCheck(chkPassive);
+        for (const t of this.tokList)
+            this.mstList[t.id].roll = t.roll = await chkPassive(Number(t.adv), Number(t.bon), Number(t.mod), t.luck);
+
+        this.render();
     }
 
     async sendRollsToChat() {
