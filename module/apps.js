@@ -378,7 +378,7 @@ export class GroupSkillCheck extends GroupRollApp {
             let newAbility = html.find('[name="select-ability"]').val();
             if (this.skillName !== newSkill) {
                 this.skillName = newSkill;
-                this.abilityName = game.system.template.Actor.templates.creature.skills[this.skillName].ability;
+                this.abilityName = CONFIG.DND5E.skills[this.skillName].ability;
             }
             else if (this.abilityName !== newAbility) this.abilityName = newAbility;
             CONFIG._grouproll_module_skillcheck = this.skillName;
