@@ -1,4 +1,4 @@
-import { chkRoll, chkPassive, midValue } from "./lib.js"
+import { chkRoll, chkPassive, midValue, debug } from "./lib.js"
 
 // Base class for group roll apps
 class GroupRollApp extends Application {
