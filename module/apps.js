@@ -119,7 +119,7 @@ class GroupRollApp extends Application {
             return;
 
         const tokens = (this.tok2Show === "all" ? this.tokList : ( this.tok2Show === "pass" ? this.tokList.filter(t => t.nat === 'grm-success') : this.tokList.filter(t => t.nat === 'grm-fumble' && t.roll instanceof Roll) ));
-        const promises = tokens.map(t => canvas.tokens.get(t.id)?.actor?.applyDamage(value, multiplier));
+        const promises = tokens.map(t => canvas.tokens.get(t.id)?.actor?.applyDamage(value, {multiplier: multiplier}));
         return Promise.all(promises);
     }
 
