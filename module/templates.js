@@ -6,5 +6,5 @@ export const preloadTemplates = async function () {
         'modules/grouproll/templates/group-ability-check.html',
         'modules/grouproll/templates/group-skill-check.html'
     ];
-    return loadTemplates(templatePaths);
+    return foundry.applications.handlebars.loadTemplates(templatePaths);
 };
