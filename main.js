@@ -119,7 +119,6 @@ Hooks.on('getSceneControlButtons', controls => {
             visible: game.user.isGM,
             button: true,
             onChange: (event, active) => {
-                // ui.controls.initialize({tool: "select"});
                 return new GroupSkillCheck().render(true);
             }
         };
@@ -130,7 +129,6 @@ Hooks.on('getSceneControlButtons', controls => {
             visible: game.user.isGM,
             button: true,
             onChange: (event, active) => {
-                // ui.controls.initialize({tool: "select"});
                 return new GroupAbilityCheck().render(true);
             }
         };
