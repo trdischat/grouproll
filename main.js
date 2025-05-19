@@ -65,15 +65,6 @@ Hooks.once('ready', function () {
         if (averagingOK && game.settings.get("grouproll", "averageRolls") !== "n") {
             debug.log(false, "Averaging enabled for d20 rolls");
 
-            // Regex for matching roll types
-            CONFIG._grouproll_module_matchrolls = new RegExp(
-                "(" + game.i18n.localize("GRTYPE.Death") + ")|(" +
-                game.i18n.localize("GRTYPE.Check") + "|" +
-                game.i18n.localize("GRTYPE.Save") + "|" +
-                game.i18n.localize("GRTYPE.Skill") + "|" +
-                game.i18n.localize("GRTYPE.Tool") + ")|(" +
-                game.i18n.localize("GRTYPE.Attack") + ")");
-
             // Insert custom d20 roll averaging function into dnd5e system
             CONFIG.Dice.D20Roll.prototype.grouprollAverage = avgD20roll;
             CONFIG.Dice.D20Roll.prototype.grouprollEvaluate = Roll.prototype.evaluate;
@@ -82,23 +73,14 @@ Hooks.once('ready', function () {
 
                 // Do not use averaging for manual rolls, and only for normal 1d20 rolls
                 if (!this.terms[0].options.isManualRoll && this.options.advantageMode === 0 && this.terms[0].faces === 20 && this.terms[0].number === 1) {
-
-                    // Use the flavor to identify the roll type
-                    const rollType = this.options.flavor.match(CONFIG._grouproll_module_matchrolls);
-                    // Debug detection of roll types when adding new languages
-                    if (debug.enabled) {
-                        if (rollType[1]) debug.log(true, rollType[1] + " = Death Saving Throw");
-                        else if (rollType[2]) debug.log(true, rollType[2] + " = Check or Save");
-                        else if (rollType[3]) debug.log(true, rollType[3] + " = Attack Roll");
-                    }
-
+                    const rollType = this.options.rollType;
                     // Average normal d20 rolls only for selected roll types
                     switch (game.settings.get("grouproll", "averageRolls")) {
                         case "c":
-                            if (rollType[2]) await this.grouprollAverage(this);
+                            if (["save", "ability", "skill"].includes(rollType)) await this.grouprollAverage(this);
                             break;
                         case "a":
-                            if (rollType[2] || rollType[3]) await this.grouprollAverage(this);
+                            if (["save", "ability", "skill", "attack"].includes(rollType)) await this.grouprollAverage(this);
                             break;
                         default:
                     };
