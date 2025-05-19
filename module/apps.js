@@ -459,7 +459,7 @@ export class GroupAbilityCheck extends GroupRollApp {
             const flagPath = t.actor.flags;
             if (this.mstList[t.id] === undefined) this.mstList[t.id] = { adv: 0, bon: 0, roll: { total: "", result: "", terms: [{ total: 10 }] } };
             let m = this.mstList[t.id];
-            let ablmod = saveRoll ? dataPath.abilities[abilityName].save : dataPath.abilities[abilityName].mod;
+            let ablmod = saveRoll ? dataPath.abilities[abilityName].save.value : dataPath.abilities[abilityName].mod;
             let lucky = flagPath.dnd5e ? (flagPath.dnd5e.halflingLucky ? true : false) : false;
             let advIcon = CONFIG._grouproll_module_advantageStatus[m.adv].icon;
             let advHover = CONFIG._grouproll_module_advantageStatus[m.adv].label;
@@ -549,7 +549,7 @@ export class GroupAbilityCheck extends GroupRollApp {
                 const token = canvas.tokens.get(t.id);
                 if (token) {
                     if (active !== hasStatus(token.actor,  effectData.id)) {
-                        token.toggleEffect(effectData, { active, overlay });
+                        token.actor.toggleStatusEffect(effectData.id, { active, overlay });
                     }
                 }
             }
