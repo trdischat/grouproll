@@ -1,8 +1,0 @@
-{
-    "GRTYPE.Attack": "Attack Roll",
-    "GRTYPE.Check": "Ability Check",
-    "GRTYPE.Death": "Death Saving Throw",
-    "GRTYPE.Save": "Saving Throw",
-    "GRTYPE.Skill": "Skill Check",
-    "GRTYPE.Tool": "Tool Check"
-}
