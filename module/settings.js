@@ -1,4 +1,4 @@
-const debouncedReload = debounce(() => window.location.reload(), 100);
+const debouncedReload = foundry.utils.debounce(() => window.location.reload(), 100);
 
 export const registerSettings = function () {
     game.settings.register("grouproll", "passfail", {
