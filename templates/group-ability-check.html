@@ -6,11 +6,7 @@
     <div class="grm-label">Ability</div>
     <div class="grm-select">          
       <select name="select-ability" data-dtype="String">
-        {{#select abl}}
-        {{#each abilities as |value ability|}}
-        <option value="{{ability}}">{{value}}</option>
-        {{/each}}
-        {{/select}}
+        {{selectOptions abilities selected=abl}}
       </select>
     </div>
     <div class="grm-label">Saving&nbsp;Throw?</div>  
@@ -63,11 +59,7 @@
     <div>&nbsp;</div>
     <div class="grm-grid grm-subgrid" style="grid-template-columns: 1fr 2.5em">
       <select name="select-effect" data-dtype="String">
-        {{#select effect}}
-        {{#each statusEffects}}
-        <option value="{{this.id}}">{{localize this.label}}</option>
-        {{/each}}
-        {{/select}}
+        {{selectOptions statusEffects selected=effect valueAttr="id" labelAttr="label" localize=true}}
       </select>
       <button type="button" class="grm-effect-button" title="Apply effect (shift or middle click to remove)"><i class="fa-solid fa-sparkles"></i></button>
     </div>

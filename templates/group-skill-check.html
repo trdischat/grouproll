@@ -4,21 +4,13 @@
     <div class="grm-label">Skill</div>
     <div class="grm-select">          
       <select name="select-skill" data-dtype="String">
-        {{#select skl}}
-        {{#each skills as |value skill|}}
-        <option value="{{skill}}">{{value}}</option>
-        {{/each}}
-        {{/select}}
+        {{selectOptions skills selected=skl}}
       </select>
     </div>
     <div class="grm-label">Ability</div>  
     <div class="grm-select">
       <select name="select-ability" data-dtype="String">
-        {{#select abl}}
-        {{#each abilities as |value ability|}}
-        <option value="{{ability}}">{{value}}</option>
-        {{/each}}
-        {{/select}}
+        {{selectOptions abilities selected=abl}}
       </select>
     </div>
     <div class="grm-label">DC</div>
