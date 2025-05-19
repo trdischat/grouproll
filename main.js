@@ -130,30 +130,27 @@ Hooks.on('getSceneControlButtons', controls => {
     if (CONFIG._grouproll_systemSupported) {
 
         // Add Group Roll buttons to UI
-        let tokenButton = controls.find(b => b.name == "token");
-        if (tokenButton) {
-            tokenButton.tools.push(
-                {
-                    name: "skill",
-                    title: "Group Skill Check",
-                    icon: "fas fa-user-check",
-                    visible: game.user.isGM,
-                    onClick: () => {
-                        ui.controls.initialize({tool: "select"});
-                        return new GroupSkillCheck().render(true);
-                    }
-                },
-                {
-                    name: "ability",
-                    title: "Group Saving Throw",
-                    icon: "fas fa-user-shield",
-                    visible: game.user.isGM,
-                    onClick: () => {
-                        ui.controls.initialize({tool: "select"});
-                        return new GroupAbilityCheck().render(true);
-                    }
-                }
-            );
+        controls.tokens.tools.grouprollSkillCheck = {
+            name: "grouprollSkillCheck",
+            title: "Group Skill Check",
+            icon: "fas fa-user-check",
+            visible: game.user.isGM,
+            button: true,
+            onChange: (event, active) => {
+                // ui.controls.initialize({tool: "select"});
+                return new GroupSkillCheck().render(true);
+            }
+        };
+        controls.tokens.tools.grouprollSavingThrow = {
+            name: "grouprollSavingThrow",
+            title: "Group Saving Throw",
+            icon: "fas fa-user-shield",
+            visible: game.user.isGM,
+            button: true,
+            onChange: (event, active) => {
+                // ui.controls.initialize({tool: "select"});
+                return new GroupAbilityCheck().render(true);
+            }
         };
     };
 });
