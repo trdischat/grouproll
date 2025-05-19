@@ -1,4 +1,4 @@
-import { chkRoll, chkPassive, midValue, debug } from "./lib.js"
+import { chkRoll, chkPassive, midValue, debug } from "./lib.js";
 
 // Base class for group roll apps
 class GroupRollApp extends Application {
@@ -87,10 +87,10 @@ class GroupRollApp extends Application {
                 })
             };
         });
-        const tooltip = await renderTemplate("modules/grouproll/templates/group-chat-tooltip.html", {
+        const tooltip = await foundry.applications.handlebars.renderTemplate("modules/grouproll/templates/group-chat-tooltip.html", {
             tok: tokRolls
         });
-        const content = await renderTemplate("modules/grouproll/templates/group-chat-roll.html", {
+        const content = await foundry.applications.handlebars.renderTemplate("modules/grouproll/templates/group-chat-roll.html", {
             flavor: this.flavor,
             total: this.groupRoll,
             groupoutcome: this.groupOutcome,
@@ -226,7 +226,7 @@ class GroupRollApp extends Application {
         };
 
         // Render the template and return the promise
-        let html = await renderTemplate("modules/grouproll/templates/group-app-window.html", windowData);
+        let html = await foundry.applications.handlebars.renderTemplate("modules/grouproll/templates/group-app-window.html", windowData);
         html = $(html);
 
         // Activate header button click listeners after a slight timeout to prevent immediate interaction
